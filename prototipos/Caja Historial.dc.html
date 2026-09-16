@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;background:#F7F0E6;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A">
+
+  <aside style="width:232px;flex:none;background:#FFFCF7;border-right:1px solid #E4D6C3;display:flex;flex-direction:column;gap:26px;padding:24px 16px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px">
+      <div style="width:34px;height:34px;border-radius:11px;background:#F1E6D6;border:1px dashed #E4D6C3;flex:none"></div>
+      <span style="font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;line-height:1.1">ShowroomCiro</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:0 8px 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#B9A890;font-weight:600">Operación</div>
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+        <a href="#" style="{{ item.style }}">
+          <span style="{{ item.dotStyle }}"></span>
+          <span style="flex:1">{{ item.label }}</span>
+          <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+            <span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#D4694A;color:#FFF8F0;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ item.badge }}</span>
+          </sc-if>
+        </a>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+      <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B9A890;font-weight:600">Caja</span>
+      <span style="display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;color:#6B7A4F">
+        <span style="width:7px;height:7px;border-radius:50%;background:#6B7A4F"></span>Abierta desde 09:40
+      </span>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 32px;background:#FFFCF7;border-bottom:1px solid #E4D6C3">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600">ShowroomCiro</span>
+        <span style="font-size:12.5px;color:#A89479">Caja · Historial</span>
+      </div>
+      <div style="position:relative;display:flex;align-items:center">
+        <button type="button" onClick="{{ toggleMenu }}" style="display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;background:#F7F0E6;border:1px solid #E4D6C3;cursor:pointer;font-family:'Work Sans',sans-serif;color:#4A342A;transition:border-color .15s" style-hover="border-color:#B87A56">
+          <span style="width:30px;height:30px;border-radius:50%;background:#B87A56;color:#FFF8F0;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ inicial }}</span>
+        <span style="display:flex;flex-direction:column;line-height:1.2">
+          <span style="font-size:13px;font-weight:600">{{ usuario }}</span>
+          <span style="font-size:11px;color:#A89479">{{ rol }}</span>
+        </span>
+          <span style="font-size:11px;color:#A89479;line-height:1;padding-left:2px">▾</span>
+        </button>
+        <sc-if value="{{ menuAbierto }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 8px);right:0;min-width:186px;padding:6px;border-radius:14px;background:#FFFCF7;border:1px solid #E4D6C3;box-shadow:0 18px 36px -20px rgba(74,52,42,.5);z-index:30">
+            <button type="button" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 13px;border:0;border-radius:10px;background:transparent;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:600;color:#4A342A;text-align:left;transition:all .15s" style-hover="background:#B87A56;color:#FFF8F0">
+              <span style="width:6px;height:6px;border-radius:50%;background:#B87A56;flex:none"></span>Cerrar sesión
+            </button>
+          </div>
+        </sc-if>
+      </div>
+    </header>
+
+    <main style="flex:1;padding:28px 32px 40px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">Historial de Caja</h1>
+          <p style="margin:0;font-size:14.5px;color:#8C7660">{{ resumen }}</p>
+        </div>
+        <button type="button" style="padding:13px 20px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Exportar</button>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:#FFFFFF;border:1px solid #E4D6C3;border-radius:12px">
+          <label for="desde" style="font-size:12.5px;font-weight:600;color:#8C7660">Desde</label>
+          <input id="desde" type="date" value="{{ desde }}" onChange="{{ onDesde }}" style="border:0;outline:none;background:transparent;font-family:'Work Sans',sans-serif;font-size:14px;color:#4A342A" />
+          <span style="width:1px;height:20px;background:#E4D6C3"></span>
+          <label for="hasta" style="font-size:12.5px;font-weight:600;color:#8C7660">Hasta</label>
+          <input id="hasta" type="date" value="{{ hasta }}" onChange="{{ onHasta }}" style="border:0;outline:none;background:transparent;font-family:'Work Sans',sans-serif;font-size:14px;color:#4A342A" />
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <sc-for list="{{ rangos }}" as="r" hint-placeholder-count="3">
+            <button type="button" onClick="{{ r.onClick }}" style="{{ r.style }}">{{ r.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:16px;overflow:hidden;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+        <div style="overflow-x:auto;max-width:100%">
+          <table style="width:100%;min-width:800px;border-collapse:collapse;font-size:14px">
+            <thead>
+              <tr style="background:#F7F0E6">
+                <th style="text-align:left;padding:13px 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Fecha</th>
+                <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Abrió</th>
+                <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Cerró</th>
+                <th style="text-align:right;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Inicial</th>
+                <th style="text-align:right;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Esperado</th>
+                <th style="text-align:right;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Contado</th>
+                <th style="text-align:right;padding:13px 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Diferencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ filas }}" as="f" hint-placeholder-count="7">
+                <tr onClick="{{ f.onClick }}" style="{{ f.rowStyle }}">
+                  <td style="padding:13px 20px">
+                    <span style="display:flex;flex-direction:column;line-height:1.3">
+                      <span style="font-weight:600">{{ f.fecha }}</span>
+                      <span style="font-size:12px;color:#A89479">{{ f.horario }}</span>
+                    </span>
+                  </td>
+                  <td style="padding:13px 14px;color:#6B5545;white-space:nowrap">{{ f.abrio }}</td>
+                  <td style="padding:13px 14px;color:#6B5545;white-space:nowrap">{{ f.cerro }}</td>
+                  <td style="padding:13px 14px;text-align:right;white-space:nowrap">{{ f.inicial }}</td>
+                  <td style="padding:13px 14px;text-align:right;white-space:nowrap">{{ f.esperado }}</td>
+                  <td style="padding:13px 14px;text-align:right;white-space:nowrap;font-weight:500">{{ f.contado }}</td>
+                  <td style="padding:13px 20px;text-align:right">
+                    <span style="{{ f.difStyle }}">{{ f.diferencia }}</span>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <sc-if value="{{ vacio }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:44px 20px;text-align:center;font-size:14px;color:#A89479">No hay jornadas en el rango elegido.</div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ hayDetalle }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#FFFCF7;border:1px solid #B87A56;border-radius:16px;padding:22px 24px 24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600">Jornada del {{ d_fecha }}</h2>
+              <span style="font-size:13px;color:#8C7660">{{ d_linea }}</span>
+            </div>
+            <button type="button" onClick="{{ cerrarDetalle }}" style="width:32px;height:32px;border:1px solid #E4D6C3;border-radius:10px;background:#FFFCF7;color:#6B5545;font-size:16px;line-height:1;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">×</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+            <sc-for list="{{ d_metricas }}" as="m" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:5px;padding:14px 16px;border-radius:13px;background:{{ m.bg }};border:1px solid {{ m.border }}">
+                <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">{{ m.label }}</span>
+                <span style="font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;line-height:1.05;color:{{ m.color }}">{{ m.valor }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Ventas por medio de pago</span>
+              <sc-for list="{{ d_medios }}" as="m" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:14px">
+                  <span style="display:flex;align-items:center;gap:10px">
+                    <span style="width:8px;height:8px;border-radius:50%;background:{{ m.dot }}"></span>{{ m.label }}
+                  </span>
+                  <span style="font-weight:600;white-space:nowrap">{{ m.monto }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Movimientos</span>
+              <sc-for list="{{ d_movs }}" as="m" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:14px">
+                  <span style="color:#6B5545">{{ m.label }}</span>
+                  <span style="font-weight:600;white-space:nowrap">{{ m.valor }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ d_nota }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:13px 15px;border-radius:12px;background:{{ d_notaBg }};border:1px solid {{ d_notaBorder }};font-size:13.5px;color:{{ d_notaColor }}">
+              <span style="width:7px;height:7px;border-radius:50%;background:{{ d_notaColor }};flex:none;margin-top:6px"></span>
+              <span>{{ d_nota }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;usuario&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Marcos&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rol&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dueño&quot;,&quot;Vendedor&quot;],&quot;default&quot;:&quot;Dueño&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const hoy = new Date();
+    const jornadas = [];
+    const datos = [
+      { abrio: "Marcos", cerro: "Marcos", inicial: 20000, efectivo: 107300, transf: 52200, tarjeta: 25000, dif: 0, ventas: 12, fiados: 1, nota: "" },
+      { abrio: "Sol", cerro: "Marcos", inicial: 20000, efectivo: 88400, transf: 31000, tarjeta: 12500, dif: -1500, ventas: 9, fiados: 2, nota: "Vuelto mal dado a la tarde." },
+      { abrio: "Marcos", cerro: "Sol", inicial: 15000, efectivo: 142900, transf: 44600, tarjeta: 38000, dif: 800, ventas: 16, fiados: 0, nota: "Sobrante sin identificar." },
+      { abrio: "Sol", cerro: "Sol", inicial: 15000, efectivo: 61200, transf: 18400, tarjeta: 9000, dif: 0, ventas: 7, fiados: 1, nota: "" },
+      { abrio: "Marcos", cerro: "Marcos", inicial: 15000, efectivo: 95500, transf: 26700, tarjeta: 21000, dif: 0, ventas: 11, fiados: 3, nota: "" },
+      { abrio: "Sol", cerro: "Marcos", inicial: 10000, efectivo: 73800, transf: 39200, tarjeta: 15500, dif: -600, ventas: 8, fiados: 1, nota: "Faltante chico, sin justificar." },
+      { abrio: "Marcos", cerro: "Marcos", inicial: 10000, efectivo: 118600, transf: 47300, tarjeta: 29000, dif: 0, ventas: 14, fiados: 2, nota: "" },
+    ];
+    datos.forEach((d, i) => {
+      const f = new Date(hoy); f.setDate(hoy.getDate() - (i + 1));
+      jornadas.push({ ...d, date: f, iso: f.toISOString().slice(0, 10) });
+    });
+    const desde = new Date(hoy); desde.setDate(hoy.getDate() - 7);
+    this.jornadas = jornadas;
+    this.state = { desde: desde.toISOString().slice(0, 10), hasta: hoy.toISOString().slice(0, 10), sel: 0, rango: "7 días" };
+  }
+
+  fmt(n) { return "$ " + Math.abs(n).toLocaleString("es-AR"); }
+  fecha(d) { return d.toLocaleDateString("es-AR", { day: "2-digit", month: "short" }); }
+  fechaLarga(d) { const s = d.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" }); return s.charAt(0).toUpperCase() + s.slice(1); }
+  iso(offset) { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); }
+
+  renderVals() {
+    const usuario = this.props.usuario ?? "Marcos";
+    const rol = this.props.rol ?? "Dueño";
+    const navItems = [
+      { label: "Dashboard" }, { label: "Productos" },
+      { label: "Caja", on: true }, { label: "Cuentas", badge: "3" },
+      { label: "Reportes", owner: true }, { label: "Usuarios", owner: true },
+    ].filter(i => !i.owner || rol === "Dueño");
+
+    const { desde, hasta, sel, rango } = this.state;
+    const filtradas = this.jornadas.filter(j => (!desde || j.iso >= desde) && (!hasta || j.iso <= hasta));
+
+    const difStyle = (n) => {
+      const c = n === 0 ? { color: "#6B7A4F", bg: "#F0F2E7", border: "#DCE1CB" }
+        : n > 0 ? { color: "#D4694A", bg: "#FBEEE8", border: "#F0D6C9" }
+          : { color: "#7A2E2A", bg: "#F6E7E4", border: "#E3C7C2" };
+      return "display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;background:" + c.bg + ";border:1px solid " + c.border + ";color:" + c.color;
+    };
+    const difTexto = (n) => (n > 0 ? "+ " : n < 0 ? "− " : "") + this.fmt(n);
+
+    const j = filtradas[sel];
+    const pill = (on) => "padding:11px 16px;border-radius:11px;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:13.5px;font-weight:" + (on ? "600" : "500") + ";transition:all .15s;border:1px solid " + (on ? "#B87A56" : "#E4D6C3") + ";background:" + (on ? "#B87A56" : "#FFFCF7") + ";color:" + (on ? "#FFF8F0" : "#6B5545");
+
+    const conDif = filtradas.filter(x => x.dif !== 0).length;
+
+    const detalle = j ? (() => {
+      const esperado = j.inicial + j.efectivo;
+      const contado = esperado + j.dif;
+      const c = j.dif === 0 ? { color: "#6B7A4F", bg: "#F0F2E7", border: "#DCE1CB" }
+        : j.dif > 0 ? { color: "#D4694A", bg: "#FBEEE8", border: "#F0D6C9" }
+          : { color: "#7A2E2A", bg: "#F6E7E4", border: "#E3C7C2" };
+      return {
+        d_fecha: this.fechaLarga(j.date),
+        d_linea: "Abrió " + j.abrio + " · cerró " + j.cerro + " · " + j.ventas + " ventas",
+        d_metricas: [
+          { label: "Monto inicial", valor: this.fmt(j.inicial), bg: "#F7F0E6", border: "#E4D6C3", color: "#4A342A" },
+          { label: "Esperado", valor: this.fmt(esperado), bg: "#F7F0E6", border: "#E4D6C3", color: "#4A342A" },
+          { label: "Contado", valor: this.fmt(contado), bg: "#F7F0E6", border: "#E4D6C3", color: "#4A342A" },
+          { label: "Diferencia", valor: difTexto(j.dif), bg: c.bg, border: c.border, color: c.color },
+        ],
+        d_medios: [
+          { label: "Efectivo", monto: this.fmt(j.efectivo), dot: "#6B7A4F" },
+          { label: "Transferencia / QR", monto: this.fmt(j.transf), dot: "#B87A56" },
+          { label: "Tarjeta", monto: this.fmt(j.tarjeta), dot: "#8C7660" },
+        ],
+        d_movs: [
+          { label: "Ventas del día", valor: j.ventas },
+          { label: "Ventas fiadas", valor: j.fiados },
+          { label: "Total vendido", valor: this.fmt(j.efectivo + j.transf + j.tarjeta) },
+        ],
+        d_nota: j.nota || false,
+        d_notaBg: c.bg, d_notaBorder: c.border, d_notaColor: c.color,
+      };
+    })() : {};
+
+    return {
+      usuario, rol, inicial: usuario.slice(0, 2).toUpperCase(),
+      menuAbierto: this.state.menu ?? false,
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
+      nav: navItems.map(i => ({
+        label: i.label, badge: i.badge || false,
+        style: "display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:14.5px;font-weight:" + (i.on ? "600" : "500") + ";color:" + (i.on ? "#4A342A" : "#8C7660") + ";background:" + (i.on ? "#F1E6D6" : "transparent") + ";cursor:pointer;transition:background .15s",
+        dotStyle: "width:6px;height:6px;border-radius:50%;flex:none;background:" + (i.on ? "#B87A56" : "#DDCDB6"),
+      })),
+      resumen: filtradas.length + " jornadas en el rango · " + conDif + " con diferencia",
+      desde, hasta,
+      onDesde: (e) => this.setState({ desde: e.target.value, sel: 0, rango: "" }),
+      onHasta: (e) => this.setState({ hasta: e.target.value, sel: 0, rango: "" }),
+      rangos: [{ label: "7 días", d: 7 }, { label: "15 días", d: 15 }, { label: "30 días", d: 30 }].map(r => ({
+        label: r.label, style: pill(rango === r.label),
+        onClick: () => this.setState({ desde: this.iso(r.d), hasta: this.iso(0), rango: r.label, sel: 0 }),
+      })),
+      filas: filtradas.map((x, i) => ({
+        fecha: this.fecha(x.date),
+        horario: "09:40 – 20:15",
+        abrio: x.abrio, cerro: x.cerro,
+        inicial: this.fmt(x.inicial),
+        esperado: this.fmt(x.inicial + x.efectivo),
+        contado: this.fmt(x.inicial + x.efectivo + x.dif),
+        diferencia: difTexto(x.dif),
+        difStyle: difStyle(x.dif),
+        rowStyle: "cursor:pointer;border-bottom:1px solid #F0E6D8;transition:background .12s;background:" + (i === sel ? "#FBF3EA" : "transparent"),
+        onClick: () => this.setState({ sel: i }),
+      })),
+      vacio: filtradas.length === 0,
+      hayDetalle: !!j,
+      cerrarDetalle: () => this.setState({ sel: -1 }),
+      ...detalle,
+    };
+  }
+}
+</script>
+</body>
+</html>

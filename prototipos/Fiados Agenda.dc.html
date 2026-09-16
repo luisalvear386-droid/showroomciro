@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+  tbody tr:hover { background: #FBF5EC; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;background:#F7F0E6;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A">
+
+  <aside style="width:232px;flex:none;background:#FFFCF7;border-right:1px solid #E4D6C3;display:flex;flex-direction:column;gap:26px;padding:24px 16px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px">
+      <div style="width:34px;height:34px;border-radius:11px;background:#F1E6D6;border:1px dashed #E4D6C3;flex:none"></div>
+      <span style="font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;line-height:1.1">ShowroomCiro</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:0 8px 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#B9A890;font-weight:600">Operación</div>
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+        <a href="#" style="{{ item.style }}">
+          <span style="{{ item.dotStyle }}"></span>
+          <span style="flex:1">{{ item.label }}</span>
+          <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+            <span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#D4694A;color:#FFF8F0;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ item.badge }}</span>
+          </sc-if>
+        </a>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+      <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B9A890;font-weight:600">Caja</span>
+      <span style="display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;color:#6B7A4F">
+        <span style="width:7px;height:7px;border-radius:50%;background:#6B7A4F"></span>Abierta desde 09:40
+      </span>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 32px;background:#FFFCF7;border-bottom:1px solid #E4D6C3">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600">ShowroomCiro</span>
+        <span style="font-size:12.5px;color:#A89479">Cuentas</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="position:relative;display:flex;align-items:center">
+        <button type="button" onClick="{{ toggleMenu }}" style="display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;background:#F7F0E6;border:1px solid #E4D6C3;cursor:pointer;font-family:'Work Sans',sans-serif;color:#4A342A;transition:border-color .15s" style-hover="border-color:#B87A56">
+          <span style="width:30px;height:30px;border-radius:50%;background:#B87A56;color:#FFF8F0;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ inicial }}</span>
+          <span style="display:flex;flex-direction:column;line-height:1.2">
+            <span style="font-size:13px;font-weight:600">{{ usuario }}</span>
+            <span style="font-size:11px;color:#A89479">{{ rol }}</span>
+          </span>
+          <span style="font-size:11px;color:#A89479;line-height:1;padding-left:2px">▾</span>
+        </button>
+        <sc-if value="{{ menuAbierto }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 8px);right:0;min-width:186px;padding:6px;border-radius:14px;background:#FFFCF7;border:1px solid #E4D6C3;box-shadow:0 18px 36px -20px rgba(74,52,42,.5);z-index:30">
+            <button type="button" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 13px;border:0;border-radius:10px;background:transparent;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:600;color:#4A342A;text-align:left;transition:all .15s" style-hover="background:#B87A56;color:#FFF8F0">
+              <span style="width:6px;height:6px;border-radius:50%;background:#B87A56;flex:none"></span>Cerrar sesión
+            </button>
+          </div>
+        </sc-if>
+      </div>
+      </div>
+    </header>
+
+    <main style="flex:1;padding:28px 32px 40px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">Cuentas</h1>
+          <p style="margin:0;font-size:14.5px;color:#8C7660">{{ resumen }}</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;padding:4px;gap:4px;background:#F1E6D6;border-radius:12px">
+          <sc-for list="{{ vistas }}" as="v" hint-placeholder-count="2">
+            <button type="button" onClick="{{ v.onClick }}" style="{{ v.style }}">{{ v.label }}</button>
+          </sc-for>
+        </div>
+        <div style="flex:1;min-width:240px;display:flex;align-items:center;gap:11px;padding:0 16px;background:#FFFFFF;border:1px solid #E4D6C3;border-radius:12px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B87A56" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <input type="text" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar cliente…" style="flex:1;border:0;outline:none;background:transparent;padding:12px 0;font-family:'Work Sans',sans-serif;font-size:14.5px;color:#4A342A" />
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:#8C7660">
+          <span style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:50%;background:#6B7A4F"></span>Al día</span>
+          <span style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:50%;background:#D4694A"></span>Por vencer</span>
+          <span style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:50%;background:#7A2E2A"></span>Vencido</span>
+        </div>
+      </div>
+
+      <sc-if value="{{ esLista }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:16px;overflow:hidden;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+            <div style="overflow-x:auto;max-width:100%">
+              <table style="width:100%;min-width:700px;border-collapse:collapse;font-size:14px">
+                <thead>
+                  <tr style="background:#F7F0E6">
+                    <th style="text-align:left;padding:13px 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Cliente</th>
+                    <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Teléfono</th>
+                    <th style="text-align:right;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Adeudado</th>
+                    <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Fecha límite</th>
+                    <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Estado</th>
+                    <th style="text-align:right;padding:13px 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ filas }}" as="f" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #F0E6D8;transition:background .12s">
+                      <td style="padding:13px 20px">
+                        <span style="display:flex;align-items:center;gap:11px">
+                          <span style="{{ f.avatarStyle }}">{{ f.iniciales }}</span>
+                          <span style="font-weight:600">{{ f.cliente }}</span>
+                        </span>
+                      </td>
+                      <td style="padding:13px 14px;color:#6B5545;white-space:nowrap">{{ f.tel }}</td>
+                      <td style="padding:13px 14px;text-align:right;font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:600;white-space:nowrap">{{ f.monto }}</td>
+                      <td style="padding:13px 14px;white-space:nowrap">
+                        <span style="display:flex;flex-direction:column;line-height:1.3">
+                          <span>{{ f.fecha }}</span>
+                          <span style="font-size:12px;color:{{ f.color }};font-weight:500">{{ f.relativo }}</span>
+                        </span>
+                      </td>
+                      <td style="padding:13px 14px"><span style="{{ f.badgeStyle }}">{{ f.estado }}</span></td>
+                      <td style="padding:13px 20px;text-align:right">
+                        <span style="display:flex;gap:7px;justify-content:flex-end">
+                          <button type="button" style="padding:7px 14px;border:0;border-radius:9px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s" style-hover="background:#A56A48">Cobrar</button>
+                          <button type="button" title="Más acciones" style="width:32px;height:32px;border:1px solid #E4D6C3;border-radius:9px;background:#FFFFFF;font-size:15px;line-height:1;color:#A89479;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">⋯</button>
+                        </span>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{ vacio }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:44px 20px;text-align:center;font-size:14px;color:#A89479">No hay cuentas que coincidan con la búsqueda.</div>
+            </sc-if>
+          </div>
+
+          <button type="button" onClick="{{ verCalendario }}" style="display:flex;align-items:center;gap:16px;text-align:left;padding:16px 18px;border:1px solid #E4D6C3;border-radius:15px;background:#FFFCF7;cursor:pointer;font-family:'Work Sans',sans-serif;transition:all .15s" style-hover="border-color:#B87A56">
+            <span style="display:grid;grid-template-columns:repeat(7,9px);gap:3px;flex:none">
+              <sc-for list="{{ mini }}" as="m" hint-placeholder-count="28">
+                <span style="{{ m.style }}"></span>
+              </sc-for>
+            </span>
+            <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+              <span style="font-size:14px;font-weight:600">Ver la agenda como calendario</span>
+              <span style="font-size:12.5px;color:#8C7660">Los vencimientos del mes, marcados día por día.</span>
+            </span>
+            <span style="font-size:13px;font-weight:600;color:#B87A56;white-space:nowrap">Abrir →</span>
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esCalendario }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:16px;padding:22px 24px 26px;display:flex;flex-direction:column;gap:16px;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:600">{{ mesLabel }}</h2>
+            <span style="font-size:12.5px;color:#A89479">{{ resumenMes }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ diasSemana }}" as="d" hint-placeholder-count="7">
+              <span style="text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#A89479;font-weight:600;padding-bottom:2px">{{ d }}</span>
+            </sc-for>
+            <sc-for list="{{ celdas }}" as="c" hint-placeholder-count="35">
+              <div style="{{ c.style }}">
+                <span style="{{ c.numStyle }}">{{ c.num }}</span>
+                <sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="1">
+                  <span style="{{ e.style }}">{{ e.label }}</span>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;usuario&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Marcos&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rol&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dueño&quot;,&quot;Vendedor&quot;],&quot;default&quot;:&quot;Dueño&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { vista: "Vista Lista", q: "" };
+
+  datos() {
+    return [
+      { cliente: "Lucía Fernández", tel: "11 5541 2290", monto: 32000, dias: -4 },
+      { cliente: "Martín Ríos", tel: "11 6702 8834", monto: 18500, dias: 1 },
+      { cliente: "Sofía Aguirre", tel: "11 3398 4417", monto: 24000, dias: 3 },
+      { cliente: "Damián Costa", tel: "11 2217 9065", monto: 9500, dias: -12 },
+      { cliente: "Carla Benítez", tel: "11 4489 1123", monto: 41000, dias: 12 },
+      { cliente: "Nahuel Paz", tel: "11 5033 7781", monto: 15200, dias: 21 },
+    ];
+  }
+  estadoDe(d) {
+    if (d < 0) return { estado: "Vencido", color: "#7A2E2A", bg: "#F6E7E4", border: "#E3C7C2" };
+    if (d <= 5) return { estado: "Por vencer", color: "#D4694A", bg: "#FBEEE8", border: "#F0D6C9" };
+    return { estado: "Al día", color: "#6B7A4F", bg: "#F0F2E7", border: "#DCE1CB" };
+  }
+  fechaDe(d) { const t = new Date(); t.setDate(t.getDate() + d); return t; }
+  fmtFecha(t) { return t.toLocaleDateString("es-AR", { day: "2-digit", month: "short" }); }
+
+  renderVals() {
+    const usuario = this.props.usuario ?? "Marcos";
+    const rol = this.props.rol ?? "Dueño";
+    const navItems = [
+      { label: "Dashboard" }, { label: "Productos" },
+      { label: "Caja" }, { label: "Cuentas", on: true, badge: "3" },
+      { label: "Reportes", owner: true }, { label: "Usuarios", owner: true },
+    ].filter(i => !i.owner || rol === "Dueño");
+
+    const all = this.datos();
+    const term = this.state.q.trim().toLowerCase();
+    const filtrados = all.filter(f => !term || f.cliente.toLowerCase().includes(term));
+    const vista = this.state.vista;
+
+    const hoy = new Date();
+    const y = hoy.getFullYear(), m = hoy.getMonth();
+    const primero = new Date(y, m, 1);
+    const offset = (primero.getDay() + 6) % 7;
+    const diasMes = new Date(y, m + 1, 0).getDate();
+
+    const porDia = {};
+    all.forEach(f => {
+      const t = this.fechaDe(f.dias);
+      if (t.getMonth() === m && t.getFullYear() === y) {
+        (porDia[t.getDate()] = porDia[t.getDate()] || []).push(f);
+      }
+    });
+
+    const celdas = [];
+    for (let i = 0; i < offset; i++) celdas.push({ num: "", vacio: true, eventos: [] });
+    for (let d = 1; d <= diasMes; d++) {
+      const esHoy = d === hoy.getDate();
+      const evs = (porDia[d] || []).map(f => {
+        const e = this.estadoDe(f.dias);
+        return {
+          label: f.cliente.split(" ")[0] + " · $" + (f.monto / 1000) + "k",
+          style: "display:block;font-size:11px;font-weight:600;padding:3px 6px;border-radius:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:" + e.bg + ";border:1px solid " + e.border + ";color:" + e.color,
+        };
+      });
+      celdas.push({
+        num: String(d), eventos: evs,
+        style: "min-height:76px;display:flex;flex-direction:column;gap:4px;padding:7px;border-radius:11px;border:1px solid " + (esHoy ? "#B87A56" : "#EFE4D3") + ";background:" + (esHoy ? "#FBF3EA" : "#FFFFFF"),
+        numStyle: "font-size:12px;font-weight:" + (esHoy ? "700" : "500") + ";color:" + (esHoy ? "#B87A56" : "#A89479"),
+      });
+    }
+
+    const mini = [];
+    for (let i = 0; i < 28; i++) {
+      const day = i - offset + 1;
+      const evs = porDia[day] || [];
+      const c = evs.length ? this.estadoDe(evs[0].dias).color : "#EADCC8";
+      mini.push({ style: "width:9px;height:9px;border-radius:2.5px;background:" + (day >= 1 && day <= diasMes ? c : "#F5EDE1") });
+    }
+
+    const totalAdeudado = all.reduce((a, f) => a + f.monto, 0);
+    const vencidos = all.filter(f => f.dias < 0).length;
+
+    return {
+      usuario, rol, inicial: usuario.slice(0, 2).toUpperCase(),
+      menuAbierto: this.state.menu ?? false,
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
+      nav: navItems.map(i => ({
+        label: i.label, badge: i.badge || false,
+        style: "display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:14.5px;font-weight:" + (i.on ? "600" : "500") + ";color:" + (i.on ? "#4A342A" : "#8C7660") + ";background:" + (i.on ? "#F1E6D6" : "transparent") + ";cursor:pointer;transition:background .15s",
+        dotStyle: "width:6px;height:6px;border-radius:50%;flex:none;background:" + (i.on ? "#B87A56" : "#DDCDB6"),
+      })),
+      resumen: "$ " + totalAdeudado.toLocaleString("es-AR") + " por cobrar · " + vencidos + " vencidas",
+      vistas: ["Vista Lista", "Vista Calendario"].map(v => ({
+        label: v, onClick: () => this.setState({ vista: v }),
+        style: "padding:9px 16px;border:0;border-radius:9px;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:13.5px;font-weight:" + (v === vista ? "600" : "500") + ";transition:all .15s;background:" + (v === vista ? "#FFFCF7" : "transparent") + ";color:" + (v === vista ? "#4A342A" : "#8C7660") + (v === vista ? ";box-shadow:0 2px 8px -4px rgba(74,52,42,.4)" : ""),
+      })),
+      esLista: vista === "Vista Lista",
+      esCalendario: vista === "Vista Calendario",
+      verCalendario: () => this.setState({ vista: "Vista Calendario" }),
+      q: this.state.q,
+      onQ: (e) => this.setState({ q: e.target.value }),
+      filas: filtrados.map(f => {
+        const e = this.estadoDe(f.dias);
+        const t = this.fechaDe(f.dias);
+        return {
+          cliente: f.cliente, tel: f.tel,
+          iniciales: f.cliente.split(" ").map(w => w[0]).join("").slice(0, 2),
+          avatarStyle: "width:32px;height:32px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;background:" + e.bg + ";border:1px solid " + e.border + ";color:" + e.color,
+          monto: "$ " + f.monto.toLocaleString("es-AR"),
+          fecha: this.fmtFecha(t),
+          relativo: f.dias < 0 ? "hace " + Math.abs(f.dias) + " días" : f.dias === 0 ? "hoy" : f.dias === 1 ? "mañana" : "en " + f.dias + " días",
+          color: e.color,
+          estado: e.estado,
+          badgeStyle: "display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap;background:" + e.bg + ";border:1px solid " + e.border + ";color:" + e.color,
+        };
+      }),
+      vacio: filtrados.length === 0,
+      mini,
+      diasSemana: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+      celdas,
+      mesLabel: (() => { const s = hoy.toLocaleDateString("es-AR", { month: "long", year: "numeric" }); return s.charAt(0).toUpperCase() + s.slice(1); })(),
+      resumenMes: Object.keys(porDia).length + " días con vencimientos",
+    };
+  }
+}
+</script>
+</body>
+</html>

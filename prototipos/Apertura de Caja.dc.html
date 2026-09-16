@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px 24px;background:#F7F0E6;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A;box-sizing:border-box">
+  <div style="width:100%;max-width:460px;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <span style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600;color:#4A342A">ShowroomCiro</span>
+      <span style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#B87A56;font-weight:500">Paso 1 de 1</span>
+    </div>
+
+    <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:18px;padding:34px 32px 30px;box-shadow:0 12px 32px -20px rgba(74,52,42,.35)">
+      <form style="display:flex;flex-direction:column;gap:24px" onSubmit="{{ onSubmit }}">
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:32px;line-height:1.1;letter-spacing:-0.01em;color:#4A342A">Apertura de Caja</h1>
+          <p style="margin:0;font-size:14.5px;line-height:1.5;color:#8C7660">Contá el efectivo con el que arrancás el día y anotá el monto. Después de esto ya podés vender.</p>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:#F7F0E6;border:1px solid #E4D6C3;font-size:13.5px;color:#6B5545">
+          <span style="font-weight:600;color:#4A342A">{{ fecha }}</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:#D3C0A8"></span>
+          <span>Abre <strong style="font-weight:600;color:#4A342A">{{ usuario }}</strong></span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <label for="monto" style="font-size:13px;font-weight:600;letter-spacing:.02em;color:#4A342A">Monto inicial en efectivo</label>
+          <div style="position:relative;display:flex;align-items:center">
+            <span style="position:absolute;left:18px;font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;color:#B87A56;pointer-events:none">$</span>
+            <input id="monto" name="monto" type="text" inputMode="decimal" autoFocus="{{ true }}" placeholder="0" style="width:100%;box-sizing:border-box;padding:16px 18px 16px 44px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFFFF;font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;color:#4A342A;transition:border-color .15s,box-shadow .15s" />
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px">
+            <sc-for list="{{ sugerencias }}" as="s" hint-placeholder-count="4">
+              <button type="button" data-monto="{{ s.value }}" onClick="{{ s.onClick }}" style="border:1px solid #E4D6C3;background:#FFFFFF;border-radius:999px;padding:7px 13px;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:500;color:#6B5545;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">{{ s.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;background:#F6E7E4;border:1px solid #E3C7C2;color:#7A2E2A;font-size:13.5px">
+            <span style="width:7px;height:7px;border-radius:50%;background:#7A2E2A;flex:none"></span>
+            <span>Ingresá el monto inicial para abrir la caja.</span>
+          </div>
+        </sc-if>
+
+        <button type="submit" style="width:100%;padding:15px;border:0;border-radius:12px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.02em;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);transition:background .15s" style-hover="background:#A56A48" style-active="background:#95603F">Abrir Caja</button>
+      </form>
+    </div>
+
+    <p style="margin:0;text-align:center;font-size:12.5px;color:#A89479;line-height:1.6">La caja se abre una vez por día. Si ya la abrió otro usuario, este paso se saltea.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;usuario&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Marcos&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Estados&quot;}}">
+class Component extends DCLogic {
+  state = { error: false };
+  fecha() {
+    const d = new Date();
+    const s = d.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  setMonto(v) {
+    const el = document.getElementById("monto");
+    if (el) { el.value = v; el.focus(); }
+    this.setState({ error: false });
+  }
+  renderVals() {
+    const montos = [5000, 10000, 20000, 30000];
+    return {
+      fecha: this.fecha(),
+      usuario: this.props.usuario ?? "Marcos",
+      hasError: (this.props.showError ?? false) || this.state.error,
+      sugerencias: montos.map(v => ({
+        value: v,
+        label: "$ " + v.toLocaleString("es-AR"),
+        onClick: () => this.setMonto(v.toLocaleString("es-AR")),
+      })),
+      onSubmit: (e) => {
+        e.preventDefault();
+        this.setState({ error: !e.target.monto.value.trim() });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

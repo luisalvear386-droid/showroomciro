@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus, select:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+  tbody tr:hover { background: #FBF5EC; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;background:#F7F0E6;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A">
+
+  <aside style="width:232px;flex:none;background:#FFFCF7;border-right:1px solid #E4D6C3;display:flex;flex-direction:column;gap:26px;padding:24px 16px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px">
+      <div style="width:34px;height:34px;border-radius:11px;background:#F1E6D6;border:1px dashed #E4D6C3;flex:none"></div>
+      <span style="font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;line-height:1.1">ShowroomCiro</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:0 8px 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#B9A890;font-weight:600">Operación</div>
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+        <a href="#" style="{{ item.style }}">
+          <span style="{{ item.dotStyle }}"></span>
+          <span style="flex:1">{{ item.label }}</span>
+          <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+            <span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#D4694A;color:#FFF8F0;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ item.badge }}</span>
+          </sc-if>
+        </a>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+      <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B9A890;font-weight:600">Caja</span>
+      <span style="display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;color:#6B7A4F">
+        <span style="width:7px;height:7px;border-radius:50%;background:#6B7A4F"></span>Abierta desde 09:40
+      </span>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 32px;background:#FFFCF7;border-bottom:1px solid #E4D6C3">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600">ShowroomCiro</span>
+        <span style="font-size:12.5px;color:#A89479">Productos</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="position:relative;display:flex;align-items:center">
+        <button type="button" onClick="{{ toggleMenu }}" style="display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;background:#F7F0E6;border:1px solid #E4D6C3;cursor:pointer;font-family:'Work Sans',sans-serif;color:#4A342A;transition:border-color .15s" style-hover="border-color:#B87A56">
+          <span style="width:30px;height:30px;border-radius:50%;background:#B87A56;color:#FFF8F0;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ inicial }}</span>
+          <span style="display:flex;flex-direction:column;line-height:1.2">
+            <span style="font-size:13px;font-weight:600">{{ usuario }}</span>
+            <span style="font-size:11px;color:#A89479">{{ rol }}</span>
+          </span>
+          <span style="font-size:11px;color:#A89479;line-height:1;padding-left:2px">▾</span>
+        </button>
+        <sc-if value="{{ menuAbierto }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 8px);right:0;min-width:186px;padding:6px;border-radius:14px;background:#FFFCF7;border:1px solid #E4D6C3;box-shadow:0 18px 36px -20px rgba(74,52,42,.5);z-index:30">
+            <button type="button" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 13px;border:0;border-radius:10px;background:transparent;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:600;color:#4A342A;text-align:left;transition:all .15s" style-hover="background:#B87A56;color:#FFF8F0">
+              <span style="width:6px;height:6px;border-radius:50%;background:#B87A56;flex:none"></span>Cerrar sesión
+            </button>
+          </div>
+        </sc-if>
+      </div>
+      </div>
+    </header>
+
+    <main style="flex:1;padding:28px 32px 40px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">Productos</h1>
+          <p style="margin:0;font-size:14.5px;color:#8C7660">{{ resumen }}</p>
+        </div>
+        <button type="button" style="padding:13px 22px;border:0;border-radius:12px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);transition:background .15s" style-hover="background:#A56A48">+ Agregar Producto</button>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:260px;display:flex;align-items:center;gap:11px;padding:0 16px;background:#FFFFFF;border:1px solid #E4D6C3;border-radius:12px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B87A56" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <input type="text" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar por nombre o SKU…" style="flex:1;border:0;outline:none;background:transparent;padding:13px 0;font-family:'Work Sans',sans-serif;font-size:14.5px;color:#4A342A">
+        </div>
+        <select value="{{ cat }}" onChange="{{ onCat }}" style="padding:13px 16px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:500;color:#4A342A;cursor:pointer">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+            <option value="{{ c }}">{{ c }}</option>
+          </sc-for>
+        </select>
+        <div style="display:flex;gap:7px">
+          <sc-for list="{{ estados }}" as="e" hint-placeholder-count="3">
+            <button type="button" onClick="{{ e.onClick }}" style="{{ e.style }}">{{ e.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:16px;overflow:hidden;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+        <div style="overflow-x:auto;max-width:100%">
+        <table style="width:100%;min-width:660px;border-collapse:collapse;font-size:14px">
+          <thead>
+            <tr style="background:#F7F0E6">
+              <th style="text-align:left;padding:13px 18px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Producto</th>
+              <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Categoría</th>
+              <th style="text-align:right;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Precio</th>
+              <th style="text-align:right;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Stock</th>
+              <th style="text-align:left;padding:13px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Estado</th>
+              <th style="text-align:right;padding:13px 18px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600;border-bottom:1px solid #E4D6C3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ filas }}" as="p" hint-placeholder-count="7">
+              <tr style="border-bottom:1px solid #F0E6D8;transition:background .12s">
+                <td style="padding:12px 18px">
+                  <span style="display:flex;align-items:center;gap:13px;min-width:0">
+                    <span style="width:44px;height:52px;flex:none;border-radius:9px;background:repeating-linear-gradient(135deg,#F1E6D6 0 6px,#EADCC8 6px 12px)"></span>
+                    <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                      <span style="font-weight:600;line-height:1.3">{{ p.nombre }}</span>
+                      <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:#A89479">{{ p.sku }}</span>
+                    </span>
+                  </span>
+                </td>
+                <td style="padding:12px 14px;color:#6B5545">{{ p.cat }}</td>
+                <td style="padding:12px 14px;text-align:right;font-family:'Fraunces',Georgia,serif;font-size:15.5px;font-weight:600;white-space:nowrap">{{ p.precio }}</td>
+                <td style="padding:12px 14px;text-align:right">
+                  <span style="display:inline-flex;flex-direction:column;align-items:flex-end;gap:2px">
+                    <span style="font-weight:600;color:{{ p.stockColor }}">{{ p.stock }}</span>
+                    <span style="font-size:11.5px;color:#A89479">{{ p.variantes }}</span>
+                  </span>
+                </td>
+                <td style="padding:12px 14px">
+                  <span style="{{ p.estadoStyle }}">{{ p.estado }}</span>
+                </td>
+                <td style="padding:12px 18px">
+                  <span style="display:flex;gap:7px;justify-content:flex-end">
+                    <button type="button" style="padding:7px 13px;border:1px solid #E4D6C3;border-radius:9px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:600;color:#6B5545;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Editar</button>
+                    <button type="button" title="Dar de baja" style="width:32px;height:32px;border:1px solid #E4D6C3;border-radius:9px;background:#FFFFFF;font-size:15px;line-height:1;color:#A89479;cursor:pointer;transition:all .15s" style-hover="border-color:#7A2E2A;color:#7A2E2A">⋯</button>
+                  </span>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        </div>
+
+        <sc-if value="{{ vacio }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:46px 20px;text-align:center;font-size:14px;color:#A89479">No hay productos que coincidan con el filtro.</div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#A89479">
+        <span>{{ conteo }}</span>
+        <span style="display:flex;gap:7px">
+          <button type="button" style="padding:8px 13px;border:1px solid #E4D6C3;border-radius:9px;background:#FFFCF7;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:500;color:#6B5545;cursor:pointer">Anterior</button>
+          <button type="button" style="padding:8px 13px;border:1px solid #E4D6C3;border-radius:9px;background:#FFFCF7;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:500;color:#6B5545;cursor:pointer">Siguiente</button>
+        </span>
+      </div>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;usuario&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Marcos&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rol&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dueño&quot;,&quot;Vendedor&quot;],&quot;default&quot;:&quot;Dueño&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { cat: "Todas las categorías", estado: "Todos", q: "" };
+
+  renderVals() {
+    const usuario = this.props.usuario ?? "Marcos";
+    const rol = this.props.rol ?? "Dueño";
+    const navItems = [
+      { label: "Dashboard" }, { label: "Productos", on: true },
+      { label: "Caja" }, { label: "Cuentas", badge: "3" },
+      { label: "Reportes", owner: true }, { label: "Usuarios", owner: true },
+    ].filter(i => !i.owner || rol === "Dueño");
+
+    const data = [
+      { nombre: "Camisa lino beige", sku: "CAM-LIN-001", cat: "Remeras", precio: 42000, stock: 7, variantes: "6 variantes", activo: true },
+      { nombre: "Remera algodón peinado", sku: "REM-ALG-014", cat: "Remeras", precio: 18500, stock: 34, variantes: "9 variantes", activo: true },
+      { nombre: "Jean wide leg", sku: "JEA-WID-007", cat: "Pantalones", precio: 58000, stock: 2, variantes: "5 variantes", activo: true },
+      { nombre: "Pantalón sastrero", sku: "PAN-SAS-003", cat: "Pantalones", precio: 61000, stock: 18, variantes: "8 variantes", activo: true },
+      { nombre: "Buzo oversize", sku: "BUZ-OVE-022", cat: "Abrigos", precio: 47500, stock: 3, variantes: "4 variantes", activo: true },
+      { nombre: "Campera de gabardina", sku: "CAM-GAB-005", cat: "Abrigos", precio: 96000, stock: 11, variantes: "6 variantes", activo: true },
+      { nombre: "Vestido midi floral", sku: "VES-MID-011", cat: "Vestidos", precio: 54000, stock: 0, variantes: "5 variantes", activo: false },
+      { nombre: "Cinto de cuero", sku: "ACC-CIN-002", cat: "Accesorios", precio: 23000, stock: 12, variantes: "3 variantes", activo: true },
+      { nombre: "Pollera tableada", sku: "POL-TAB-009", cat: "Vestidos", precio: 39000, stock: 6, variantes: "4 variantes", activo: false },
+    ];
+
+    const { cat, estado, q } = this.state;
+    const term = q.trim().toLowerCase();
+    const filtrados = data.filter(p =>
+      (cat === "Todas las categorías" || p.cat === cat) &&
+      (estado === "Todos" || (estado === "Activos") === p.activo) &&
+      (!term || p.nombre.toLowerCase().includes(term) || p.sku.toLowerCase().includes(term))
+    );
+
+    const pill = (on) => "padding:11px 16px;border-radius:11px;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:13.5px;font-weight:" + (on ? "600" : "500") + ";transition:all .15s;border:1px solid " + (on ? "#B87A56" : "#E4D6C3") + ";background:" + (on ? "#B87A56" : "#FFFCF7") + ";color:" + (on ? "#FFF8F0" : "#6B5545");
+
+    const badge = (activo) => "display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid " + (activo ? "#DCE1CB" : "#E4D6C3") + ";background:" + (activo ? "#F0F2E7" : "#F3EDE3") + ";color:" + (activo ? "#6B7A4F" : "#A89479");
+
+    return {
+      usuario, rol, inicial: usuario.slice(0, 2).toUpperCase(),
+      menuAbierto: this.state.menu ?? false,
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
+      nav: navItems.map(i => ({
+        label: i.label, badge: i.badge || false,
+        style: "display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:14.5px;font-weight:" + (i.on ? "600" : "500") + ";color:" + (i.on ? "#4A342A" : "#8C7660") + ";background:" + (i.on ? "#F1E6D6" : "transparent") + ";cursor:pointer;transition:background .15s",
+        dotStyle: "width:6px;height:6px;border-radius:50%;flex:none;background:" + (i.on ? "#B87A56" : "#DDCDB6"),
+      })),
+      resumen: data.length + " productos cargados · " + data.filter(p => p.activo).length + " activos",
+      cats: ["Todas las categorías", "Remeras", "Pantalones", "Abrigos", "Vestidos", "Accesorios"],
+      cat, onCat: (e) => this.setState({ cat: e.target.value }),
+      q, onQ: (e) => this.setState({ q: e.target.value }),
+      estados: ["Todos", "Activos", "Inactivos"].map(s => ({
+        label: s, style: pill(s === estado), onClick: () => this.setState({ estado: s }),
+      })),
+      filas: filtrados.map(p => ({
+        ...p,
+        precio: "$ " + p.precio.toLocaleString("es-AR"),
+        stock: p.stock + " u.",
+        stockColor: p.stock === 0 ? "#7A2E2A" : p.stock <= 3 ? "#D4694A" : "#4A342A",
+        estado: p.activo ? "Activo" : "Inactivo",
+        estadoStyle: badge(p.activo),
+      })),
+      vacio: filtrados.length === 0,
+      conteo: "Mostrando " + filtrados.length + " de " + data.length + " productos",
+    };
+  }
+}
+</script>
+</body>
+</html>

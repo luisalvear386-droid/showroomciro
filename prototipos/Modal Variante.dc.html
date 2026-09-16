@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;box-sizing:border-box;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A;background:repeating-linear-gradient(135deg,#EDE2D2 0 14px,#E9DDCB 14px 28px)">
+  <div style="position:fixed;inset:0;background:rgba(48,32,24,.55)"></div>
+
+  <div style="position:relative;width:100%;max-width:470px;background:#FFFCF7;border:1px solid #E4D6C3;border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -32px rgba(38,24,18,.6);display:flex;flex-direction:column">
+
+    <div style="position:relative;height:216px;display:flex;align-items:flex-end;justify-content:center;padding:12px;box-sizing:border-box;background:repeating-linear-gradient(135deg,#F1E6D6 0 10px,#EADCC8 10px 20px)">
+      <button type="button" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFCF7;color:#6B5545;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">×</button>
+      <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#9C8974;background:#FFFCF7;border-radius:7px;padding:4px 9px">foto del producto</span>
+    </div>
+
+    <div style="padding:22px 24px 24px;display:flex;flex-direction:column;gap:20px">
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;line-height:1.15;letter-spacing:-0.01em">Camisa lino beige</h2>
+          <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#A89479">CAM-LIN-001</span>
+        </div>
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;white-space:nowrap">$ 42.000</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Talle</span>
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <sc-for list="{{ talles }}" as="t" hint-placeholder-count="4">
+            <button type="button" disabled="{{ t.disabled }}" onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Color</span>
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <sc-for list="{{ colores }}" as="c" hint-placeholder-count="3">
+            <button type="button" disabled="{{ c.disabled }}" onClick="{{ c.onClick }}" style="{{ c.style }}">
+              <span style="{{ c.dotStyle }}"></span>
+              <span>{{ c.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:13px;background:{{ stockBg }};border:1px solid {{ stockBorder }}">
+        <span style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:500;color:{{ stockColor }}">
+          <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ stockColor }}"></span>
+          {{ stockTexto }}
+        </span>
+        <div style="display:flex;align-items:center;gap:1px;border:1px solid #E4D6C3;border-radius:10px;overflow:hidden;background:#FFFCF7">
+          <button type="button" onClick="{{ dec }}" style="border:0;background:#FFFCF7;width:32px;height:32px;font-size:16px;color:#6B5545;cursor:pointer" style-hover="background:#F1E6D6">−</button>
+          <span style="width:34px;text-align:center;font-size:14px;font-weight:600">{{ qty }}</span>
+          <button type="button" onClick="{{ inc }}" style="border:0;background:#FFFCF7;width:32px;height:32px;font-size:16px;color:#6B5545;cursor:pointer" style-hover="background:#F1E6D6">+</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button type="button" style="flex:none;padding:15px 20px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-family:'Work Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Cancelar</button>
+        <button type="button" disabled="{{ addDisabled }}" style="{{ addStyle }}">{{ addLabel }}</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:760}}">
+class Component extends DCLogic {
+  state = { talle: "M", color: "Crudo", qty: 1 };
+  // stock[talle][color]
+  stock = {
+    S: { Crudo: 4, Verde: 0, Negro: 2 },
+    M: { Crudo: 2, Verde: 3, Negro: 0 },
+    L: { Crudo: 0, Verde: 1, Negro: 5 },
+    XL: { Crudo: 0, Verde: 0, Negro: 0 },
+  };
+  colorHex = { Crudo: "#EFE3CF", Verde: "#6B7A4F", Negro: "#3A322C" };
+
+  disp(t, c) { return (this.stock[t] && this.stock[t][c]) || 0; }
+  talleTotal(t) { return Object.values(this.stock[t]).reduce((a, b) => a + b, 0); }
+  colorTotal(c) { return Object.keys(this.stock).reduce((a, t) => a + this.stock[t][c], 0); }
+
+  chip(label, on, off, extra) {
+    const base = "display:flex;align-items:center;gap:8px;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:" + (on ? "600" : "500") + ";padding:10px 16px;border-radius:11px;transition:all .15s;";
+    if (off) return base + "border:1px dashed #E4D6C3;background:#F7F0E6;color:#C0AE96;cursor:not-allowed;text-decoration:line-through;" + (extra || "");
+    if (on) return base + "border:1px solid #B87A56;background:#B87A56;color:#FFF8F0;cursor:pointer;box-shadow:0 6px 14px -10px rgba(184,122,86,.9);" + (extra || "");
+    return base + "border:1px solid #E4D6C3;background:#FFFFFF;color:#4A342A;cursor:pointer;" + (extra || "");
+  }
+
+  renderVals() {
+    const { talle, color, qty } = this.state;
+    const n = this.disp(talle, color);
+
+    const talles = ["S", "M", "L", "XL"].map(t => {
+      const off = this.talleTotal(t) === 0;
+      return { label: t, disabled: off, style: this.chip(t, t === talle, off, "justify-content:center;min-width:54px;"),
+        onClick: () => {
+          if (off) return;
+          const keep = this.disp(t, this.state.color) > 0 ? this.state.color
+            : ["Crudo", "Verde", "Negro"].find(c => this.disp(t, c) > 0) || this.state.color;
+          this.setState({ talle: t, color: keep, qty: 1 });
+        } };
+    });
+
+    const colores = ["Crudo", "Verde", "Negro"].map(c => {
+      const off = this.colorTotal(c) === 0 || this.disp(talle, c) === 0;
+      const on = c === color;
+      return { label: c, disabled: off, style: this.chip(c, on, off),
+        dotStyle: "width:14px;height:14px;border-radius:50%;flex:none;background:" + this.colorHex[c] + ";border:1px solid " + (on ? "rgba(255,248,240,.6)" : "#DDCDB6") + (off ? ";opacity:.45" : ""),
+        onClick: () => !off && this.setState({ color: c, qty: 1 }) };
+    });
+
+    const sinStock = n === 0;
+    const bajo = n > 0 && n <= 2;
+    const addBase = "flex:1;padding:15px;border:0;border-radius:12px;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.02em;transition:background .15s;";
+
+    return {
+      talles, colores, qty,
+      stockTexto: sinStock ? "Sin stock en esta combinación"
+        : n + (n === 1 ? " unidad disponible" : " unidades disponibles") + (bajo ? " · queda poco" : ""),
+      stockColor: sinStock ? "#7A2E2A" : bajo ? "#D4694A" : "#6B7A4F",
+      stockBg: sinStock ? "#F6E7E4" : bajo ? "#FBEEE8" : "#F0F2E7",
+      stockBorder: sinStock ? "#E3C7C2" : bajo ? "#F0D6C9" : "#DCE1CB",
+      addDisabled: sinStock,
+      addLabel: sinStock ? "Sin stock" : "Agregar al carrito",
+      addStyle: addBase + (sinStock
+        ? "background:#EEE3D3;color:#B9A890;cursor:not-allowed;"
+        : "background:#B87A56;color:#FFF8F0;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);"),
+      inc: () => this.setState(s => ({ qty: Math.min(s.qty + 1, Math.max(n, 1)) })),
+      dec: () => this.setState(s => ({ qty: Math.max(1, s.qty - 1) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

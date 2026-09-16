@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #B9A890; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px 24px;background:#F7F0E6;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A;box-sizing:border-box">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:28px">
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+      <div style="width:76px;height:76px;border-radius:22px;background:#F1E6D6;border:1px dashed #E4D6C3;display:flex;align-items:center;justify-content:center;font-family:'Work Sans',sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#B9A890;text-align:center;line-height:1.3">logo<br />futuro</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:40px;letter-spacing:-0.01em;color:#4A342A;line-height:1">ShowroomCiro</h1>
+        <p style="margin:0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#B87A56;font-weight:500">Sistema de gestión</p>
+      </div>
+    </div>
+
+    <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:18px;padding:34px 32px 32px;box-shadow:0 12px 32px -20px rgba(74,52,42,.35)">
+      <form style="display:flex;flex-direction:column;gap:20px" onSubmit="{{ onSubmit }}">
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label for="usuario" style="font-size:13px;font-weight:600;letter-spacing:.02em;color:#4A342A">Usuario</label>
+          <input id="usuario" name="usuario" type="text" autoComplete="username" placeholder="Tu nombre de usuario" style="width:100%;box-sizing:border-box;padding:13px 15px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:15px;color:#4A342A;transition:border-color .15s,box-shadow .15s" />
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label for="clave" style="font-size:13px;font-weight:600;letter-spacing:.02em;color:#4A342A">Contraseña</label>
+          <div style="position:relative;display:flex;align-items:center">
+            <input id="clave" name="clave" type="{{ passType }}" autoComplete="current-password" placeholder="••••••••" style="width:100%;box-sizing:border-box;padding:13px 74px 13px 15px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:15px;color:#4A342A;transition:border-color .15s,box-shadow .15s" />
+            <button type="button" onClick="{{ togglePass }}" style="position:absolute;right:8px;border:0;background:transparent;padding:6px 8px;border-radius:8px;font-family:'Work Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#B87A56;cursor:pointer" style-hover="background:#F7F0E6">{{ passLabel }}</button>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;background:#F6E7E4;border:1px solid #E3C7C2;color:#7A2E2A;font-size:13.5px">
+            <span style="width:7px;height:7px;border-radius:50%;background:#7A2E2A;flex:none"></span>
+            <span>Usuario o contraseña incorrectos.</span>
+          </div>
+        </sc-if>
+
+        <button type="submit" style="margin-top:4px;width:100%;padding:15px;border:0;border-radius:12px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.02em;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);transition:background .15s" style-hover="background:#A56A48" style-active="background:#95603F">Ingresar</button>
+      </form>
+    </div>
+
+    <p style="margin:0;text-align:center;font-size:12.5px;color:#A89479;line-height:1.6">Acceso interno del local. Si no recordás tu clave, pedísela al dueño.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Estados&quot;}}">
+class Component extends DCLogic {
+  state = { showPass: false, error: false };
+  renderVals() {
+    return {
+      passType: this.state.showPass ? "text" : "password",
+      passLabel: this.state.showPass ? "Ocultar" : "Ver",
+      hasError: (this.props.showError ?? false) || this.state.error,
+      togglePass: () => this.setState(s => ({ showPass: !s.showPass })),
+      onSubmit: (e) => {
+        e.preventDefault();
+        const f = e.target;
+        const ok = f.usuario.value.trim() && f.clave.value.trim();
+        this.setState({ error: !ok });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

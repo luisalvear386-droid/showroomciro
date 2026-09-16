@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;box-sizing:border-box;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A;background:repeating-linear-gradient(135deg,#EDE2D2 0 14px,#E9DDCB 14px 28px)">
+  <div style="position:fixed;inset:0;background:rgba(48,32,24,.55)"></div>
+
+  <div style="position:relative;width:100%;max-width:560px;background:#FFFCF7;border:1px solid #E4D6C3;border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -32px rgba(38,24,18,.6);display:flex;flex-direction:column">
+
+    <sc-if value="{{ enCurso }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px 16px;border-bottom:1px solid #E4D6C3">
+          <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;letter-spacing:-0.01em">Cobrar venta</h2>
+          <button type="button" style="width:34px;height:34px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFCF7;color:#6B5545;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">×</button>
+        </div>
+
+        <div style="padding:20px 26px 24px;display:flex;flex-direction:column;gap:20px;max-height:70vh;overflow:auto">
+
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ items }}" as="i" hint-placeholder-count="3">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;font-size:14px">
+                <span style="display:flex;gap:8px;min-width:0">
+                  <span style="color:#A89479;font-weight:600;flex:none">{{ i.qty }}×</span>
+                  <span style="display:flex;flex-direction:column;line-height:1.35">
+                    <span style="font-weight:500">{{ i.nombre }}</span>
+                    <span style="font-size:12.5px;color:#8C7660">{{ i.variante }}</span>
+                  </span>
+                </span>
+                <span style="white-space:nowrap;font-weight:500">{{ i.subtotal }}</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-top:6px;padding-top:14px;border-top:1px solid #E4D6C3">
+              <span style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Total a pagar</span>
+              <span style="font-family:'Fraunces',Georgia,serif;font-size:34px;font-weight:600;line-height:1;letter-spacing:-0.01em">{{ total }}</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Medio de pago</span>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <sc-for list="{{ medios }}" as="m" hint-placeholder-count="3">
+                <button type="button" onClick="{{ m.onClick }}" style="{{ m.style }}">
+                  <span style="{{ m.dotStyle }}"></span>
+                  <span style="font-size:14px;font-weight:600">{{ m.label }}</span>
+                  <span style="font-size:11.5px;opacity:.75">{{ m.hint }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ esEfectivo }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+              <label for="paga" style="font-size:13.5px;font-weight:500;color:#6B5545">Paga con</label>
+              <input id="paga" type="text" inputMode="decimal" value="{{ pagaCon }}" onChange="{{ onPaga }}" placeholder="$ 0" style="flex:1;min-width:120px;box-sizing:border-box;padding:11px 14px;border:1px solid #E4D6C3;border-radius:10px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:15px;color:#4A342A" />
+              <span style="font-size:13.5px;color:#6B5545">Vuelto <strong style="font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;color:{{ vueltoColor }};margin-left:6px">{{ vuelto }}</strong></span>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <div style="padding:16px 26px 22px;border-top:1px solid #E4D6C3;display:flex;gap:10px;background:#FFFCF7">
+          <button type="button" style="flex:none;padding:15px 20px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-family:'Work Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Volver al carrito</button>
+          <button type="button" onClick="{{ confirmar }}" style="{{ confirmStyle }}">{{ confirmLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ exito }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:44px 34px 34px;display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center">
+        <span style="width:64px;height:64px;border-radius:50%;background:#F0F2E7;border:1px solid #DCE1CB;display:flex;align-items:center;justify-content:center">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6B7A4F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"></path></svg>
+        </span>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:27px;font-weight:600;letter-spacing:-0.01em">{{ exitoTitulo }}</h2>
+          <p style="margin:0;font-size:14.5px;color:#8C7660;line-height:1.5">{{ exitoDetalle }}</p>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:14px 22px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+          <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Total</span>
+          <span style="font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:600;line-height:1">{{ total }}</span>
+        </div>
+        <div style="display:flex;gap:10px;width:100%;margin-top:4px">
+          <button type="button" style="flex:1;padding:15px;border:0;border-radius:12px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);transition:background .15s" style-hover="background:#A56A48">Imprimir ticket</button>
+          <button type="button" onClick="{{ nuevaVenta }}" style="flex:1;padding:15px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Nueva venta</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = { medio: "Efectivo", pagaCon: "", exito: false };
+
+  fmt(n) { return "$ " + n.toLocaleString("es-AR"); }
+
+  renderVals() {
+    const items = [
+      { nombre: "Camisa lino beige", variante: "Talle M · Crudo", qty: 1, subtotal: "$ 42.000" },
+      { nombre: "Jean wide leg", variante: "Talle 38 · Azul", qty: 1, subtotal: "$ 58.000" },
+      { nombre: "Remera algodón peinado", variante: "Talle S · Negro", qty: 2, subtotal: "$ 37.000" },
+    ];
+    const totalNum = 137000;
+    const { medio, exito } = this.state;
+
+    const medioDefs = [
+      { label: "Efectivo", hint: "Entra a caja" },
+      { label: "Transferencia", hint: "QR o alias" },
+      { label: "Tarjeta", hint: "Débito o crédito" },
+    ];
+
+    const paga = parseInt((this.state.pagaCon || "").replace(/\D/g, ""), 10) || 0;
+    const vueltoNum = paga - totalNum;
+
+
+    return {
+      items, total: this.fmt(totalNum),
+      enCurso: !exito, exito,
+      esEfectivo: medio === "Efectivo",
+      medios: medioDefs.map(m => {
+        const on = m.label === medio;
+        return {
+          label: m.label, hint: m.hint,
+          onClick: () => this.setState({ medio: m.label }),
+          style: "display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px 15px;border-radius:13px;cursor:pointer;text-align:left;font-family:'Work Sans',sans-serif;transition:all .15s;border:1px solid " + (on ? "#B87A56" : "#E4D6C3") + ";background:" + (on ? "#B87A56" : "#FFFFFF") + ";color:" + (on ? "#FFF8F0" : "#4A342A") + (on ? ";box-shadow:0 8px 18px -14px rgba(184,122,86,.9)" : ""),
+          dotStyle: "width:9px;height:9px;border-radius:50%;margin-bottom:4px;background:" + (on ? "#FFF8F0" : "#DDCDB6"),
+        };
+      }),
+      pagaCon: this.state.pagaCon,
+      onPaga: (e) => this.setState({ pagaCon: e.target.value }),
+      vuelto: paga ? this.fmt(Math.max(vueltoNum, 0)) : "—",
+      vueltoColor: paga && vueltoNum < 0 ? "#7A2E2A" : "#4A342A",
+
+      confirmLabel: "Confirmar Venta",
+      confirmStyle: "flex:1;padding:15px;border:0;border-radius:12px;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.02em;cursor:pointer;transition:background .15s;color:#FFF8F0;background:#B87A56;box-shadow:0 8px 18px -12px rgba(184,122,86,.9)",
+      confirmar: () => this.setState({ exito: true }),
+
+      exitoTitulo: "Venta registrada",
+      exitoDetalle: "Cobrada en " + medio.toLowerCase() + ". Ya se descontó el stock de las variantes vendidas.",
+      nuevaVenta: () => this.setState({ exito: false, pagaCon: "", medio: "Efectivo" }),
+    };
+  }
+}
+</script>
+</body>
+</html>

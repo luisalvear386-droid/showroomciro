@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #EFE5D6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:36px 20px;box-sizing:border-box;background:repeating-linear-gradient(135deg,#EFE5D6 0 16px,#EBE0CF 16px 32px);font-family:'Work Sans',system-ui,sans-serif;color:#4A342A">
+
+  <div style="width:390px;height:844px;flex:none;position:relative;border-radius:44px;background:#F7F0E6;border:10px solid #2E2620;box-shadow:0 36px 70px -30px rgba(38,24,18,.6);overflow:hidden;display:flex;flex-direction:column">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 26px 6px;font-size:13px;font-weight:600;color:#4A342A">
+      <span>9:41</span>
+      <span style="display:flex;align-items:center;gap:5px">
+        <span style="width:16px;height:9px;border:1px solid #4A342A;border-radius:3px;display:inline-block"></span>
+        <span style="width:22px;height:9px;border:1px solid #4A342A;border-radius:3px;display:inline-block;background:linear-gradient(to right,#4A342A 72%,transparent 72%)"></span>
+      </span>
+    </div>
+
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px 14px;border-bottom:1px solid #E4D6C3;background:#FFFCF7">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <sc-if value="{{ enUsuarios }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ volver }}" style="width:34px;height:34px;flex:none;border:1px solid #E4D6C3;border-radius:11px;background:#FFFCF7;color:#6B5545;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">←</button>
+        </sc-if>
+        <sc-if value="{{ enConfig }}" hint-placeholder-val="{{ true }}">
+          <div style="width:32px;height:32px;border-radius:10px;background:#F1E6D6;border:1px dashed #E4D6C3;flex:none"></div>
+        </sc-if>
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;line-height:1.1">{{ headerTitulo }}</span>
+      </div>
+      <div style="position:relative;display:flex;align-items:center;flex:none">
+        <button type="button" onClick="{{ toggleMenu }}" style="display:flex;align-items:center;gap:8px;padding:5px 11px 5px 5px;border-radius:999px;background:#F7F0E6;border:1px solid #E4D6C3;cursor:pointer;font-family:'Work Sans',sans-serif;color:#4A342A">
+          <span style="width:28px;height:28px;flex:none;border-radius:50%;background:#B87A56;color:#FFF8F0;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ inicial }}</span>
+          <span style="font-size:10px;color:#6B5545;line-height:1">▾</span>
+        </button>
+        <sc-if value="{{ menuAbierto }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 8px);right:0;min-width:178px;padding:6px;border-radius:14px;background:#FFFCF7;border:1px solid #E4D6C3;box-shadow:0 18px 36px -20px rgba(74,52,42,.5);z-index:30">
+            <button type="button" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 13px;border:0;border-radius:10px;background:transparent;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:600;color:#4A342A;text-align:left" style-hover="background:#B87A56;color:#FFF8F0">
+              <span style="width:6px;height:6px;border-radius:50%;background:#B87A56;flex:none"></span>Cerrar sesión
+            </button>
+          </div>
+        </sc-if>
+      </div>
+    </header>
+
+    <main style="flex:1;overflow:auto;padding:22px 18px 108px;display:flex;flex-direction:column;gap:18px;background:#F7F0E6">
+
+      <sc-if value="{{ enConfig }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px">
+
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">Configuración</h1>
+            <p style="margin:0;font-size:13.5px;color:#8C7660">Ajustes del sistema disponibles desde el celular.</p>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6B5545;font-weight:600;padding-left:2px">Equipo</span>
+            <button type="button" onClick="{{ irUsuarios }}" style="display:flex;align-items:center;gap:13px;text-align:left;padding:16px 16px;border:1px solid #E4D6C3;border-radius:16px;background:#FFFCF7;cursor:pointer;font-family:'Work Sans',sans-serif;box-shadow:0 10px 26px -24px rgba(74,52,42,.5);transition:border-color .15s" style-hover="border-color:#B87A56">
+              <span style="width:40px;height:40px;flex:none;border-radius:13px;background:#F5E7DA;border:1px solid #E8D2BE;display:flex;align-items:center;justify-content:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B87A56" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20"></path><circle cx="10" cy="8" r="3.5"></circle><path d="M20 20v-1.5a3.5 3.5 0 0 0-2.6-3.4"></path><path d="M15.5 4.6a3.5 3.5 0 0 1 0 6.8"></path></svg>
+              </span>
+              <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:15.5px;font-weight:600;line-height:1.3">Gestionar Usuarios</span>
+                <span style="font-size:12.5px;color:#8C7660">{{ resumenUsuarios }}</span>
+              </span>
+              <span style="flex:none;font-size:19px;color:#B9A890;line-height:1">›</span>
+            </button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6B5545;font-weight:600;padding-left:2px">Próximamente</span>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <span style="height:64px;border-radius:16px;border:1px dashed #E4D6C3;background:#FBF5EC"></span>
+              <span style="height:64px;border-radius:16px;border:1px dashed #E4D6C3;background:#FBF5EC"></span>
+            </div>
+            <p style="margin:2px 0 0;font-size:12.5px;color:#6B5545;line-height:1.55">Acá van a sumarse los ajustes de local, categorías y datos de la tienda.</p>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ enUsuarios }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">Usuarios</h1>
+            <p style="margin:0;font-size:13.5px;color:#8C7660">{{ resumenUsuarios }}</p>
+          </div>
+
+          <sc-if value="{{ sinForm }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ abrirForm }}" style="width:100%;padding:15px;border:0;border-radius:14px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9)">+ Nuevo Vendedor</button>
+          </sc-if>
+
+          <sc-if value="{{ form }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFCF7;border:1px solid #B87A56;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                <span style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600">Nuevo vendedor</span>
+                  <span style="font-size:12.5px;color:#8C7660">Accede a ventas, productos y cuentas.</span>
+                </span>
+                <button type="button" onClick="{{ cerrarForm }}" style="width:30px;height:30px;flex:none;border:1px solid #E4D6C3;border-radius:10px;background:#FFFCF7;color:#6B5545;font-size:15px;line-height:1;cursor:pointer">×</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label for="m-nombre" style="font-size:12.5px;font-weight:600">Nombre completo</label>
+                <input id="m-nombre" type="text" value="{{ fNombre }}" onChange="{{ onNombre }}" placeholder="Ej. Sol Martínez" style="width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:15px;color:#4A342A" />
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label for="m-user" style="font-size:12.5px;font-weight:600">Nombre de usuario</label>
+                <input id="m-user" type="text" value="{{ fUser }}" onChange="{{ onUser }}" placeholder="sol" style="width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:15px;color:#4A342A" />
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label for="m-pass" style="font-size:12.5px;font-weight:600">Contraseña</label>
+                <input id="m-pass" type="password" value="{{ fPass }}" onChange="{{ onPass }}" placeholder="••••••••" style="width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:15px;color:#4A342A" />
+              </div>
+              <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:11px;background:#F6E7E4;border:1px solid #E3C7C2;color:#7A2E2A;font-size:13px">
+                  <span style="width:7px;height:7px;border-radius:50%;background:#7A2E2A;flex:none"></span>
+                  <span>{{ error }}</span>
+                </div>
+              </sc-if>
+              <button type="button" onClick="{{ crear }}" style="width:100%;padding:15px;border:0;border-radius:13px;background:#B87A56;color:#FFF8F0;font-family:'Work Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9)">Crear vendedor</button>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ usuarios }}" as="u" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:12px;padding:15px 16px;border-radius:16px;background:#FFFCF7;border:1px solid #E4D6C3;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="{{ u.avatarStyle }}">{{ u.iniciales }}</span>
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-size:15px;font-weight:600;line-height:1.3">{{ u.nombre }}</span>
+                    <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:#6B5545">{{ u.linea }}</span>
+                  </span>
+                  <span style="{{ u.badgeStyle }}">{{ u.estado }}</span>
+                </div>
+                <sc-if value="{{ u.editable }}" hint-placeholder-val="{{ true }}">
+                  <button type="button" onClick="{{ u.toggle }}" style="{{ u.accionStyle }}">{{ u.accion }}</button>
+                </sc-if>
+                <sc-if value="{{ u.protegido }}" hint-placeholder-val="{{ false }}">
+                  <span style="padding:11px;border-radius:12px;background:#F7F0E6;border:1px dashed #E4D6C3;text-align:center;font-size:12.5px;color:#6B5545;font-weight:500">Tu cuenta · no se puede desactivar</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <p style="margin:0;font-size:12.5px;color:#6B5545;line-height:1.6">Los vendedores desactivados no pueden iniciar sesión, pero sus ventas y cierres de caja quedan en el historial.</p>
+
+        </div>
+      </sc-if>
+
+    </main>
+
+    <nav style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:stretch;gap:2px;padding:9px 12px 26px;background:#FFFCF7;border-top:1px solid #E4D6C3">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <button type="button" onClick="{{ t.onClick }}" style="{{ t.style }}">
+          <span style="display:flex;align-items:center;justify-content:center;height:22px">{{ t.icon }}</span>
+          <span style="{{ t.labelStyle }}">{{ t.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:940},&quot;usuario&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Marcos&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    vista: "config", menu: false,
+    form: false, fNombre: "", fUser: "", fPass: "", error: "",
+    usuarios: [
+      { nombre: "Marcos Ciro", user: "marcos", rol: "Dueño", activo: true, dueno: true },
+      { nombre: "Sol Martínez", user: "sol", rol: "Vendedor", activo: true },
+      { nombre: "Julián Costa", user: "julian", rol: "Vendedor", activo: true },
+      { nombre: "Ana Pereyra", user: "ana", rol: "Vendedor", activo: false },
+    ],
+  };
+
+  icono(name, color) {
+    const p = { width: 21, height: 21, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
+    const paths = {
+      Dashboard: ["M3 10.5L12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"],
+      Cuentas: ["M4 6h16v14H4z", "M4 10h16", "M9 3v4", "M15 3v4"],
+      Reportes: ["M5 20V10", "M12 20V4", "M19 20v-7"],
+      Configuración: ["M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z", "M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.4-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 11a2 2 0 1 1 0 4 1.7 1.7 0 0 0-1.6 0z"],
+    };
+    return React.createElement("svg", p, paths[name].map((d, i) => React.createElement("path", { key: i, d })));
+  }
+
+  renderVals() {
+    const usuario = this.props.usuario ?? "Marcos";
+    const us = this.state.usuarios;
+    const activos = us.filter(u => u.activo).length;
+    const enUsuarios = this.state.vista === "usuarios";
+
+    const badge = (activo) => "flex:none;display:inline-flex;align-items:center;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid " + (activo ? "#DCE1CB" : "#E4D6C3") + ";background:" + (activo ? "#F0F2E7" : "#F3EDE3") + ";color:" + (activo ? "#6B7A4F" : "#6B5545");
+
+    return {
+      usuario,
+      inicial: usuario.slice(0, 2).toUpperCase(),
+      menuAbierto: this.state.menu,
+      toggleMenu: () => this.setState(s => ({ menu: !s.menu })),
+
+      enConfig: !enUsuarios, enUsuarios,
+      headerTitulo: enUsuarios ? "Usuarios" : "ShowroomCiro",
+      irUsuarios: () => this.setState({ vista: "usuarios", menu: false }),
+      volver: () => this.setState({ vista: "config", form: false, error: "" }),
+      resumenUsuarios: us.length + " cuentas · " + activos + " activas",
+
+      form: this.state.form, sinForm: !this.state.form,
+      abrirForm: () => this.setState({ form: true }),
+      cerrarForm: () => this.setState({ form: false, error: "", fNombre: "", fUser: "", fPass: "" }),
+      fNombre: this.state.fNombre, fUser: this.state.fUser, fPass: this.state.fPass,
+      onNombre: (e) => this.setState({ fNombre: e.target.value, error: "" }),
+      onUser: (e) => this.setState({ fUser: e.target.value, error: "" }),
+      onPass: (e) => this.setState({ fPass: e.target.value, error: "" }),
+      error: this.state.error || false,
+      crear: () => {
+        const { fNombre, fUser, fPass } = this.state;
+        if (!fNombre.trim() || !fUser.trim() || !fPass.trim()) return this.setState({ error: "Completá los tres campos." });
+        if (us.some(u => u.user.toLowerCase() === fUser.trim().toLowerCase())) return this.setState({ error: "Ese nombre de usuario ya existe." });
+        this.setState({
+          usuarios: [...us, { nombre: fNombre.trim(), user: fUser.trim().toLowerCase(), rol: "Vendedor", activo: true }],
+          form: false, fNombre: "", fUser: "", fPass: "", error: "",
+        });
+      },
+
+      usuarios: us.map((u, i) => ({
+        nombre: u.nombre,
+        linea: u.user + " · " + u.rol,
+        iniciales: u.nombre.split(" ").map(w => w[0]).join("").slice(0, 2),
+        avatarStyle: "width:38px;height:38px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;background:" + (u.activo ? "#B87A56" : "#F1E6D6") + ";color:" + (u.activo ? "#FFF8F0" : "#6B5545"),
+        estado: u.activo ? "Activo" : "Inactivo",
+        badgeStyle: badge(u.activo),
+        editable: !u.dueno, protegido: !!u.dueno,
+        accion: u.activo ? "Desactivar" : "Reactivar",
+        accionStyle: "width:100%;padding:12px;border-radius:12px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid " + (u.activo ? "#E3C7C2" : "#DCE1CB") + ";color:" + (u.activo ? "#7A2E2A" : "#6B7A4F"),
+        toggle: () => this.setState({ usuarios: us.map((x, j) => j === i ? { ...x, activo: !x.activo } : x) }),
+      })),
+
+      tabs: ["Dashboard", "Cuentas", "Reportes", "Configuración"].map(t => {
+        const on = t === "Configuración";
+        const color = on ? "#B87A56" : "#6B5545";
+        return {
+          label: t, icon: this.icono(t, color),
+          onClick: () => {},
+          style: "flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 2px;border:0;border-radius:13px;cursor:pointer;font-family:'Work Sans',sans-serif;background:" + (on ? "#F5E7DA" : "transparent") + ";color:" + color,
+          labelStyle: "font-size:10.5px;font-weight:600;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%",
+        };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>

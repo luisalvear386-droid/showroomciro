@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;box-sizing:border-box;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A;background:repeating-linear-gradient(135deg,#EDE2D2 0 14px,#E9DDCB 14px 28px)">
+  <div style="position:fixed;inset:0;background:rgba(48,32,24,.55)"></div>
+
+  <div style="position:relative;width:100%;max-width:540px;background:#FFFCF7;border:1px solid #E4D6C3;border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -32px rgba(38,24,18,.6);display:flex;flex-direction:column">
+
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 26px 18px;border-bottom:1px solid #E4D6C3">
+      <div style="display:flex;align-items:center;gap:13px;min-width:0">
+        <span style="{{ avatarStyle }}">{{ iniciales }}</span>
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:23px;font-weight:600;line-height:1.15;letter-spacing:-0.01em">{{ cliente }}</h2>
+          <span style="font-size:13px;color:#8C7660">{{ telefono }}</span>
+        </div>
+      </div>
+      <button type="button" style="flex:none;width:34px;height:34px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFCF7;color:#6B5545;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">×</button>
+    </div>
+
+    <div style="padding:20px 26px 24px;display:flex;flex-direction:column;gap:20px;max-height:72vh;overflow:auto">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:14px;background:{{ saldoBg }};border:1px solid {{ saldoBorder }}">
+          <span style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Saldo adeudado</span>
+          <span style="font-family:'Fraunces',Georgia,serif;font-size:31px;font-weight:600;line-height:1;letter-spacing:-0.01em;color:{{ saldoColor }}">{{ saldo }}</span>
+          <span style="font-size:12.5px;color:#8C7660">De {{ montoOriginal }} original</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:14px;background:#F7F0E6;border:1px solid #E4D6C3">
+          <span style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Fecha límite</span>
+          <span style="font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;line-height:1.1">{{ fecha }}</span>
+          <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:{{ estadoColor }}">
+            <span style="width:7px;height:7px;border-radius:50%;background:{{ estadoColor }}"></span>{{ estadoTexto }}
+          </span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Historial de cobros</span>
+          <span style="font-size:12.5px;color:#8C7660">{{ abonado }} abonado</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ abonos }}" as="a" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 15px;border-radius:12px;background:#FFFFFF;border:1px solid #E4D6C3">
+              <span style="display:flex;align-items:center;gap:11px;min-width:0">
+                <span style="width:8px;height:8px;border-radius:50%;flex:none;background:#6B7A4F"></span>
+                <span style="display:flex;flex-direction:column;line-height:1.35">
+                  <span style="font-size:14px;font-weight:600">{{ a.fecha }}</span>
+                  <span style="font-size:12.5px;color:#8C7660">{{ a.detalle }}</span>
+                </span>
+              </span>
+              <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;white-space:nowrap">{{ a.monto }}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ sinAbonos }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:22px 16px;text-align:center;font-size:13.5px;color:#A89479;border:1px dashed #E4D6C3;border-radius:12px">Todavía no registró ningún pago.</div>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ abierto }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:14px;background:#F7F0E6;border:1px solid #E4D6C3">
+          <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Registrar cobro</span>
+
+          <div style="display:flex;gap:9px">
+            <sc-for list="{{ tipos }}" as="t" hint-placeholder-count="2">
+              <button type="button" onClick="{{ t.onClick }}" style="{{ t.style }}">
+                <span style="font-size:14px;font-weight:600">{{ t.label }}</span>
+                <span style="font-size:12px;opacity:.75">{{ t.hint }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label for="monto" style="font-size:13px;font-weight:600">Monto del cobro</label>
+            <div style="position:relative;display:flex;align-items:center">
+              <span style="position:absolute;left:16px;font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;color:#B87A56;pointer-events:none">$</span>
+              <input id="monto" type="text" inputMode="decimal" value="{{ input }}" onChange="{{ onInput }}" disabled="{{ esTotal }}" placeholder="0" style="{{ inputStyle }}" />
+            </div>
+            <sc-if value="{{ excede }}" hint-placeholder-val="{{ false }}">
+              <span style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#7A2E2A;font-weight:500">
+                <span style="width:6px;height:6px;border-radius:50%;background:#7A2E2A"></span>El monto supera el saldo adeudado.
+              </span>
+            </sc-if>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:2px">
+            <span style="font-size:13.5px;color:#6B5545">Saldo después del cobro <strong style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600;color:#4A342A;margin-left:7px">{{ saldoFinal }}</strong></span>
+            <button type="button" onClick="{{ registrar }}" disabled="{{ noPuede }}" style="{{ btnStyle }}">Registrar Cobro</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ saldado }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:13px;padding:18px;border-radius:14px;background:#F0F2E7;border:1px solid #DCE1CB">
+          <span style="width:40px;height:40px;flex:none;border-radius:50%;background:#FFFCF7;border:1px solid #DCE1CB;display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7A4F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"></path></svg>
+          </span>
+          <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+            <span style="font-size:15px;font-weight:600;color:#4A342A">Cuenta saldada</span>
+            <span style="font-size:13px;color:#6B7A4F">El cliente no tiene deuda pendiente. Sale de la agenda.</span>
+          </span>
+          <button type="button" style="flex:none;padding:11px 16px;border:1px solid #DCE1CB;border-radius:11px;background:#FFFCF7;color:#6B7A4F;font-family:'Work Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer">Imprimir recibo</button>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:740,&quot;height&quot;:900},&quot;cliente&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Lucía Fernández&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;telefono&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;11 5541 2290&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    tipo: "Parcial", input: "",
+    abonos: [
+      { fecha: "28 ago", detalle: "Abono parcial · efectivo", monto: 8000 },
+      { fecha: "05 sep", detalle: "Abono parcial · transferencia", monto: 10000 },
+    ],
+  };
+  original = 50000;
+  dias = -4;
+
+  fmt(n) { return "$ " + n.toLocaleString("es-AR"); }
+
+  renderVals() {
+    const cliente = this.props.cliente ?? "Lucía Fernández";
+    const abonado = this.state.abonos.reduce((a, x) => a + x.monto, 0);
+    const saldo = this.original - abonado;
+    const saldado = saldo <= 0;
+    const esTotal = this.state.tipo === "Total";
+    const monto = esTotal ? saldo : (parseInt((this.state.input || "").replace(/\D/g, ""), 10) || 0);
+    const excede = monto > saldo;
+    const noPuede = monto <= 0 || excede;
+
+    const est = this.dias < 0
+      ? { color: "#7A2E2A", texto: "Vencido hace " + Math.abs(this.dias) + " días", bg: "#F6E7E4", border: "#E3C7C2" }
+      : this.dias <= 5
+        ? { color: "#D4694A", texto: "Vence en " + this.dias + " días", bg: "#FBEEE8", border: "#F0D6C9" }
+        : { color: "#6B7A4F", texto: "Al día", bg: "#F0F2E7", border: "#DCE1CB" };
+
+    const venc = new Date(); venc.setDate(venc.getDate() + this.dias);
+
+    return {
+      cliente,
+      telefono: this.props.telefono ?? "11 5541 2290",
+      iniciales: cliente.split(" ").map(w => w[0]).join("").slice(0, 2),
+      avatarStyle: "width:44px;height:44px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;background:" + est.bg + ";border:1px solid " + est.border + ";color:" + est.color,
+
+      saldo: this.fmt(Math.max(saldo, 0)),
+      montoOriginal: this.fmt(this.original),
+      saldoColor: saldado ? "#6B7A4F" : est.color,
+      saldoBg: saldado ? "#F0F2E7" : est.bg,
+      saldoBorder: saldado ? "#DCE1CB" : est.border,
+      fecha: venc.toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" }),
+      estadoColor: saldado ? "#6B7A4F" : est.color,
+      estadoTexto: saldado ? "Saldado" : est.texto,
+
+      abonos: this.state.abonos.map(a => ({ ...a, monto: this.fmt(a.monto) })),
+      sinAbonos: this.state.abonos.length === 0,
+      abonado: this.fmt(abonado),
+
+      abierto: !saldado, saldado,
+      tipos: [
+        { label: "Pago parcial", hint: "Abona una parte", key: "Parcial" },
+        { label: "Pago total", hint: this.fmt(Math.max(saldo, 0)), key: "Total" },
+      ].map(t => {
+        const on = this.state.tipo === t.key;
+        return {
+          label: t.label, hint: t.hint,
+          onClick: () => this.setState({ tipo: t.key }),
+          style: "flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:13px 15px;border-radius:12px;cursor:pointer;text-align:left;font-family:'Work Sans',sans-serif;transition:all .15s;border:1px solid " + (on ? "#B87A56" : "#E4D6C3") + ";background:" + (on ? "#B87A56" : "#FFFFFF") + ";color:" + (on ? "#FFF8F0" : "#4A342A"),
+        };
+      }),
+      esTotal,
+      input: esTotal ? saldo.toLocaleString("es-AR") : this.state.input,
+      onInput: (e) => this.setState({ input: e.target.value }),
+      inputStyle: "width:100%;box-sizing:border-box;padding:14px 16px 14px 38px;border:1px solid " + (excede ? "#DDB9B2" : "#E4D6C3") + ";border-radius:12px;background:" + (esTotal ? "#F3EDE3" : "#FFFFFF") + ";font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;color:#4A342A",
+      excede,
+      saldoFinal: this.fmt(Math.max(saldo - (excede ? 0 : monto), 0)),
+      noPuede,
+      btnStyle: "padding:14px 22px;border:0;border-radius:12px;font-family:'Work Sans',sans-serif;font-size:14.5px;font-weight:600;transition:background .15s;" + (noPuede
+        ? "background:#EEE3D3;color:#B9A890;cursor:not-allowed;"
+        : "background:#B87A56;color:#FFF8F0;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);"),
+      registrar: () => {
+        if (noPuede) return;
+        const hoy = new Date().toLocaleDateString("es-AR", { day: "2-digit", month: "short" });
+        this.setState(s => ({
+          abonos: [...s.abonos, { fecha: hoy, detalle: (esTotal ? "Pago total" : "Abono parcial") + " · efectivo", monto }],
+          input: "", tipo: "Parcial",
+        }));
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

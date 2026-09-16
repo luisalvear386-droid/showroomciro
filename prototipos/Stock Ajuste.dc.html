@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;box-sizing:border-box;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A;background:repeating-linear-gradient(135deg,#EDE2D2 0 14px,#E9DDCB 14px 28px)">
+  <div style="position:fixed;inset:0;background:rgba(48,32,24,.55)"></div>
+
+  <div style="position:relative;width:100%;max-width:500px;background:#FFFCF7;border:1px solid #E4D6C3;border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -32px rgba(38,24,18,.6);display:flex;flex-direction:column">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px 16px;border-bottom:1px solid #E4D6C3">
+      <h2 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;letter-spacing:-0.01em">Ajuste de stock</h2>
+      <button type="button" style="width:34px;height:34px;flex:none;border:1px solid #E4D6C3;border-radius:11px;background:#FFFCF7;color:#6B5545;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">×</button>
+    </div>
+
+    <div style="padding:20px 24px 24px;display:flex;flex-direction:column;gap:20px;max-height:72vh;overflow:auto">
+
+      <div style="display:flex;gap:15px;padding:14px;border-radius:14px;background:#F7F0E6;border:1px solid #E4D6C3">
+        <span style="width:64px;height:76px;flex:none;border-radius:10px;background:repeating-linear-gradient(135deg,#F1E6D6 0 7px,#EADCC8 7px 14px)"></span>
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:7px">
+          <span style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:15.5px;font-weight:600;line-height:1.3">{{ producto }}</span>
+            <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:#A89479">{{ sku }}</span>
+          </span>
+          <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;padding:4px 11px;border-radius:999px;background:#FFFFFF;border:1px solid #E4D6C3;font-size:12.5px;font-weight:600">{{ talleLabel }}</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;padding:4px 11px;border-radius:999px;background:#FFFFFF;border:1px solid #E4D6C3;font-size:12.5px;font-weight:600">
+              <span style="{{ colorDot }}"></span>{{ color }}
+            </span>
+          </span>
+        </span>
+        <span style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+          <span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#A89479;font-weight:600">Actual</span>
+          <span style="font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;line-height:1;color:{{ actualColor }}">{{ actual }}</span>
+        </span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Tipo de ajuste</span>
+        <div style="display:flex;gap:10px">
+          <sc-for list="{{ tipos }}" as="t" hint-placeholder-count="2">
+            <button type="button" onClick="{{ t.onClick }}" style="{{ t.style }}">
+              <span style="{{ t.signStyle }}">{{ t.signo }}</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.25">
+                <span style="font-size:14px;font-weight:600">{{ t.label }}</span>
+                <span style="font-size:12px;opacity:.75">{{ t.hint }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <label for="cant" style="font-size:13px;font-weight:600">Cantidad</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button type="button" onClick="{{ dec }}" style="width:46px;height:52px;flex:none;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-size:20px;line-height:1;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">−</button>
+          <input id="cant" type="text" inputMode="numeric" value="{{ cantidad }}" onChange="{{ onCant }}" style="{{ inputStyle }}" />
+          <button type="button" onClick="{{ inc }}" style="width:46px;height:52px;flex:none;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-size:20px;line-height:1;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">+</button>
+        </div>
+        <sc-if value="{{ excede }}" hint-placeholder-val="{{ false }}">
+          <span style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#7A2E2A;font-weight:500">
+            <span style="width:6px;height:6px;border-radius:50%;background:#7A2E2A"></span>{{ excedeTexto }}
+          </span>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Motivo <span style="text-transform:none;letter-spacing:0;font-weight:500;color:#B9A890">· opcional</span></span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ motivos }}" as="m" hint-placeholder-count="4">
+            <button type="button" onClick="{{ m.onClick }}" style="{{ m.style }}">{{ m.label }}</button>
+          </sc-for>
+        </div>
+        <input type="text" value="{{ nota }}" onChange="{{ onNota }}" placeholder="Detalle del ajuste (opcional)" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:14.5px;color:#4A342A" />
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:15px 17px;border-radius:14px;background:{{ resBg }};border:1px solid {{ resBorder }}">
+        <span style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Stock resultante</span>
+          <span style="font-size:12.5px;color:#8C7660">{{ resDetalle }}</span>
+        </span>
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:600;line-height:1;color:{{ resColor }}">{{ resultante }}</span>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button type="button" style="flex:none;padding:15px 20px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-family:'Work Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Cancelar</button>
+        <button type="button" disabled="{{ noPuede }}" style="{{ btnStyle }}">Confirmar ajuste</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:700,&quot;height&quot;:800},&quot;producto&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Camisa lino beige&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sku&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CAM-LIN-001&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;talle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;XS&quot;,&quot;S&quot;,&quot;M&quot;,&quot;L&quot;,&quot;XL&quot;],&quot;default&quot;:&quot;M&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;color&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Crudo&quot;,&quot;Verde&quot;,&quot;Negro&quot;,&quot;Azul&quot;,&quot;Terracota&quot;],&quot;default&quot;:&quot;Crudo&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;stockActual&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:99,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { tipo: "sumar", cantidad: "1", motivo: "", nota: "" };
+  colorHex = { Crudo: "#EFE3CF", Verde: "#6B7A4F", Negro: "#3A322C", Azul: "#3E5068", Terracota: "#C0664A" };
+
+  renderVals() {
+    const actual = this.props.stockActual ?? 2;
+    const color = this.props.color ?? "Crudo";
+    const suma = this.state.tipo === "sumar";
+    const n = parseInt((this.state.cantidad || "").replace(/\D/g, ""), 10) || 0;
+    const excede = !suma && n > actual;
+    const resultante = suma ? actual + n : Math.max(actual - n, 0);
+    const noPuede = n <= 0 || excede;
+
+    const tono = (v) => v === 0
+      ? { color: "#7A2E2A", bg: "#F6E7E4", border: "#E3C7C2" }
+      : v <= 2
+        ? { color: "#D4694A", bg: "#FBEEE8", border: "#F0D6C9" }
+        : { color: "#6B7A4F", bg: "#F0F2E7", border: "#DCE1CB" };
+    const res = excede ? { color: "#7A2E2A", bg: "#F6E7E4", border: "#E3C7C2" } : tono(resultante);
+
+    return {
+      producto: this.props.producto ?? "Camisa lino beige",
+      sku: this.props.sku ?? "CAM-LIN-001",
+      talleLabel: "Talle " + (this.props.talle ?? "M"),
+      excedeTexto: "No podés restar más de las " + actual + " u. en stock.",
+      color,
+      colorDot: "width:13px;height:13px;border-radius:50%;flex:none;border:1px solid #DDCDB6;background:" + (this.colorHex[color] || "#DDCDB6"),
+      actual: actual + " u.",
+      actualColor: tono(actual).color,
+
+      tipos: [
+        { key: "sumar", label: "Sumar stock", hint: "Reposición, devolución", signo: "+" },
+        { key: "restar", label: "Restar stock", hint: "Merma, rotura", signo: "−" },
+      ].map(t => {
+        const on = this.state.tipo === t.key;
+        const acento = t.key === "sumar" ? "#6B7A4F" : "#7A2E2A";
+        return {
+          label: t.label, hint: t.hint, signo: t.signo,
+          onClick: () => this.setState({ tipo: t.key }),
+          style: "flex:1;display:flex;align-items:center;gap:11px;padding:13px 15px;border-radius:13px;cursor:pointer;text-align:left;font-family:'Work Sans',sans-serif;transition:all .15s;border:1px solid " + (on ? acento : "#E4D6C3") + ";background:" + (on ? acento : "#FFFFFF") + ";color:" + (on ? "#FFF8F0" : "#4A342A"),
+          signStyle: "width:26px;height:26px;flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;background:" + (on ? "rgba(255,248,240,.22)" : "#F1E6D6") + ";color:" + (on ? "#FFF8F0" : acento),
+        };
+      }),
+
+      cantidad: this.state.cantidad,
+      onCant: (e) => this.setState({ cantidad: e.target.value }),
+      inc: () => this.setState({ cantidad: String(n + 1) }),
+      dec: () => this.setState({ cantidad: String(Math.max(1, n - 1)) }),
+      inputStyle: "flex:1;min-width:0;box-sizing:border-box;padding:14px 16px;text-align:center;border:1px solid " + (excede ? "#DDB9B2" : "#E4D6C3") + ";border-radius:12px;background:#FFFFFF;font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;color:#4A342A",
+      excede,
+
+      motivos: ["Reposición", "Merma/rotura", "Corrección", "Devolución"].map(m => {
+        const on = this.state.motivo === m;
+        return {
+          label: m,
+          onClick: () => this.setState({ motivo: on ? "" : m }),
+          style: "padding:8px 14px;border-radius:999px;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:13px;font-weight:" + (on ? "600" : "500") + ";transition:all .15s;border:1px solid " + (on ? "#B87A56" : "#E4D6C3") + ";background:" + (on ? "#B87A56" : "#FFFCF7") + ";color:" + (on ? "#FFF8F0" : "#6B5545"),
+        };
+      }),
+      nota: this.state.nota,
+      onNota: (e) => this.setState({ nota: e.target.value }),
+
+      resultante: resultante + " u.",
+      resDetalle: excede ? "Revisá la cantidad" : (suma ? "+" : "−") + n + " u. sobre " + actual + " actuales",
+      resColor: res.color, resBg: res.bg, resBorder: res.border,
+      noPuede,
+      btnStyle: "flex:1;padding:15px;border:0;border-radius:12px;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.02em;transition:background .15s;" + (noPuede
+        ? "background:#EEE3D3;color:#B9A890;cursor:not-allowed;"
+        : "background:#B87A56;color:#FFF8F0;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);"),
+    };
+  }
+}
+</script>
+</body>
+</html>

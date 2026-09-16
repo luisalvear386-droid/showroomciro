@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F7F0E6; }
+  a { color: #B87A56; text-decoration: none; }
+  a:hover { color: #4A342A; }
+  input::placeholder { color: #C7B69C; }
+  input:focus { outline: none; border-color: #B87A56 !important; box-shadow: 0 0 0 3px rgba(184,122,86,.15) !important; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;background:#F7F0E6;font-family:'Work Sans',system-ui,sans-serif;color:#4A342A">
+
+  <aside style="width:232px;flex:none;background:#FFFCF7;border-right:1px solid #E4D6C3;display:flex;flex-direction:column;gap:26px;padding:24px 16px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px">
+      <div style="width:34px;height:34px;border-radius:11px;background:#F1E6D6;border:1px dashed #E4D6C3;flex:none"></div>
+      <span style="font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;line-height:1.1">ShowroomCiro</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:0 8px 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#B9A890;font-weight:600">Operación</div>
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+        <a href="#" style="{{ item.style }}">
+          <span style="{{ item.dotStyle }}"></span>
+          <span style="flex:1">{{ item.label }}</span>
+          <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+            <span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#D4694A;color:#FFF8F0;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ item.badge }}</span>
+          </sc-if>
+        </a>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+      <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B9A890;font-weight:600">Caja</span>
+      <span style="display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;color:#6B7A4F">
+        <span style="width:7px;height:7px;border-radius:50%;background:#6B7A4F"></span>Abierta desde 09:40
+      </span>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 32px;background:#FFFCF7;border-bottom:1px solid #E4D6C3">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600">ShowroomCiro</span>
+        <span style="font-size:12.5px;color:#A89479">Caja · Cierre del día</span>
+      </div>
+      <div style="position:relative;display:flex;align-items:center">
+        <button type="button" onClick="{{ toggleMenu }}" style="display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;background:#F7F0E6;border:1px solid #E4D6C3;cursor:pointer;font-family:'Work Sans',sans-serif;color:#4A342A;transition:border-color .15s" style-hover="border-color:#B87A56">
+          <span style="width:30px;height:30px;border-radius:50%;background:#B87A56;color:#FFF8F0;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ inicial }}</span>
+        <span style="display:flex;flex-direction:column;line-height:1.2">
+          <span style="font-size:13px;font-weight:600">{{ usuario }}</span>
+          <span style="font-size:11px;color:#A89479">{{ rol }}</span>
+        </span>
+          <span style="font-size:11px;color:#A89479;line-height:1;padding-left:2px">▾</span>
+        </button>
+        <sc-if value="{{ menuAbierto }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 8px);right:0;min-width:186px;padding:6px;border-radius:14px;background:#FFFCF7;border:1px solid #E4D6C3;box-shadow:0 18px 36px -20px rgba(74,52,42,.5);z-index:30">
+            <button type="button" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 13px;border:0;border-radius:10px;background:transparent;cursor:pointer;font-family:'Work Sans',sans-serif;font-size:14px;font-weight:600;color:#4A342A;text-align:left;transition:all .15s" style-hover="background:#B87A56;color:#FFF8F0">
+              <span style="width:6px;height:6px;border-radius:50%;background:#B87A56;flex:none"></span>Cerrar sesión
+            </button>
+          </div>
+        </sc-if>
+      </div>
+    </header>
+
+    <main style="flex:1;padding:28px 32px 44px;display:flex;flex-direction:column;gap:22px;max-width:900px;width:100%;box-sizing:border-box">
+
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h1 style="margin:0;font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">Cierre de Caja</h1>
+        <p style="margin:0;font-size:14.5px;color:#8C7660">{{ subtitulo }}</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start">
+
+        <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+          <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Ventas del día</span>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <sc-for list="{{ medios }}" as="m" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px">
+                <span style="display:flex;align-items:center;gap:10px;min-width:0">
+                  <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ m.dot }}"></span>
+                  <span style="display:flex;flex-direction:column;line-height:1.3">
+                    <span style="font-size:14px;font-weight:500">{{ m.label }}</span>
+                    <span style="font-size:12px;color:#A89479">{{ m.detalle }}</span>
+                  </span>
+                </span>
+                <span style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;white-space:nowrap">{{ m.monto }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="height:1px;background:#E4D6C3"></div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px">
+            <span style="font-size:13.5px;color:#6B5545">Total vendido</span>
+            <span style="font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600">{{ totalVendido }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px;padding:15px 16px;border-radius:13px;background:#F7F0E6;border:1px solid #E4D6C3">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13.5px;color:#6B5545">
+              <span>Monto de apertura</span><span style="font-weight:600">{{ apertura }}</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13.5px;color:#6B5545">
+              <span>Ventas en efectivo</span><span style="font-weight:600">{{ efectivo }}</span>
+            </div>
+            <div style="height:1px;background:#E4D6C3"></div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+              <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Esperado en caja</span>
+              <span style="font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;line-height:1">{{ esperado }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#FFFCF7;border:1px solid #E4D6C3;border-radius:16px;padding:22px 24px 24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 10px 26px -24px rgba(74,52,42,.5)">
+          <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Conteo físico</span>
+
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <label for="contado" style="font-size:13px;font-weight:600">Efectivo contado en caja</label>
+            <div style="position:relative;display:flex;align-items:center">
+              <span style="position:absolute;left:18px;font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;color:#B87A56;pointer-events:none">$</span>
+              <input id="contado" type="text" inputMode="decimal" value="{{ contado }}" onChange="{{ onContado }}" placeholder="0" style="width:100%;box-sizing:border-box;padding:16px 18px 16px 44px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFFFF;font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:600;color:#4A342A" />
+            </div>
+            <span style="font-size:12.5px;color:#A89479">Contá billetes y monedas antes de cerrar. El conteo no se puede editar después.</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:7px;padding:18px;border-radius:14px;background:{{ difBg }};border:1px solid {{ difBorder }}">
+            <span style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#A89479">Diferencia</span>
+            <span style="font-family:'Fraunces',Georgia,serif;font-size:33px;font-weight:600;line-height:1;letter-spacing:-0.01em;color:{{ difColor }}">{{ diferencia }}</span>
+            <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:{{ difColor }}">
+              <span style="width:7px;height:7px;border-radius:50%;flex:none;background:{{ difColor }}"></span>{{ difTexto }}
+            </span>
+          </div>
+
+          <sc-if value="{{ hayDif }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label for="nota" style="font-size:13px;font-weight:600">Nota sobre la diferencia</label>
+              <input id="nota" type="text" placeholder="Ej. vuelto mal dado a la tarde" style="width:100%;box-sizing:border-box;padding:13px 15px;border:1px solid #E4D6C3;border-radius:11px;background:#FFFFFF;font-family:'Work Sans',sans-serif;font-size:14.5px;color:#4A342A" />
+            </div>
+          </sc-if>
+
+          <p style="margin:0;font-size:12.5px;color:#8C7660;line-height:1.55">Al cerrar la caja, tu sesión se cerrará automáticamente.</p>
+
+          <div style="display:flex;gap:10px;margin-top:2px">
+            <button type="button" style="flex:none;padding:15px 20px;border:1px solid #E4D6C3;border-radius:12px;background:#FFFCF7;color:#6B5545;font-family:'Work Sans',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;transition:all .15s" style-hover="border-color:#B87A56;color:#B87A56">Cancelar</button>
+            <button type="button" disabled="{{ noPuede }}" style="{{ btnStyle }}">Cerrar Caja</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;usuario&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Marcos&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rol&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dueño&quot;,&quot;Vendedor&quot;],&quot;default&quot;:&quot;Dueño&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { contado: "" };
+  apertura = 20000;
+  ventas = [
+    { label: "Efectivo", detalle: "7 ventas", monto: 107300, dot: "#6B7A4F" },
+    { label: "Transferencia / QR", detalle: "3 ventas", monto: 52200, dot: "#B87A56" },
+    { label: "Tarjeta", detalle: "2 ventas", monto: 25000, dot: "#8C7660" },
+  ];
+
+  fmt(n) { return "$ " + Math.abs(n).toLocaleString("es-AR"); }
+
+  renderVals() {
+    const usuario = this.props.usuario ?? "Marcos";
+    const rol = this.props.rol ?? "Dueño";
+    const navItems = [
+      { label: "Dashboard" }, { label: "Productos" },
+      { label: "Caja", on: true }, { label: "Cuentas", badge: "3" },
+      { label: "Reportes", owner: true }, { label: "Usuarios", owner: true },
+    ].filter(i => !i.owner || rol === "Dueño");
+
+    const efectivo = this.ventas[0].monto;
+    const totalVendido = this.ventas.reduce((a, v) => a + v.monto, 0);
+    const esperado = this.apertura + efectivo;
+    const raw = (this.state.contado || "").replace(/\D/g, "");
+    const contadoNum = parseInt(raw, 10) || 0;
+    const tieneConteo = raw.length > 0;
+    const dif = contadoNum - esperado;
+
+    let difColor = "#A89479", difBg = "#F7F0E6", difBorder = "#E4D6C3", difTexto = "Ingresá el conteo para ver la diferencia.";
+    if (tieneConteo) {
+      if (dif === 0) { difColor = "#6B7A4F"; difBg = "#F0F2E7"; difBorder = "#DCE1CB"; difTexto = "El conteo coincide con lo esperado."; }
+      else if (dif > 0) { difColor = "#D4694A"; difBg = "#FBEEE8"; difBorder = "#F0D6C9"; difTexto = "Sobra efectivo en caja."; }
+      else { difColor = "#7A2E2A"; difBg = "#F6E7E4"; difBorder = "#E3C7C2"; difTexto = "Falta efectivo en caja."; }
+    }
+
+    const hoy = new Date().toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
+
+    return {
+      usuario, rol, inicial: usuario.slice(0, 2).toUpperCase(),
+      menuAbierto: this.state.menu ?? false,
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
+      nav: navItems.map(i => ({
+        label: i.label, badge: i.badge || false,
+        style: "display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:14.5px;font-weight:" + (i.on ? "600" : "500") + ";color:" + (i.on ? "#4A342A" : "#8C7660") + ";background:" + (i.on ? "#F1E6D6" : "transparent") + ";cursor:pointer;transition:background .15s",
+        dotStyle: "width:6px;height:6px;border-radius:50%;flex:none;background:" + (i.on ? "#B87A56" : "#DDCDB6"),
+      })),
+      subtitulo: hoy.charAt(0).toUpperCase() + hoy.slice(1) + " · abierta a las 09:40 por " + usuario,
+      medios: this.ventas.map(v => ({ ...v, monto: this.fmt(v.monto) })),
+      totalVendido: this.fmt(totalVendido),
+      apertura: this.fmt(this.apertura),
+      efectivo: this.fmt(efectivo),
+      esperado: this.fmt(esperado),
+      contado: this.state.contado,
+      onContado: (e) => this.setState({ contado: e.target.value }),
+      diferencia: tieneConteo ? (dif > 0 ? "+ " : dif < 0 ? "− " : "") + this.fmt(dif) : "—",
+      difColor, difBg, difBorder, difTexto,
+      hayDif: tieneConteo && dif !== 0,
+      noPuede: !tieneConteo,
+      btnStyle: "flex:1;padding:15px;border:0;border-radius:12px;font-family:'Work Sans',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.02em;transition:background .15s;" + (tieneConteo
+        ? "background:#B87A56;color:#FFF8F0;cursor:pointer;box-shadow:0 8px 18px -12px rgba(184,122,86,.9);"
+        : "background:#EEE3D3;color:#B9A890;cursor:not-allowed;"),
+    };
+  }
+}
+</script>
+</body>
+</html>
