@@ -26,7 +26,7 @@ _A definir con nombres concretos de fuente (Google Fonts) al cerrar el inventari
 
 ### Stack
 - **Frontend:** React + Vite + TypeScript, construido como **PWA (offline-first)**. Uso de IndexedDB (vía Dexie.js) para cachear catálogo de productos y encolar ventas pendientes cuando no hay internet. Service Worker para funcionamiento sin conexión. Deploy en **Vercel**.
-- **Backend/Datos:** **Supabase** — PostgreSQL administrado + Autenticación + Storage (fotos de producto) + API autogenerada (PostgREST) + Edge Functions (TypeScript/Deno) para lógica de negocio custom (cálculo de diferencia de caja, generación de SKU, chequeo de alertas de fiados).
+- **Backend/Datos:** **Supabase** — PostgreSQL administrado + Autenticación + Storage (fotos de producto) + API autogenerada (PostgREST). La lógica de negocio custom (generación de SKU, cálculo de diferencia de caja, estado de cuentas) se resuelve con **funciones y vistas SQL/PL-pgSQL nativas de Postgres** (trigger, función RPC, vista), no con Edge Functions — evita sumar un runtime serverless aparte para lógica que Postgres ya resuelve.
 - **Autenticación:** Supabase Auth, adaptado para login por usuario/contraseña (sin email visible): el nombre de usuario se mapea internamente a un email técnico (ej. `vendedor1@showroomciro.internal`) de forma transparente para el usuario final. Roles (Dueño/Vendedor) controlados con una tabla de perfiles + **Row Level Security (RLS)** de Postgres, que es lo que efectivamente impone los permisos definidos en `requirements.md` a nivel base de datos (no solo en el frontend).
 
 ### Modo Offline-First (Ventas/POS)
@@ -42,26 +42,28 @@ _A definir con nombres concretos de fuente (Google Fonts) al cerrar el inventari
 - `categorias` (id, nombre)
 - `productos` (id, nombre, descripción, categoría_id, precio, foto_url, activo)
 - `variantes` (id, producto_id, talle, color, sku, stock)
-- `ventas` (id, usuario_id, fecha, total, medio_pago, estado_sync)
+- `ventas` (id, usuario_id, caja_id, fecha, total, medio_pago, estado_sync)
 - `venta_items` (id, venta_id, variante_id, cantidad, precio_unitario)
 - `ajustes_stock` (id, variante_id, usuario_id, tipo: suma/resta, cantidad, motivo, fecha)
 - `cajas` (id, usuario_apertura_id, usuario_cierre_id, monto_inicial, monto_esperado, monto_contado, diferencia, fecha_apertura, fecha_cierre)
-- `cuentas` (id, cliente_nombre, cliente_telefono, monto_total, fecha_limite, estado: al_dia/por_vencer/vencido/pagado)
-- `cuenta_pagos` (id, cuenta_id, monto, fecha)
+- `cuentas` (id, cliente_nombre, cliente_telefono, monto_total, fecha_limite) — el estado (al_dia/por_vencer/vencido/pagado) ya NO se guarda como columna: se calcula al vuelo en la vista `cuentas_vista`, cruzando con `cuenta_pagos`, para que nunca quede desactualizado.
+- `cuenta_pagos` (id, cuenta_id, monto, fecha) — `cuenta_id` usa `on delete restrict`: no se puede borrar una cuenta que ya tiene pagos cargados, para no perder ese historial.
+
+> Nota: `ventas.caja_id` (FK a `cajas`) vincula cada venta con la caja que estaba abierta al momento de hacerla — es lo que permite calcular `monto_esperado` en `cerrar_caja()` sin depender de qué usuario vendió. El Módulo 6 (POS) debe enviar este `caja_id` en cada venta, incluidas las que se guardan offline en la cola de Dexie (la apertura de caja requiere conexión, así que el id ya está disponible antes de perder internet).
 
 ### Impresión de ticket
 Ticket generado como HTML/CSS con ancho de impresora térmica (58mm/80mm) e impreso vía el diálogo de impresión estándar del navegador (`window.print()`). Compatible con cualquier impresora ya instalada en Windows, sin agente local adicional.
 
-### APIs principales (sobre la API autogenerada de Supabase + Edge Functions custom)
+### APIs principales (sobre la API autogenerada de Supabase — PostgREST)
 - `POST /auth/login` — login por usuario/contraseña
 - `GET /productos`, `POST /productos`, `PUT /productos/:id`, `DELETE /productos/:id`
-- `POST /variantes` (con generación automática de SKU vía Edge Function)
+- `POST /variantes` (el SKU se genera solo, vía trigger `BEFORE INSERT` en Postgres — no requiere llamada aparte)
 - `POST /ajustes-stock`
 - `POST /ventas` (registrada desde el mostrador; consulta de solo lectura disponible para el celular)
-- `POST /caja/apertura`, `POST /caja/cierre` (con cálculo de diferencia vía Edge Function)
+- `POST /caja/apertura`, `rpc: cerrar_caja(caja_id, monto_contado)` (función SQL que calcula la diferencia y deja la caja cerrada)
 - `GET /caja/historial`
-- `POST /cuentas`, `POST /cuentas/:id/pagos`, `GET /cuentas` (con cálculo de estado al_dia/por_vencer/vencido)
-- `GET /reportes/ventas?periodo=`, `GET /reportes/top-productos`
+- `POST /cuentas`, `POST /cuentas/:id/pagos`, `GET /cuentas_vista` (vista SQL que calcula el estado al_dia/por_vencer/vencido/pagado al vuelo, sin necesidad de mantenerlo actualizado)
+- `GET /reportes_ventas_vista?periodo=`, `GET /reportes_top_productos_vista` (vistas/funciones SQL de agregación)
 - `POST /usuarios`, `PATCH /usuarios/:id` (desactivar) — Dueño/a, disponible también desde mobile
 
 ### Hosting
