@@ -27,10 +27,11 @@
 
 ## Módulo 2 — Funciones y vistas SQL (lógica de negocio)
 > Corrección de alcance: se resuelve con funciones/vistas nativas de Postgres, no con Edge Functions (Deno) — evita sumar un runtime serverless aparte para lógica que SQL ya resuelve. Ver nota en `design.md`, sección Arquitectura técnica.
-- [ ] Trigger `BEFORE INSERT` en `variantes`: genera el SKU interno automático (ej. `SC-001-AZ-M`).
-- [ ] Función RPC `cerrar_caja(caja_id, monto_contado)`: calcula `monto_esperado` (suma de ventas desde la apertura), guarda `monto_contado`, calcula `diferencia`, completa `fecha_cierre` y `usuario_cierre_id`.
-- [ ] Vista `cuentas_vista`: calcula el estado (al_dia/por_vencer/vencido/pagado) al vuelo, cruzando `cuentas` con la suma de `cuenta_pagos`, sin necesidad de mantenimiento.
-- [ ] Vistas/funciones de reportes: ventas por período, top productos, ticket promedio (ver `prd.md` para la definición exacta de cada métrica).
+- [x] Trigger `BEFORE INSERT` en `variantes`: genera el SKU interno automático (ej. `SC-001-AZ-M`).
+- [x] Función RPC `cerrar_caja(caja_id, monto_contado)`.
+- [x] Vista `cuentas_vista`.
+- [x] Vistas/funciones de reportes (incluye extras: `reportes_cuentas_pendientes_vista`, `reporte_ventas_rango`, `reporte_top_productos_rango`).
+- [x] Endurecimiento de RLS post-auditoría (ventas/cajas/venta_items sin UPDATE, SELECT acotado del Vendedor, `caja_actual_resumen()`, caja única abierta) — ver detalle en `design.md`.
 
 ---
 
@@ -114,4 +115,4 @@
 
 ---
 
-**Estado: Módulo 0 y Módulo 1 completos. Arrancando Módulo 2 (funciones y vistas SQL).**
+**Estado: Módulos 0, 1, 2 y 3 completos. Arrancando Módulo 4 (Frontend: núcleo, layout y sesión).**

@@ -29,6 +29,14 @@ _A definir con nombres concretos de fuente (Google Fonts) al cerrar el inventari
 - **Backend/Datos:** **Supabase** — PostgreSQL administrado + Autenticación + Storage (fotos de producto) + API autogenerada (PostgREST). La lógica de negocio custom (generación de SKU, cálculo de diferencia de caja, estado de cuentas) se resuelve con **funciones y vistas SQL/PL-pgSQL nativas de Postgres** (trigger, función RPC, vista), no con Edge Functions — evita sumar un runtime serverless aparte para lógica que Postgres ya resuelve.
 - **Autenticación:** Supabase Auth, adaptado para login por usuario/contraseña (sin email visible): el nombre de usuario se mapea internamente a un email técnico (ej. `vendedor1@showroomciro.internal`) de forma transparente para el usuario final. Roles (Dueño/Vendedor) controlados con una tabla de perfiles + **Row Level Security (RLS)** de Postgres, que es lo que efectivamente impone los permisos definidos en `requirements.md` a nivel base de datos (no solo en el frontend).
 
+### Seguridad reforzada en Módulo 2 (post-auditoría)
+Se detectó que filtrar los reportes solo a nivel de vista (`reportes_*_vista`) no alcanza si el rol subyacente tiene SELECT amplio sobre las tablas base — un Vendedor podía reconstruir el mismo reporte consultando `ventas`/`venta_items` directo. Se reforzó así:
+- El Vendedor solo puede ver (`SELECT`) sus propias ventas de la caja actualmente abierta (vía función `caja_abierta_id()`); el Dueño/a ve todo el historial.
+- `UPDATE` deshabilitado por completo sobre `ventas`, `venta_items` y `cajas`, para ambos roles — evita alterar registros financieros ya conciliados. El cierre de caja es exclusivamente vía la función `cerrar_caja()` (`security definer`).
+- `cajas_insert` exige `usuario_apertura_id = auth.uid()` (que además es el default de la columna) y que los campos de cierre vengan en null — nadie puede abrir una caja a nombre de otro usuario ni insertarla ya "cerrada".
+- Índice único parcial (`uq_cajas_una_abierta`) impide tener más de una caja abierta al mismo tiempo.
+- KPI "ventas de hoy" del Dashboard expuesto vía `caja_actual_resumen()` (`security definer`), con conteo ciego: no expone `monto_esperado` antes de que el Vendedor cuente el efectivo.
+
 ### Modo Offline-First (Ventas/POS)
 > Se simplifica respecto a la primera versión: como el celular del Dueño/a ahora **solo consulta** (no vende), ya no hay dos puntos generando ventas al mismo tiempo. Se elimina la necesidad de resolución de conflictos de stock entre dispositivos.
 
@@ -40,7 +48,7 @@ _A definir con nombres concretos de fuente (Google Fonts) al cerrar el inventari
 ### Modelo de datos (entidades principales)
 - `usuarios` (id, nombre_usuario, rol: dueño/vendedor, activo)
 - `categorias` (id, nombre)
-- `productos` (id, nombre, descripción, categoría_id, precio, foto_url, activo)
+- `productos` (id, codigo, nombre, descripción, categoría_id, precio, foto_url, activo) — `codigo` es un correlativo autonumerado (1, 2, 3…), usado para generar el SKU corto de cada variante.
 - `variantes` (id, producto_id, talle, color, sku, stock)
 - `ventas` (id, usuario_id, caja_id, fecha, total, medio_pago, estado_sync)
 - `venta_items` (id, venta_id, variante_id, cantidad, precio_unitario)
