@@ -9,7 +9,7 @@
 -- - Insertar filas directamente en auth.users es válido para seed/desarrollo, pero en
 --   producción lo normal es crear usuarios vía Supabase Auth (Admin API / Edge Function),
 --   que es lo que design.md describe para el alta de vendedores desde la app.
--- - Requiere el schema de 0001_init_schema.sql y las policies de 0002_rls_policies.sql
+-- - Requiere 0001_init_schema.sql, 0002_rls_policies.sql y 0003_funciones_negocio.sql
 --   ya aplicadas.
 
 -- ============================================================================
@@ -73,14 +73,15 @@ insert into public.productos_costos (producto_id, costo) values
 -- ============================================================================
 -- Variantes (talle + color distintos, con stock)
 -- ============================================================================
-insert into public.variantes (id, producto_id, talle, color, sku, stock) values
+-- Sin `sku`: lo genera el trigger de 0003_funciones_negocio.sql (SC-001-AZ-M, SC-001-NG-L).
+insert into public.variantes (id, producto_id, talle, color, stock) values
   (
     '66666666-6666-6666-6666-666666666666',
     '55555555-5555-5555-5555-555555555555',
-    'M', 'Azul', 'REM-OVR-AZ-M-0001', 10
+    'M', 'Azul', 10
   ),
   (
     '77777777-7777-7777-7777-777777777777',
     '55555555-5555-5555-5555-555555555555',
-    'L', 'Negro', 'REM-OVR-NG-L-0002', 5
+    'L', 'Negro', 5
   );
