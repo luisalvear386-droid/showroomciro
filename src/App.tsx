@@ -9,6 +9,8 @@ import { AperturaCajaPage } from './pages/apertura-caja-page'
 import { DashboardPage } from './pages/dashboard-page'
 import { EnConstruccionPage } from './pages/en-construccion-page'
 import { LoginPage } from './pages/login-page'
+import { ProductoFormPage } from './pages/producto-form-page'
+import { ProductosPage } from './pages/productos-page'
 
 function App() {
   return (
@@ -29,7 +31,9 @@ function App() {
                   {/* Destinos de "Nueva Venta" / "Nueva Cuenta" del Dashboard (sin ítem de menú) */}
                   <Route path="ventas" element={<EnConstruccionPage titulo="Nueva Venta" modulo={6} />} />
                   <Route path="cuentas/nueva" element={<EnConstruccionPage titulo="Nueva Cuenta" modulo={7} />} />
-                  <Route path="productos" element={<EnConstruccionPage titulo="Productos" modulo={5} />} />
+                  <Route path="productos" element={<ProductosPage />} />
+                  <Route path="productos/nuevo" element={<ProductoFormPage />} />
+                  <Route path="productos/:id/editar" element={<ProductoFormPage />} />
                   <Route path="caja" element={<EnConstruccionPage titulo="Caja" modulo={8} />} />
                   <Route path="cuentas" element={<EnConstruccionPage titulo="Cuentas" modulo={7} />} />
 

@@ -1,0 +1,146 @@
+/* Piezas visuales compartidas de Productos (listado, alta/edición, ajuste de stock) */
+
+.punto-color {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid #ddcdb6;
+  background: #ddcdb6;
+}
+
+.foto-vacia {
+  display: block;
+  background: repeating-linear-gradient(135deg, #f1e6d6 0 6px, #eadcc8 6px 12px);
+}
+
+img.foto-vacia,
+.foto-producto {
+  object-fit: cover;
+}
+
+.sku {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  color: var(--color-texto-tenue);
+}
+
+.stock--agotado {
+  color: var(--color-vino);
+}
+
+.stock--bajo {
+  color: var(--color-coral);
+}
+
+.mensaje-error {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  border-radius: 11px;
+  background: #f6e7e4;
+  border: 1px solid #e3c7c2;
+  color: var(--color-vino);
+  font-size: 13px;
+}
+
+.mensaje-error::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.mensaje-error--coral {
+  background: #fbeee8;
+  border-color: #f0d6c9;
+  color: var(--color-coral);
+}
+
+.mensaje-ok {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  border-radius: 11px;
+  background: #f0f2e7;
+  border: 1px solid #dce1cb;
+  color: var(--color-oliva);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.boton-primario {
+  padding: 13px 22px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--color-canela);
+  color: #fff8f0;
+  font-family: var(--fuente-ui);
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 18px -12px rgba(184, 122, 86, 0.9);
+  transition: background 0.15s;
+}
+
+.boton-primario:hover:not(:disabled) {
+  background: #a56a48;
+}
+
+.boton-primario:disabled {
+  background: #eee3d3;
+  color: var(--color-texto-suave);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.campo__label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.campo__input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--color-lino);
+  border-radius: 11px;
+  background: #fff;
+  font-family: var(--fuente-ui);
+  font-size: 15px;
+  color: var(--color-cacao);
+}
+
+.campo__input::placeholder {
+  color: #c7b69c;
+}
+
+.campo__input:focus {
+  outline: none;
+  border-color: var(--color-canela);
+  box-shadow: 0 0 0 3px rgba(184, 122, 86, 0.15);
+}
+
+.campo__input[aria-invalid='true'] {
+  border-color: #ddb9b2;
+}
+
+.campo__input:disabled {
+  background: var(--color-crema);
+  color: var(--color-texto-medio);
+}
+
+.campo__ayuda {
+  font-size: 12px;
+  color: var(--color-texto-tenue);
+}

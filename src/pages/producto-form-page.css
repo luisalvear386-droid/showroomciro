@@ -1,0 +1,536 @@
+/* Productos — Alta/Edición, según prototipos/Producto Alta.dc.html */
+
+.producto-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 900px;
+  width: 100%;
+  min-width: 0;
+}
+
+.producto-form__titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.producto-form__titulo {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--fuente-titulos);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.producto-form__codigo {
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.producto-form__bajada {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--color-texto-medio);
+}
+
+/* ---------- Pasos ---------- */
+
+.producto-form__pasos {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.producto-form__paso-contenedor {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.producto-form__paso {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 16px;
+  border: 1px solid var(--color-lino);
+  border-radius: 13px;
+  background: transparent;
+  color: var(--color-texto-medio);
+  font-family: var(--fuente-ui);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.producto-form__paso[aria-current='step'] {
+  border-color: var(--color-canela);
+  background: var(--color-card);
+  color: var(--color-cacao);
+}
+
+.producto-form__paso-num {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f1e6d6;
+  color: var(--color-texto-tenue);
+}
+
+.producto-form__paso[aria-current='step'] .producto-form__paso-num {
+  background: var(--color-canela);
+  color: #fff8f0;
+}
+
+.producto-form__paso-textos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.producto-form__paso-etiqueta {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.producto-form__paso-ayuda {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.producto-form__paso-linea {
+  flex: 1;
+  height: 1px;
+  min-width: 20px;
+  background: var(--color-lino);
+}
+
+/* ---------- Cards ---------- */
+
+.producto-form__card {
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  border-radius: 16px;
+  box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+}
+
+/* ---------- Paso 1 ---------- */
+
+.producto-form__datos {
+  display: grid;
+  grid-template-columns: 1fr 210px;
+  gap: 24px;
+  align-items: start;
+  padding: 26px 28px 28px;
+}
+
+.producto-form__campos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.producto-form__textarea {
+  font-size: 14.5px;
+  resize: vertical;
+}
+
+.producto-form__select {
+  cursor: pointer;
+}
+
+.producto-form__grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+}
+
+.producto-form__monto {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.producto-form__moneda {
+  position: absolute;
+  left: 15px;
+  font-family: var(--fuente-titulos);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-canela);
+  pointer-events: none;
+}
+
+.producto-form__monto-input {
+  padding-left: 34px;
+}
+
+.producto-form__error-campo {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-vino);
+}
+
+.producto-form__foto {
+  position: relative;
+  height: 232px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  overflow: hidden;
+  border: 1px dashed #ddcdb6;
+  border-radius: 14px;
+  background: repeating-linear-gradient(135deg, #f5ede1 0 10px, #f1e6d6 10px 20px);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.producto-form__foto:hover,
+.producto-form__foto:focus-within {
+  border-color: var(--color-canela);
+}
+
+.producto-form__foto--con-foto {
+  border-style: solid;
+}
+
+.producto-form__foto-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.producto-form__foto-imagen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.producto-form__foto-cambiar {
+  position: absolute;
+  bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 252, 247, 0.92);
+  border: 1px solid var(--color-lino);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b5545;
+}
+
+.producto-form__foto-mas {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  line-height: 1;
+  color: var(--color-canela);
+}
+
+.producto-form__foto-texto {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #6b5545;
+}
+
+.producto-form__foto-ayuda {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  color: #9c8974;
+}
+
+/* ---------- Paso 2 ---------- */
+
+.producto-form__variantes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.producto-form__agregar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 24px;
+}
+
+.producto-form__seccion {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-texto-tenue);
+}
+
+.producto-form__agregar-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr 0.8fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.producto-form__input-chico {
+  padding: 12px 14px;
+  font-size: 14.5px;
+}
+
+.producto-form__agregar-boton {
+  padding: 13px 20px;
+  border: 1px solid var(--color-canela);
+  border-radius: 11px;
+  background: var(--color-card);
+  color: var(--color-canela);
+  font-family: var(--fuente-ui);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.producto-form__agregar-boton:hover:not(:disabled) {
+  background: var(--color-canela);
+  color: #fff8f0;
+}
+
+.producto-form__tabla-card {
+  overflow: hidden;
+}
+
+.producto-form__tabla-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-lino);
+}
+
+.producto-form__tabla-titulo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.producto-form__tabla-resumen {
+  font-size: 12.5px;
+  color: var(--color-texto-tenue);
+}
+
+.producto-form__tabla-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.producto-form__tabla {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.producto-form__tabla th {
+  text-align: left;
+  padding: 11px 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-texto-tenue);
+  font-weight: 600;
+  background: var(--color-crema);
+  border-bottom: 1px solid var(--color-lino);
+}
+
+.producto-form__tabla td {
+  padding: 10px 14px;
+}
+
+.producto-form__tabla th:first-child,
+.producto-form__tabla td:first-child {
+  padding-left: 20px;
+}
+
+.producto-form__tabla th:last-child,
+.producto-form__tabla td:last-child {
+  padding-right: 20px;
+}
+
+.producto-form__tabla .num {
+  text-align: right;
+}
+
+.producto-form__tabla tbody tr {
+  border-bottom: 1px solid #f0e6d8;
+}
+
+.producto-form__fila-nueva {
+  background: #fdf9f3;
+}
+
+.producto-form__sku {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  color: #6b5545;
+}
+
+.producto-form__sku--pendiente {
+  font-family: var(--fuente-ui);
+  font-style: italic;
+  color: var(--color-texto-suave);
+}
+
+.producto-form__talle,
+.producto-form__stock {
+  font-weight: 600;
+}
+
+.producto-form__color {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.producto-form__minimo {
+  width: 70px;
+  padding: 7px 9px;
+  border: 1px solid var(--color-lino);
+  border-radius: 9px;
+  background: #fff;
+  font-family: var(--fuente-ui);
+  font-size: 13.5px;
+  color: var(--color-cacao);
+  text-align: right;
+}
+
+.producto-form__minimo:focus {
+  outline: none;
+  border-color: var(--color-canela);
+  box-shadow: 0 0 0 3px rgba(184, 122, 86, 0.15);
+}
+
+.producto-form__ajustar {
+  padding: 7px 12px;
+  border: 1px solid var(--color-lino);
+  border-radius: 9px;
+  background: #fff;
+  font-family: var(--fuente-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b5545;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.producto-form__ajustar:hover:not(:disabled) {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.producto-form__quitar {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-lino);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--color-texto-tenue);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.producto-form__quitar:hover:not(:disabled) {
+  border-color: var(--color-vino);
+  color: var(--color-vino);
+}
+
+.producto-form__vacio {
+  padding: 38px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-texto-tenue);
+}
+
+/* ---------- Botones ---------- */
+
+.producto-form__botones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.producto-form__botones-derecha {
+  display: flex;
+  gap: 10px;
+}
+
+.producto-form__secundario {
+  padding: 14px 20px;
+  border: 1px solid var(--color-lino);
+  border-radius: 12px;
+  background: var(--color-card);
+  color: #6b5545;
+  font-family: var(--fuente-ui);
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.producto-form__secundario:hover:not(:disabled) {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.producto-form__secundario:disabled {
+  color: #c7b69c;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+  .producto-form__datos {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .producto-form__agregar-campos {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .producto-form__agregar-boton {
+    grid-column: 1 / -1;
+  }
+
+  .producto-form__paso-ayuda {
+    display: none;
+  }
+}
