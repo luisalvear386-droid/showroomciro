@@ -9,6 +9,8 @@
   --color-vino: #7a2e2a;
   --color-card: #fffcf7;
   --color-texto-suave: #b9a890;
+  --color-texto-medio: #8c7660;
+  --color-texto-tenue: #a89479;
 
   --fuente-titulos: 'Fraunces', Georgia, serif;
   --fuente-ui: 'Work Sans', system-ui, sans-serif;
@@ -69,4 +71,9 @@ a:hover {
 
 .boton-secundario:hover {
   border-color: var(--color-canela);
+}
+
+/* Variante dentro del layout: el alto lo pone el contenido, no el viewport */
+.pantalla-centrada--interna {
+  min-height: 50vh;
 }

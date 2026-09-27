@@ -1,0 +1,449 @@
+/* Layout — según prototipos/Dashboard ShowroomCiro.dc.html (desktop) y Mobile Dashboard.dc.html */
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-crema);
+}
+
+/* ---------- Sidebar (desktop) ---------- */
+
+.layout__sidebar {
+  width: 232px;
+  flex: none;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 24px 16px;
+  background: var(--color-card);
+  border-right: 1px solid var(--color-lino);
+}
+
+.layout__marca {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 6px;
+}
+
+.layout__logo {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 11px;
+  background: #f1e6d6;
+  border: 1px dashed var(--color-lino);
+}
+
+.layout__nombre {
+  font-family: var(--fuente-titulos);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.layout__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.layout__nav-titulo {
+  padding: 0 8px 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  font-weight: 600;
+}
+
+.layout__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--color-texto-medio);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.layout__nav-item:hover {
+  color: var(--color-cacao);
+  background: #f7efe3;
+}
+
+.layout__nav-item.active {
+  font-weight: 600;
+  color: var(--color-cacao);
+  background: #f1e6d6;
+}
+
+.layout__nav-punto {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: #ddcdb6;
+}
+
+.layout__nav-item.active .layout__nav-punto {
+  background: var(--color-canela);
+}
+
+.layout__nav-etiqueta {
+  flex: 1;
+}
+
+.layout__badge,
+.layout__tab-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-coral);
+  color: #fff8f0;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout__caja {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 13px;
+  background: var(--color-crema);
+  border: 1px solid var(--color-lino);
+}
+
+.layout__caja-titulo {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  font-weight: 600;
+}
+
+.layout__caja-estado {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-oliva);
+}
+
+.layout__caja-estado--cerrada {
+  color: var(--color-texto-medio);
+}
+
+.layout__caja-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------- Columna principal + header ---------- */
+
+.layout__principal {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout__header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 32px;
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-lino);
+}
+
+.layout__header-titulos {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 2px;
+  min-width: 0;
+}
+
+.layout__header-nombre {
+  font-family: var(--fuente-titulos);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.layout__header-fecha {
+  font-size: 12.5px;
+  color: var(--color-texto-tenue);
+}
+
+.layout__logo--mobile {
+  display: none;
+}
+
+.layout__contenido {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  padding: 32px;
+}
+
+/* ---------- Menú de usuario ---------- */
+
+.menu-usuario {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.menu-usuario__boton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 999px;
+  background: var(--color-crema);
+  border: 1px solid var(--color-lino);
+  cursor: pointer;
+  font-family: var(--fuente-ui);
+  color: var(--color-cacao);
+  transition: border-color 0.15s;
+}
+
+.menu-usuario__boton:hover,
+.menu-usuario__boton[aria-expanded='true'] {
+  border-color: var(--color-canela);
+}
+
+.menu-usuario__avatar {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-canela);
+  color: #fff8f0;
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-usuario__datos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.menu-usuario__nombre {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.menu-usuario__rol {
+  font-size: 11px;
+  color: var(--color-texto-tenue);
+}
+
+.menu-usuario__flecha {
+  font-size: 11px;
+  color: var(--color-texto-tenue);
+  line-height: 1;
+  padding-left: 2px;
+}
+
+.menu-usuario__desplegable {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  min-width: 186px;
+  padding: 6px;
+  border-radius: 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  box-shadow: 0 18px 36px -20px rgba(74, 52, 42, 0.5);
+}
+
+.menu-usuario__opcion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 13px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--fuente-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-cacao);
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.menu-usuario__opcion:hover:not(:disabled) {
+  background: var(--color-canela);
+  color: #fff8f0;
+}
+
+.menu-usuario__opcion:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.menu-usuario__punto {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-canela);
+}
+
+.menu-usuario__opcion:hover:not(:disabled) .menu-usuario__punto {
+  background: #fff8f0;
+}
+
+/* ---------- Menú inferior (mobile) ---------- */
+
+.layout__tabs {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .layout__sidebar {
+    display: none;
+  }
+
+  .layout__header {
+    padding: 10px 20px 14px;
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+
+  .layout__header-titulos {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+  }
+
+  .layout__logo--mobile {
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+
+  .layout__header-nombre {
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  /* En mobile la fecha va debajo del saludo del Dashboard */
+  .layout__header-fecha {
+    display: none;
+  }
+
+  .menu-usuario__boton {
+    gap: 8px;
+    padding: 5px 11px 5px 5px;
+  }
+
+  .menu-usuario__avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .menu-usuario__nombre {
+    font-size: 12.5px;
+  }
+
+  .menu-usuario__rol {
+    display: none;
+  }
+
+  .layout__contenido {
+    padding: 20px 18px calc(108px + env(safe-area-inset-bottom));
+  }
+
+  .layout__tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    padding: 9px 12px calc(12px + env(safe-area-inset-bottom));
+    background: var(--color-card);
+    border-top: 1px solid var(--color-lino);
+  }
+
+  .layout__tab {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 2px;
+    border-radius: 13px;
+    color: #6b5545;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .layout__tab.active {
+    background: #f5e7da;
+    color: var(--color-canela);
+  }
+
+  .layout__tab:hover {
+    color: var(--color-canela);
+  }
+
+  .layout__tab-icono {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+  }
+
+  .layout__tab-badge {
+    position: absolute;
+    top: -6px;
+    left: calc(100% - 6px);
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    font-size: 10px;
+  }
+
+  .layout__tab-etiqueta {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+}
