@@ -20,7 +20,7 @@
 - [x] Crear las tablas según el modelo de datos de `design.md` (incluye `productos_costos`, agregada durante la ejecución para poder ocultar el costo al Vendedor vía RLS row-level).
 - [x] Definir relaciones (foreign keys) y constraints (stock no negativo, montos no negativos, `on delete restrict` en `cuenta_pagos` para no perder historial de cobros).
 - [x] Configurar **Row Level Security (RLS)** por rol (sin políticas de DELETE en tablas de auditoría: `ventas`, `venta_items`, `cajas`, `ajustes_stock`, `cuenta_pagos`, `perfiles`).
-- [x] Configurar el bucket de **Storage** (`fotos-productos`, público) para fotos de producto.
+- [x] Configurar el bucket de **Storage** (`fotos-productos`, público) para fotos de producto — versionado en `supabase/migrations/0005_storage.sql` (bucket + políticas, idempotente).
 - [x] Cargar datos de prueba (seed): 2 categorías, 1 producto con 2 variantes, 1 usuario Dueño/a (`ciro`) y 1 Vendedor (`vendedor1`).
 
 ---
@@ -35,11 +35,11 @@
 
 ---
 
-## Módulo 3 — Autenticación y roles
-- [ ] Configurar Supabase Auth con el mapeo usuario→email técnico (`nombre_usuario@showroomciro.internal`).
-- [ ] Tabla de perfiles vinculada a `auth.users`, con campo `rol` (dueño/vendedor) — ya existe desde el Módulo 1.
-- [ ] Pantalla de **Login** conectada (según prototipo).
-- [ ] Middleware/guard de rutas por rol en el frontend (complementa RLS, no lo reemplaza).
+## Módulo 3 — Autenticación y roles ✅ COMPLETO
+- [x] Configurar Supabase Auth con el mapeo usuario→email técnico (`nombre_usuario@showroomciro.internal`).
+- [x] Tabla de perfiles vinculada a `auth.users`, con campo `rol` (dueño/vendedor) — ya existe desde el Módulo 1.
+- [x] Pantalla de **Login** conectada (según prototipo).
+- [x] Middleware/guard de rutas por rol en el frontend (complementa RLS, no lo reemplaza).
 
 ---
 
