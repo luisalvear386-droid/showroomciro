@@ -43,13 +43,13 @@
 
 ---
 
-## Módulo 4 — Frontend: Núcleo, layout y sesión
-- [ ] Setup de routing.
-- [ ] Layout con sidebar (desktop) y menú inferior (mobile), según prototipos — sin ítem "Ventas", con "Cuentas" en vez de "Fiados".
-- [ ] Pantalla **Apertura de Caja** (bloqueante post-login).
-- [ ] Pantalla **Dashboard** con KPIs del día y panel de Alertas (stock bajo, cuentas por vencer).
-- [ ] Bloque de usuario en el header clickeable → "Cerrar sesión".
-- [ ] Lógica de **logout automático** al confirmar Cierre de Caja.
+## Módulo 4 — Frontend: Núcleo, layout y sesión ✅ COMPLETO
+- [x] Setup de routing.
+- [x] Layout con sidebar (desktop) y menú inferior (mobile), según prototipos — sin ítem "Ventas", con "Cuentas" en vez de "Fiados".
+- [x] Pantalla **Apertura de Caja** (bloqueante post-login).
+- [x] Pantalla **Dashboard** con KPIs del día y panel de Alertas (stock bajo, cuentas por vencer) — umbral por variante en `variantes.stock_minimo` (migración `0006_stock_minimo.sql`).
+- [x] Bloque de usuario en el header clickeable → "Cerrar sesión".
+- [x] Lógica de **logout automático** al confirmar Cierre de Caja — `useAuth().logout()` disponible; se conecta al confirmar el cierre en el Módulo 8.
 
 ---
 
@@ -115,4 +115,4 @@
 
 ---
 
-**Estado: Módulos 0, 1, 2 y 3 completos. Arrancando Módulo 4 (Frontend: núcleo, layout y sesión).**
+**Estado: Módulos 0, 1, 2, 3 y 4 completos. Arrancando Módulo 5 (Frontend: Productos y Stock).**

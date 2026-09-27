@@ -88,7 +88,9 @@ La apertura de caja es obligatoria antes de poder vender; se resuelve como paso 
 
 1. **Login** — usuario y contraseña simples (sin email). Cada Vendedor tiene su propio usuario.
 2. **Apertura de Caja** — pantalla bloqueante post-login: registro de monto inicial en efectivo. Se salta si la caja ya fue abierta ese día por otro usuario.
+   > Nota: se agregó un enlace de "Cerrar sesión" en esta pantalla, fuera del prototipo original — necesario para poder cambiar de usuario o salir si alguien entró por error antes de abrir caja.
 3. **Dashboard/Inicio** — KPIs del día (ventas de hoy, estado de caja actual) + panel de alertas (stock bajo, fiados por vencer/vencidos).
+   > El KPI "Caja actual" muestra solo el estado (abierta desde HH:MM / cerrada) y **no muestra `monto_esperado`** ni el efectivo acumulado: el cierre es a conteo ciego y `caja_actual_resumen()` no expone esos montos (ver [Seguridad reforzada en Módulo 2](#seguridad-reforzada-en-módulo-2-post-auditoría)). El Dashboard respeta esa regla aunque el prototipo mostraba "Efectivo esperado".
 4. **Ventas (POS)** — pantalla principal de venta (accedida solo vía botón "Nueva Venta" del Dashboard; al confirmar vuelve al Dashboard):
    - Buscador rápido por nombre o SKU (arriba).
    - Grilla visual de productos con foto (catálogo, navegable por categoría).
@@ -109,6 +111,8 @@ La apertura de caja es obligatoria antes de poder vender; se resuelve como paso 
 
 ### Listado de pantallas (Mobile — acceso remoto del Dueño/a)
 Menú inferior tipo app con 4 secciones: **Dashboard, Cuentas, Reportes, Configuración** — las primeras 3 son de **solo consulta/lectura**. **Configuración** contiene, por ahora, **Gestión de Usuarios** (alta/baja de Vendedores) — es la **única acción real** habilitada desde el celular, ya que no tiene el riesgo de concurrencia que motivó restringir las ventas remotas. Espacio reservado en Configuración para futuras opciones.
+
+> El Vendedor en mobile ve únicamente Dashboard y Cuentas (Configuración queda oculta, ya que solo contiene Gestión de Usuarios, exclusiva del Dueño/a). El Dueño/a en mobile no pasa por Apertura de Caja aunque no haya ninguna abierta — el celular nunca opera caja, así que no tiene sentido bloquearlo ahí.
 
 15. **Configuración (mobile)** — pantalla nueva, con acceso a Gestión de Usuarios (mismo alcance que la versión desktop: alta y baja de Vendedores).
 
