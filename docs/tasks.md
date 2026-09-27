@@ -53,10 +53,10 @@
 
 ---
 
-## Módulo 5 — Frontend: Productos y Stock
-- [ ] Pantalla **Productos — Listado**.
-- [ ] Pantalla **Productos — Alta/Edición** (formulario en 2 pasos: datos generales + variantes).
-- [ ] Acción/modal **Ajuste de Stock**.
+## Módulo 5 — Frontend: Productos y Stock ✅ COMPLETO
+- [x] Pantalla **Productos — Listado**.
+- [x] Pantalla **Productos — Alta/Edición** (formulario en 2 pasos: datos generales + variantes).
+- [x] Acción/modal **Ajuste de Stock** — atómico vía trigger en `ajustes_stock` (migración `0007_ajustes_stock.sql`, ver `design.md`).
 
 ---
 
@@ -115,4 +115,4 @@
 
 ---
 
-**Estado: Módulos 0, 1, 2, 3 y 4 completos. Arrancando Módulo 5 (Frontend: Productos y Stock).**
+**Estado: Módulos 0 a 5 completos. Arrancando Módulo 6 (Frontend: Ventas / POS).**

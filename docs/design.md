@@ -37,6 +37,11 @@ Se detectó que filtrar los reportes solo a nivel de vista (`reportes_*_vista`) 
 - Índice único parcial (`uq_cajas_una_abierta`) impide tener más de una caja abierta al mismo tiempo.
 - KPI "ventas de hoy" del Dashboard expuesto vía `caja_actual_resumen()` (`security definer`), con conteo ciego: no expone `monto_esperado` antes de que el Vendedor cuente el efectivo.
 
+### Ajuste de stock atómico (Módulo 5)
+Insertar en `ajustes_stock` no modificaba `variantes.stock` por sí solo — hacerlo con dos escrituras separadas desde el frontend (insert del ajuste + update del stock) no era atómico: si la segunda fallaba, quedaba un ajuste sin efecto, y dos ajustes simultáneos podían pisarse. Se agregó un trigger `AFTER INSERT` (`aplicar_ajuste_stock()`, `security definer`) que aplica el delta sobre `variantes.stock` en la misma transacción. El motivo es obligatorio y el `UPDATE` sobre `ajustes_stock` está deshabilitado para todos los roles (registro de auditoría).
+
+**Pendiente para el Módulo 6:** `variantes.stock` sigue siendo editable por `UPDATE` directo (lo necesita el POS para descontar al vender). Evaluar ahí si conviene resolverlo con una función dedicada, con el mismo criterio que `cerrar_caja()`.
+
 ### Modo Offline-First (Ventas/POS)
 > Se simplifica respecto a la primera versión: como el celular del Dueño/a ahora **solo consulta** (no vende), ya no hay dos puntos generando ventas al mismo tiempo. Se elimina la necesidad de resolución de conflictos de stock entre dispositivos.
 
@@ -49,7 +54,7 @@ Se detectó que filtrar los reportes solo a nivel de vista (`reportes_*_vista`) 
 - `usuarios` (id, nombre_usuario, rol: dueño/vendedor, activo)
 - `categorias` (id, nombre)
 - `productos` (id, codigo, nombre, descripción, categoría_id, precio, foto_url, activo) — `codigo` es un correlativo autonumerado (1, 2, 3…), usado para generar el SKU corto de cada variante.
-- `variantes` (id, producto_id, talle, color, sku, stock)
+- `variantes` (id, producto_id, talle, color, sku, stock, stock_minimo)
 - `ventas` (id, usuario_id, caja_id, fecha, total, medio_pago, estado_sync)
 - `venta_items` (id, venta_id, variante_id, cantidad, precio_unitario)
 - `ajustes_stock` (id, variante_id, usuario_id, tipo: suma/resta, cantidad, motivo, fecha)
