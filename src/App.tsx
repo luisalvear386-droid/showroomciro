@@ -30,6 +30,13 @@ function App() {
               {/* Paso bloqueante post-login: se saltea solo si ya hay una caja abierta */}
               <Route path="apertura-caja" element={<AperturaCajaPage />} />
 
+              {/* Consulta de solo lectura: la apertura obligatoria bloquea la venta, no esto */}
+              <Route element={<RequireRole roles={['dueño']} />}>
+                <Route element={<AppLayout />}>
+                  <Route path="caja/historial" element={<CajaHistorialPage />} />
+                </Route>
+              </Route>
+
               <Route element={<RequireCajaAbierta />}>
                 <Route element={<AppLayout />}>
                   <Route index element={<DashboardPage />} />
@@ -45,7 +52,6 @@ function App() {
                   <Route path="cuentas/:id" element={<CuentasPage />} />
 
                   <Route element={<RequireRole roles={['dueño']} />}>
-                    <Route path="caja/historial" element={<CajaHistorialPage />} />
                     <Route path="reportes" element={<EnConstruccionPage titulo="Reportes" modulo={9} />} />
                     <Route path="usuarios" element={<EnConstruccionPage titulo="Usuarios" modulo={9} />} />
                     <Route

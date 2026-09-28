@@ -139,7 +139,7 @@ export function CajaCierrePage() {
         <div className="cierre__titulos">
           <h1 className="cierre__titulo">Cierre de Caja</h1>
           <p className="cierre__bajada">
-            {formatearFechaLarga(new Date())} · abierta a las {formatearHora(apertura)}
+            {formatearFechaLarga(apertura)} · abierta a las {formatearHora(apertura)}
           </p>
         </div>
         <RequireRole roles={['dueño']} fallback={null}>
