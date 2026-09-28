@@ -1,16 +1,5 @@
 /* Ajuste de stock — según prototipos/Stock Ajuste.dc.html */
 
-.modal-fondo {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  background: rgba(48, 32, 24, 0.55);
-}
-
 .ajuste {
   width: 100%;
   max-width: 500px;

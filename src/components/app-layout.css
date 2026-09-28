@@ -447,3 +447,22 @@
     letter-spacing: 0.01em;
   }
 }
+
+/* ---------- POS (Ventas): alto fijo, sin padding; el contenido maneja su scroll ---------- */
+
+.layout--pos .layout__principal {
+  height: 100vh;
+}
+
+.layout--pos .layout__contenido {
+  min-height: 0;
+  max-width: none;
+  padding: 0;
+  display: flex;
+}
+
+@media (max-width: 900px) {
+  .layout--pos .layout__principal {
+    height: auto;
+  }
+}

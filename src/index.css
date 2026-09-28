@@ -77,3 +77,90 @@ a:hover {
 .pantalla-centrada--interna {
   min-height: 50vh;
 }
+
+/* Fondo oscurecido de los modales (ajuste de stock, variante, checkout) */
+.modal-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(48, 32, 24, 0.55);
+}
+
+/* Botón secundario de los pies de modal ("Cancelar", "Volver al carrito") */
+.boton-cancelar {
+  flex: none;
+  padding: 15px 20px;
+  border: 1px solid var(--color-lino);
+  border-radius: 12px;
+  background: var(--color-card);
+  color: #6b5545;
+  font-family: var(--fuente-ui);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.boton-cancelar:hover:not(:disabled) {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.boton-cancelar:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Contador − n + (cantidad en el modal de variante y en el carrito) */
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex: none;
+  border: 1px solid var(--color-lino);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-card);
+}
+
+.contador__paso {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: var(--color-card);
+  font-family: var(--fuente-ui);
+  font-size: 16px;
+  color: #6b5545;
+  cursor: pointer;
+}
+
+.contador__paso:hover:not(:disabled) {
+  background: #f1e6d6;
+}
+
+.contador__paso:disabled {
+  color: #d5c6b1;
+  cursor: not-allowed;
+}
+
+.contador__valor {
+  width: 34px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.contador--chico .contador__paso {
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+}
+
+.contador--chico .contador__valor {
+  width: 26px;
+  font-size: 13px;
+}

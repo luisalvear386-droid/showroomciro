@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { NavLink, Outlet, useMatch } from 'react-router'
 import { RequireRole } from '../auth/require-role'
 import { useCaja } from '../caja/use-caja'
 import { useConsulta } from '../hooks/use-consulta'
@@ -86,9 +86,11 @@ function EstadoCajaSidebar() {
 export function AppLayout() {
   const { datos: cuentasEnAlerta } = useConsulta(contarCuentasEnAlerta)
   const badge = cuentasEnAlerta ?? 0
+  // El POS ocupa todo el alto: catálogo y carrito con scroll propio (prototipo Ventas POS)
+  const esPos = useMatch('/ventas') !== null
 
   return (
-    <div className="layout">
+    <div className={esPos ? 'layout layout--pos' : 'layout'}>
       <aside className="layout__sidebar">
         <div className="layout__marca">
           <div className="layout__logo" aria-hidden="true" />
@@ -116,7 +118,7 @@ export function AppLayout() {
           <div className="layout__header-titulos">
             <div className="layout__logo layout__logo--mobile" aria-hidden="true" />
             <span className="layout__header-nombre">ShowroomCiro</span>
-            <span className="layout__header-fecha">{formatearFechaLarga(new Date())}</span>
+            <span className="layout__header-fecha">{esPos ? 'Punto de venta' : formatearFechaLarga(new Date())}</span>
           </div>
           <MenuUsuario />
         </header>

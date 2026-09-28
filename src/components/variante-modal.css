@@ -1,0 +1,208 @@
+/* Selección de variante — según prototipos/Modal Variante.dc.html */
+
+.variante-modal {
+  width: 100%;
+  max-width: 470px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px -32px rgba(38, 24, 18, 0.6);
+}
+
+.variante-modal__foto-contenedor {
+  position: relative;
+  flex: none;
+  height: 216px;
+}
+
+.variante-modal__foto {
+  width: 100%;
+  height: 100%;
+}
+
+.variante-modal__cerrar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--color-lino);
+  border-radius: 11px;
+  background: var(--color-card);
+  color: #6b5545;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.variante-modal__cerrar:hover {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.variante-modal__cuerpo {
+  padding: 22px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: auto;
+}
+
+.variante-modal__encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.variante-modal__titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.variante-modal__nombre {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.variante-modal__precio {
+  font-family: var(--fuente-titulos);
+  font-size: 26px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.variante-modal__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.variante-modal__grupo-titulo {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-texto-tenue);
+}
+
+.variante-modal__opciones {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.variante-modal__chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-lino);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--color-cacao);
+  font-family: var(--fuente-ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.variante-modal__chip--talle {
+  justify-content: center;
+  min-width: 54px;
+}
+
+.variante-modal__chip:hover:not(:disabled) {
+  border-color: var(--color-canela);
+}
+
+.variante-modal__chip[aria-pressed='true'] {
+  border-color: var(--color-canela);
+  background: var(--color-canela);
+  color: #fff8f0;
+  font-weight: 600;
+  box-shadow: 0 6px 14px -10px rgba(184, 122, 86, 0.9);
+}
+
+.variante-modal__chip[aria-pressed='true'] .punto-color {
+  border-color: rgba(255, 248, 240, 0.6);
+}
+
+.variante-modal__chip:disabled {
+  border-style: dashed;
+  background: var(--color-crema);
+  color: #c0ae96;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.variante-modal__chip:disabled .punto-color {
+  opacity: 0.45;
+}
+
+.variante-modal__stock {
+  --stock-color: var(--color-oliva);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 13px;
+  background: #f0f2e7;
+  border: 1px solid #dce1cb;
+}
+
+.variante-modal__stock--bajo {
+  --stock-color: var(--color-coral);
+  background: #fbeee8;
+  border-color: #f0d6c9;
+}
+
+.variante-modal__stock--agotado {
+  --stock-color: var(--color-vino);
+  background: #f6e7e4;
+  border-color: #e3c7c2;
+}
+
+.variante-modal__stock-texto {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--stock-color);
+}
+
+.variante-modal__stock-texto::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.variante-modal__botones {
+  display: flex;
+  gap: 10px;
+}
+
+.variante-modal__agregar {
+  flex: 1;
+  padding: 15px;
+  font-size: 15.5px;
+  letter-spacing: 0.02em;
+}

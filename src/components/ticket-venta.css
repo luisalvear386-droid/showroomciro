@@ -1,0 +1,82 @@
+/*
+ * Ticket térmico (58mm / 80mm). El ancho lo define el papel que tenga configurado la
+ * impresora en el diálogo de impresión: el ticket ocupa todo el ancho disponible hasta
+ * 80mm, así que sirve para los dos rollos sin tocar nada.
+ */
+
+.ticket {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  /* Solo se imprime el ticket (montado directo en <body>, fuera de #root) */
+  body > :not(.ticket) {
+    display: none !important;
+  }
+
+  .ticket {
+    display: block;
+    width: 100%;
+    max-width: 80mm;
+    padding: 3mm 3mm 6mm;
+    font-family: ui-monospace, 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #000;
+  }
+
+  .ticket__marca {
+    margin-bottom: 2mm;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .ticket__linea {
+    display: flex;
+    justify-content: space-between;
+    gap: 2mm;
+  }
+
+  .ticket__linea > span:last-child {
+    flex: none;
+    text-align: right;
+  }
+
+  .ticket__item {
+    margin-bottom: 1.5mm;
+  }
+
+  .ticket__item-nombre {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .ticket__detalle {
+    padding-left: 3mm;
+    font-size: 10px;
+  }
+
+  .ticket__separador {
+    margin: 2mm 0;
+    border-top: 1px dashed #000;
+  }
+
+  .ticket__total {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .ticket__pie {
+    text-align: center;
+  }
+}

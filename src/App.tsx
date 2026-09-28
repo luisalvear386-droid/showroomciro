@@ -11,6 +11,7 @@ import { EnConstruccionPage } from './pages/en-construccion-page'
 import { LoginPage } from './pages/login-page'
 import { ProductoFormPage } from './pages/producto-form-page'
 import { ProductosPage } from './pages/productos-page'
+import { VentasPage } from './pages/ventas-page'
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
                 <Route element={<AppLayout />}>
                   <Route index element={<DashboardPage />} />
                   {/* Destinos de "Nueva Venta" / "Nueva Cuenta" del Dashboard (sin ítem de menú) */}
-                  <Route path="ventas" element={<EnConstruccionPage titulo="Nueva Venta" modulo={6} />} />
+                  <Route path="ventas" element={<VentasPage />} />
                   <Route path="cuentas/nueva" element={<EnConstruccionPage titulo="Nueva Cuenta" modulo={7} />} />
                   <Route path="productos" element={<ProductosPage />} />
                   <Route path="productos/nuevo" element={<ProductoFormPage />} />

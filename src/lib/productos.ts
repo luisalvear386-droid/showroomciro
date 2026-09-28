@@ -132,11 +132,13 @@ interface FilaListado {
   variantes: Variante[]
 }
 
-export async function obtenerProductos(): Promise<ProductoListado[]> {
-  const { data, error } = await supabase
+/** `soloActivos`: para el POS, que no debe ofrecer productos dados de baja. */
+export async function obtenerProductos({ soloActivos = false } = {}): Promise<ProductoListado[]> {
+  let consulta = supabase
     .from('productos')
     .select(`id, codigo, nombre, precio, foto_url, activo, categorias(nombre), variantes(${COLUMNAS_VARIANTE})`)
-    .order('nombre')
+  if (soloActivos) consulta = consulta.eq('activo', true)
+  const { data, error } = await consulta.order('nombre')
   if (error) throw error
 
   return (data as unknown as FilaListado[]).map((p) => ({
