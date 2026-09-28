@@ -76,9 +76,9 @@
 
 ---
 
-## Módulo 8 — Frontend: Caja
-- [ ] Pantalla **Caja — Cierre** (conteo + diferencia vía RPC `cerrar_caja` + aviso de logout automático).
-- [ ] Pantalla **Caja — Historial**.
+## Módulo 8 — Frontend: Caja ✅ COMPLETO
+- [x] Pantalla **Caja — Cierre** (conteo + diferencia vía RPC `cerrar_caja` + aviso de logout automático) — a conteo ciego, con modal de confirmación y logout solo si la RPC responde OK (ver `design.md`).
+- [x] Pantalla **Caja — Historial** — solo Dueño/a, solo lectura (ver `design.md`).
 
 ---
 
@@ -116,4 +116,4 @@
 
 ---
 
-**Estado: Módulos 0 a 7 completos. Arrancando Módulo 8 (Frontend: Caja).**
+**Estado: Módulos 0 a 8 completos. Arrancando Módulo 9 (Frontend: Reportes y Usuarios).**
