@@ -56,6 +56,11 @@ La migración 0010 cierra las otras dos vías para alterar una deuda por fuera d
 
 Frontend: la Agenda separa las cuentas pagadas en una sección plegable ("Cuentas saldadas"), fuera de la lista, del calendario y de los totales de las activas. El Detalle/Cobro es un modal sobre la Agenda (`/cuentas/:id`); en mobile se muestra sin formulario de cobro (solo consulta).
 
+### Alta de usuarios (Módulo 9)
+Crear un usuario de Supabase Auth necesita privilegios que el frontend (anon key + sesión del Dueño/a) no tiene. En vez de una Edge Function con la service role key, se agregó `crear_vendedor(p_nombre_usuario, p_contrasena)` (migración 0011), `security definer`, mismo criterio que `registrar_venta()`/`registrar_pago()`: verifica `es_dueno()`, valida el nombre de usuario (mismo formato que el Login) y la contraseña (mínimo 6 caracteres, el default de Supabase Auth), rechaza duplicados y crea en una sola transacción la fila de `auth.users` (email técnico `<usuario>@showroomciro.internal`, igual que `seed.sql`) y la de `perfiles` con rol `vendedor`. Solo crea Vendedores.
+
+Desactivar/reactivar es un `UPDATE` de `perfiles.activo` que la policy `perfiles_update` ya limita al Dueño/a. Un perfil inactivo no tiene rol (`rol_actual()` devuelve null), así que el RLS le niega todo aunque tenga una sesión abierta, y el Login lo rechaza.
+
 ### Modo Offline-First (Ventas/POS)
 > Se simplifica respecto a la primera versión: como el celular del Dueño/a ahora **solo consulta** (no vende), ya no hay dos puntos generando ventas al mismo tiempo. Se elimina la necesidad de resolución de conflictos de stock entre dispositivos.
 
@@ -91,7 +96,7 @@ Ticket generado como HTML/CSS con ancho de impresora térmica (58mm/80mm) e impr
 - `GET /caja/historial`
 - `POST /cuentas`, `rpc: registrar_pago(cuenta_id, monto)` (ver [Cobros y validación de montos](#cobros-y-validación-de-montos-módulo-7)), `GET /cuentas_vista` (vista SQL que calcula el estado al_dia/por_vencer/vencido/pagado al vuelo, sin necesidad de mantenerlo actualizado)
 - `GET /reportes_ventas_vista?periodo=`, `GET /reportes_top_productos_vista` (vistas/funciones SQL de agregación)
-- `POST /usuarios`, `PATCH /usuarios/:id` (desactivar) — Dueño/a, disponible también desde mobile
+- `rpc: crear_vendedor(p_nombre_usuario, p_contrasena)` (ver [Alta de usuarios](#alta-de-usuarios-módulo-9)), `PATCH /perfiles?id=eq.:id` (`activo`: desactivar/reactivar) — Dueño/a, disponible también desde mobile
 
 ### Hosting
 - Frontend: **Vercel**.
@@ -128,7 +133,9 @@ La apertura de caja es obligatoria antes de poder vender; se resuelve como paso 
 12. **Caja — Historial** — listado de aperturas/cierres pasados por día y usuario.
    > **Solo Dueño/a** (`/caja/historial`, enlace "Ver historial" desde el Cierre). Queda **fuera del bloqueo de apertura obligatoria**: es de solo lectura, y esa regla bloquea la venta, no la consulta — el Dueño/a puede entrar desde la compu aunque no haya caja abierta (el enlace "Volver al cierre" solo aparece si hay una). El RLS del Vendedor no le deja ver cajas ni nombres de otros usuarios, ni ventas de cajas cerradas. Lista solo cajas cerradas, filtradas por fecha de apertura. Del prototipo se omiten el botón "Exportar" (no está en requirements.md), "Ventas fiadas" (las cuentas no pasan por caja) y la nota de la jornada (sin columna en `cajas`).
 13. **Reportes** (solo Dueño/a) — ventas por día/semana/mes, productos más vendidos, cuentas pendientes de cobro.
+   > `/reportes`, **fuera del bloqueo de apertura obligatoria** (igual que el Historial de Caja: es consulta, no venta). Los períodos son móviles como en el prototipo: Día = hoy (gráfico por franjas de 2 h), Semana = últimos 7 días (una barra por día), Mes = últimos 30 días (4 barras "Sem 1…4"; las dos primeras cubren 8 días y las otras 7). KPIs y top 5 vía `reporte_ventas_rango()` / `reporte_top_productos_rango()`; barras por día desde `reportes_ventas_vista`; el panel de cuentas desde `reportes_cuentas_pendientes_vista` (estado actual, no depende del período). Del prototipo se omiten la serie "Fiado" del gráfico y el KPI "Vendido en fiado" (las cuentas no pasan por el checkout), y en el panel —renombrado "Cuentas pendientes"— "Cobrados en el período" y la cantidad de clientes (fuera de lo pedido en requirements.md).
 14. **Gestión de Usuarios** (solo Dueño/a) — alta de nuevos Vendedores.
+   > `/usuarios`, también **fuera del bloqueo de apertura obligatoria** (gestión, no venta). Alta vía `crear_vendedor()` y desactivar/reactivar vía `perfiles.activo` (ver [Alta de usuarios](#alta-de-usuarios-módulo-9)); la cuenta del Dueño/a no tiene acciones. Sin el campo "Nombre completo" del prototipo: `perfiles` no tiene dónde guardarlo, así que cada usuario se identifica por su nombre de usuario.
 
 ### Listado de pantallas (Mobile — acceso remoto del Dueño/a)
 Menú inferior tipo app con 4 secciones: **Dashboard, Cuentas, Reportes, Configuración** — las primeras 3 son de **solo consulta/lectura**. **Configuración** contiene, por ahora, **Gestión de Usuarios** (alta/baja de Vendedores) — es la **única acción real** habilitada desde el celular, ya que no tiene el riesgo de concurrencia que motivó restringir las ventas remotas. Espacio reservado en Configuración para futuras opciones.
