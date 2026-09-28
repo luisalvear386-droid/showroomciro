@@ -19,6 +19,7 @@ import { ProductosPage } from './pages/productos-page'
 import { ReportesPage } from './pages/reportes-page'
 import { UsuariosPage } from './pages/usuarios-page'
 import { VentasPage } from './pages/ventas-page'
+import { SincronizacionProvider } from './sincronizacion/sincronizacion-provider'
 
 function App() {
   return (
@@ -29,37 +30,40 @@ function App() {
 
           {/* Todo lo demás requiere sesión activa */}
           <Route element={<RequireAuth />}>
-            <Route element={<CajaProvider />}>
-              {/* Paso bloqueante post-login: se saltea solo si ya hay una caja abierta */}
-              <Route path="apertura-caja" element={<AperturaCajaPage />} />
+            {/* Cola de ventas offline del mostrador (Módulo 11): se sincroniza sola */}
+            <Route element={<SincronizacionProvider />}>
+              <Route element={<CajaProvider />}>
+                {/* Paso bloqueante post-login: se saltea solo si ya hay una caja abierta */}
+                <Route path="apertura-caja" element={<AperturaCajaPage />} />
 
-              {/* Consulta y gestión, no venta: la apertura obligatoria bloquea la venta, no esto */}
-              <Route element={<RequireRole roles={['dueño']} />}>
-                <Route element={<AppLayout />}>
-                  <Route path="caja/historial" element={<CajaHistorialPage />} />
-                  <Route path="reportes" element={<ReportesPage />} />
-                  <Route path="usuarios" element={<UsuariosPage />} />
-                  {/* Menú "Configuración" del celular: por ahora solo lleva a Gestión de Usuarios */}
-                  <Route path="configuracion" element={<ConfiguracionPage />} />
+                {/* Consulta y gestión, no venta: la apertura obligatoria bloquea la venta, no esto */}
+                <Route element={<RequireRole roles={['dueño']} />}>
+                  <Route element={<AppLayout />}>
+                    <Route path="caja/historial" element={<CajaHistorialPage />} />
+                    <Route path="reportes" element={<ReportesPage />} />
+                    <Route path="usuarios" element={<UsuariosPage />} />
+                    {/* Menú "Configuración" del celular: por ahora solo lleva a Gestión de Usuarios */}
+                    <Route path="configuracion" element={<ConfiguracionPage />} />
+                  </Route>
                 </Route>
-              </Route>
 
-              <Route element={<RequireCajaAbierta />}>
-                <Route element={<AppLayout />}>
-                  <Route index element={<DashboardPage />} />
-                  <Route path="cuentas" element={<CuentasPage />} />
-                  {/* Detalle/Cobro: modal sobre la agenda (en mobile, sin cobro) */}
-                  <Route path="cuentas/:id" element={<CuentasPage />} />
+                <Route element={<RequireCajaAbierta />}>
+                  <Route element={<AppLayout />}>
+                    <Route index element={<DashboardPage />} />
+                    <Route path="cuentas" element={<CuentasPage />} />
+                    {/* Detalle/Cobro: modal sobre la agenda (en mobile, sin cobro) */}
+                    <Route path="cuentas/:id" element={<CuentasPage />} />
 
-                  {/* Venta, caja y altas/ediciones: solo desde el mostrador, nunca desde el celular */}
-                  <Route element={<SoloEscritorio />}>
-                    {/* Destinos de "Nueva Venta" / "Nueva Cuenta" del Dashboard (sin ítem de menú) */}
-                    <Route path="ventas" element={<VentasPage />} />
-                    <Route path="cuentas/nueva" element={<CuentaNuevaPage />} />
-                    <Route path="productos" element={<ProductosPage />} />
-                    <Route path="productos/nuevo" element={<ProductoFormPage />} />
-                    <Route path="productos/:id/editar" element={<ProductoFormPage />} />
-                    <Route path="caja" element={<CajaCierrePage />} />
+                    {/* Venta, caja y altas/ediciones: solo desde el mostrador, nunca desde el celular */}
+                    <Route element={<SoloEscritorio />}>
+                      {/* Destinos de "Nueva Venta" / "Nueva Cuenta" del Dashboard (sin ítem de menú) */}
+                      <Route path="ventas" element={<VentasPage />} />
+                      <Route path="cuentas/nueva" element={<CuentaNuevaPage />} />
+                      <Route path="productos" element={<ProductosPage />} />
+                      <Route path="productos/nuevo" element={<ProductoFormPage />} />
+                      <Route path="productos/:id/editar" element={<ProductoFormPage />} />
+                      <Route path="caja" element={<CajaCierrePage />} />
+                    </Route>
                   </Route>
                 </Route>
               </Route>

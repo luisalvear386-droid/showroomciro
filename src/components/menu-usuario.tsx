@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../auth/use-auth'
+import { useCerrarSesion } from '../hooks/use-cerrar-sesion'
 import type { Rol } from '../lib/auth'
 
 const ETIQUETA_ROL: Record<Rol, string> = {
@@ -9,9 +10,9 @@ const ETIQUETA_ROL: Record<Rol, string> = {
 
 /** Bloque de usuario del header (nombre + rol). Al hacer clic despliega "Cerrar sesión". */
 export function MenuUsuario() {
-  const { perfil, logout } = useAuth()
+  const { perfil } = useAuth()
+  const { pedirSalida, saliendo, aviso } = useCerrarSesion()
   const [abierto, setAbierto] = useState(false)
-  const [saliendo, setSaliendo] = useState(false)
   const contenedor = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -31,12 +32,6 @@ export function MenuUsuario() {
   }, [abierto])
 
   if (!perfil) return null
-
-  async function cerrarSesion() {
-    setSaliendo(true)
-    // Al quedar sin sesión, <RequireAuth> redirige solo a /login
-    await logout()
-  }
 
   return (
     <div className="menu-usuario" ref={contenedor}>
@@ -65,7 +60,10 @@ export function MenuUsuario() {
             type="button"
             role="menuitem"
             className="menu-usuario__opcion"
-            onClick={() => void cerrarSesion()}
+            onClick={() => {
+              setAbierto(false)
+              void pedirSalida()
+            }}
             disabled={saliendo}
           >
             <span className="menu-usuario__punto" aria-hidden="true" />
@@ -73,6 +71,8 @@ export function MenuUsuario() {
           </button>
         </div>
       )}
+
+      {aviso}
     </div>
   )
 }

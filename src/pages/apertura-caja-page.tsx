@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
 import { PantallaCarga } from '../components/pantalla-carga'
+import { useCerrarSesion } from '../hooks/use-cerrar-sesion'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { abrirCaja } from '../lib/caja'
 import { formatearFechaLarga, parsearMonto } from '../lib/formato'
@@ -14,7 +15,8 @@ const MENSAJE_MONTO_INVALIDO = 'Ingresá un monto válido (ej. 20.000).'
 
 /** Pantalla bloqueante post-login — según prototipos/Apertura de Caja.dc.html */
 export function AperturaCajaPage() {
-  const { perfil, logout } = useAuth()
+  const { perfil } = useAuth()
+  const { pedirSalida, saliendo, aviso } = useCerrarSesion()
   const { caja, error: errorCaja, refrescar } = useCaja()
   const esMobile = useEsMobile()
   const navigate = useNavigate()
@@ -22,7 +24,6 @@ export function AperturaCajaPage() {
   const [monto, setMonto] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
-  const [saliendo, setSaliendo] = useState(false)
 
   // Desde el celular nadie opera caja (acceso de solo consulta, cualquier rol): ni siquiera por URL
   if (esMobile) return <Navigate to="/" replace />
@@ -70,12 +71,6 @@ export function AperturaCajaPage() {
       setEnviando(false)
       setError('La caja se abrió, pero no se pudo actualizar la pantalla. Recargá la página.')
     }
-  }
-
-  async function cerrarSesion() {
-    setSaliendo(true)
-    // Al quedar sin sesión, <RequireAuth> redirige solo a /login
-    await logout()
   }
 
   function elegirSugerido(valor: number) {
@@ -171,13 +166,15 @@ export function AperturaCajaPage() {
           <button
             type="button"
             className="apertura__salir-boton"
-            onClick={() => void cerrarSesion()}
+            onClick={() => void pedirSalida()}
             disabled={enviando || saliendo}
           >
             {saliendo ? 'Cerrando sesión…' : 'Cerrar sesión'}
           </button>
         </p>
       </div>
+
+      {aviso}
     </div>
   )
 }

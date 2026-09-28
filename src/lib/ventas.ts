@@ -112,6 +112,15 @@ export function esErrorTransitorio(error: unknown): boolean {
   return error.code === '' || /^PGRST00[0-3]$/.test(error.code) || CODIGOS_TRANSITORIOS.has(error.code) || error.code.startsWith('08')
 }
 
+/**
+ * true si el rechazo es por la sesión y no por la venta: usuario inactivo, venta de otro
+ * usuario (42501) o JWT rechazado por PostgREST (PGRST301/302). Frena la cola entera: las
+ * ventas siguientes fallarían igual.
+ */
+export function esErrorDeSesion(error: unknown): boolean {
+  return esErrorPostgrest(error) && ['42501', 'PGRST301', 'PGRST302'].includes(error.code)
+}
+
 /** Errores de `registrar_venta()` cuyo mensaje ya está escrito para mostrarse en el POS. */
 const CODIGOS_CON_MENSAJE = new Set(['23514', '22023', 'P0002'])
 

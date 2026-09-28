@@ -32,6 +32,19 @@ export interface VentaPendiente {
   ultimo_error?: { codigo: string; mensaje: string }
 }
 
+/**
+ * Venta sincronizada que la base registró con otro total que el cobrado en el mostrador
+ * (el precio cambió mientras estaba en la cola: la base usa el precio actual). Queda para
+ * avisarla hasta que alguien la vea.
+ */
+export interface VentaConDiferencia {
+  id: string
+  usuario_id: string
+  creada_en: string
+  total_cobrado: number
+  total_registrado: number
+}
+
 /** Datos sueltos de una sola fila cada uno, por clave. */
 type Estado =
   /** Última caja conocida. null = el servidor confirmó que no había caja abierta. */
@@ -45,6 +58,7 @@ class BaseLocal extends Dexie {
   declare perfiles: EntityTable<Perfil, 'id'>
   declare estado: Table<Estado, Estado['clave']>
   declare ventasPendientes: EntityTable<VentaPendiente, 'id'>
+  declare ventasConDiferencia: EntityTable<VentaConDiferencia, 'id'>
 
   constructor() {
     super('showroomciro')
@@ -54,6 +68,9 @@ class BaseLocal extends Dexie {
       perfiles: 'id',
       estado: 'clave',
       ventasPendientes: 'id, estado, usuario_id, creada_en',
+    })
+    this.version(2).stores({
+      ventasConDiferencia: 'id, usuario_id',
     })
   }
 }
