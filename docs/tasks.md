@@ -69,10 +69,10 @@
 
 ---
 
-## Módulo 7 — Frontend: Cuentas
-- [ ] Pantalla **Cuentas — Agenda** (lista + toggle calendario, consultando `cuentas_vista`), sin botón propio de alta.
-- [ ] Pantalla **Cuentas — Alta**, accedida desde el botón "Nueva Cuenta" del Dashboard.
-- [ ] Pantalla **Cuentas — Detalle/Cobro** (registro de abonos).
+## Módulo 7 — Frontend: Cuentas ✅ COMPLETO
+- [x] Pantalla **Cuentas — Agenda** (lista + toggle calendario, consultando `cuentas_vista`), sin botón propio de alta. Las cuentas pagadas van en una sección plegable aparte.
+- [x] Pantalla **Cuentas — Alta**, accedida desde el botón "Nueva Cuenta" del Dashboard.
+- [x] Pantalla **Cuentas — Detalle/Cobro** (registro de abonos) — atómico vía RPC `registrar_pago()` (migración `0009_registrar_pago.sql`) + endurecimiento de `cuentas`/`cuenta_pagos` (migración `0010_rls_cuentas.sql`, ver `design.md`).
 
 ---
 
@@ -116,4 +116,4 @@
 
 ---
 
-**Estado: Módulos 0 a 6 completos. Arrancando Módulo 7 (Frontend: Cuentas).**
+**Estado: Módulos 0 a 7 completos. Arrancando Módulo 8 (Frontend: Caja).**

@@ -47,6 +47,15 @@ Se agregó `registrar_venta(p_venta_id, p_caja_id, p_medio_pago, p_items)` (migr
 
 **Pendiente para el Módulo 11:** la función rechaza ventas contra una caja cerrada; una venta offline que se sincronice después del cierre de esa caja va a fallar, y además quedaría con la fecha de sincronización en vez de la fecha real de la venta. Resolver ahí.
 
+### Cobros y validación de montos (Módulo 7)
+Se agregó `registrar_pago(p_cuenta_id, p_monto)` (migración 0009), con el mismo criterio que `registrar_venta()`: función `security definer` que bloquea la fila de la cuenta (`for update`), calcula el saldo pendiente (`monto_total` − suma de `cuenta_pagos`) y rechaza el cobro si lo supera o si la cuenta ya está saldada. Devuelve la fila actualizada de `cuentas_vista`. El bloqueo serializa cobros simultáneos sobre la misma cuenta: de dos cobros que juntos superan el saldo, solo pasa uno. El `INSERT` directo sobre `cuenta_pagos` quedó deshabilitado para todos los roles.
+
+La migración 0010 cierra las otras dos vías para alterar una deuda por fuera de esa función:
+- Sin `UPDATE` directo sobre `cuenta_pagos` para ningún rol (policy borrada y privilegio revocado): un pago registrado no se edita ni se borra vía API.
+- Trigger `BEFORE UPDATE OF monto_total` en `cuentas` (`validar_monto_total_cuenta()`): impide dejar `monto_total` por debajo de lo ya cobrado (evita cuentas "pagado" con saldo negativo o deuda perdonada sin un pago que lo refleje). Sin pagos cargados, el monto se puede corregir libremente; editar nombre, teléfono o fecha límite no se ve afectado.
+
+Frontend: la Agenda separa las cuentas pagadas en una sección plegable ("Cuentas saldadas"), fuera de la lista, del calendario y de los totales de las activas. El Detalle/Cobro es un modal sobre la Agenda (`/cuentas/:id`); en mobile se muestra sin formulario de cobro (solo consulta).
+
 ### Modo Offline-First (Ventas/POS)
 > Se simplifica respecto a la primera versión: como el celular del Dueño/a ahora **solo consulta** (no vende), ya no hay dos puntos generando ventas al mismo tiempo. Se elimina la necesidad de resolución de conflictos de stock entre dispositivos.
 
@@ -80,7 +89,7 @@ Ticket generado como HTML/CSS con ancho de impresora térmica (58mm/80mm) e impr
 - `POST /ventas` (registrada desde el mostrador; consulta de solo lectura disponible para el celular)
 - `POST /caja/apertura`, `rpc: cerrar_caja(caja_id, monto_contado)` (función SQL que calcula la diferencia y deja la caja cerrada)
 - `GET /caja/historial`
-- `POST /cuentas`, `POST /cuentas/:id/pagos`, `GET /cuentas_vista` (vista SQL que calcula el estado al_dia/por_vencer/vencido/pagado al vuelo, sin necesidad de mantenerlo actualizado)
+- `POST /cuentas`, `rpc: registrar_pago(cuenta_id, monto)` (ver [Cobros y validación de montos](#cobros-y-validación-de-montos-módulo-7)), `GET /cuentas_vista` (vista SQL que calcula el estado al_dia/por_vencer/vencido/pagado al vuelo, sin necesidad de mantenerlo actualizado)
 - `GET /reportes_ventas_vista?periodo=`, `GET /reportes_top_productos_vista` (vistas/funciones SQL de agregación)
 - `POST /usuarios`, `PATCH /usuarios/:id` (desactivar) — Dueño/a, disponible también desde mobile
 
