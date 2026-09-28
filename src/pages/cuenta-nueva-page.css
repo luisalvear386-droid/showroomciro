@@ -1,0 +1,215 @@
+/* Cuentas — Alta, según prototipos/Nueva Cuenta.dc.html */
+
+.cuenta-nueva {
+  max-width: 760px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.cuenta-nueva__titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cuenta-nueva__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.cuenta-nueva__bajada {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--color-texto-medio);
+}
+
+.cuenta-nueva__card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 26px 28px 28px;
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  border-radius: 16px;
+  box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+}
+
+.cuenta-nueva__fila {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.cuenta-nueva .campo {
+  gap: 9px;
+}
+
+.cuenta-nueva__monto {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 320px;
+}
+
+.cuenta-nueva__monto-signo {
+  position: absolute;
+  left: 18px;
+  font-family: var(--fuente-titulos);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-canela);
+  pointer-events: none;
+}
+
+.cuenta-nueva__monto-input {
+  width: 100%;
+  padding: 16px 18px 16px 44px;
+  border: 1px solid var(--color-lino);
+  border-radius: 12px;
+  background: #fff;
+  font-family: var(--fuente-titulos);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-cacao);
+}
+
+.cuenta-nueva__monto-input::placeholder {
+  color: #c7b69c;
+}
+
+.cuenta-nueva__monto-input:focus {
+  outline: none;
+  border-color: var(--color-canela);
+  box-shadow: 0 0 0 3px rgba(184, 122, 86, 0.15);
+}
+
+.cuenta-nueva__monto-input[aria-invalid='true'] {
+  border-color: #ddb9b2;
+}
+
+.cuenta-nueva__plazos {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cuenta-nueva__fecha {
+  width: auto;
+}
+
+.cuenta-nueva__plazo {
+  padding: 12px 16px;
+  border: 1px solid var(--color-lino);
+  border-radius: 11px;
+  background: var(--color-card);
+  font-family: var(--fuente-ui);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #6b5545;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cuenta-nueva__plazo[aria-pressed='true'] {
+  border-color: var(--color-canela);
+  background: var(--color-canela);
+  color: #fff8f0;
+  font-weight: 600;
+}
+
+.cuenta-nueva__ayuda {
+  font-size: 12.5px;
+  color: var(--color-texto-medio);
+}
+
+.cuenta-nueva__botones {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.cuenta-nueva__cancelar {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.cuenta-nueva__cancelar[aria-disabled='true'] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.cuenta-nueva__guardar {
+  flex: 1;
+  padding: 15px;
+  font-size: 15.5px;
+  letter-spacing: 0.02em;
+}
+
+.cuenta-nueva__pie {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--color-texto-medio);
+}
+
+/* ---------- Confirmación ---------- */
+
+.cuenta-nueva__confirmacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 34px;
+  text-align: center;
+  background: var(--color-card);
+  border: 1px solid #dce1cb;
+  border-radius: 16px;
+  box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+}
+
+.cuenta-nueva__check {
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f0f2e7;
+  border: 1px solid #dce1cb;
+  color: var(--color-oliva);
+}
+
+.cuenta-nueva__confirmacion-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cuenta-nueva__confirmacion-titulo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.cuenta-nueva__confirmacion-detalle {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--color-texto-medio);
+}
+
+@media (max-width: 480px) {
+  .cuenta-nueva__card {
+    padding: 20px 18px 22px;
+  }
+}

@@ -4,18 +4,10 @@ import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
 import { useConsulta } from '../hooks/use-consulta'
 import { useEsMobile } from '../hooks/use-es-mobile'
-import { obtenerCuentasEnAlerta, obtenerStockBajo, type CuentaEnAlerta } from '../lib/alertas'
-import { diasHasta, formatearFechaLarga, formatearHora, formatearMoneda } from '../lib/formato'
+import { obtenerCuentasEnAlerta, obtenerStockBajo } from '../lib/alertas'
+import { describirVencimiento } from '../lib/cuentas'
+import { formatearFechaLarga, formatearHora, formatearMoneda } from '../lib/formato'
 import './dashboard-page.css'
-
-function describirVencimiento(cuenta: CuentaEnAlerta): string {
-  const dias = diasHasta(cuenta.fecha_limite)
-  if (dias < -1) return `Vencido hace ${-dias} días`
-  if (dias === -1) return 'Venció ayer'
-  if (dias === 0) return 'Vence hoy'
-  if (dias === 1) return 'Vence mañana'
-  return `Vence en ${dias} días`
-}
 
 function MensajePanel({ cargando, error, vacio }: { cargando: boolean; error: boolean; vacio: string }) {
   let texto = vacio
@@ -142,7 +134,7 @@ export function DashboardPage() {
                   <div key={c.id} className={`alerta alerta--${variante}`}>
                     <span className="alerta__textos">
                       <span className="alerta__principal">{c.cliente_nombre}</span>
-                      <span className="alerta__secundario alerta__secundario--estado">{describirVencimiento(c)}</span>
+                      <span className="alerta__secundario alerta__secundario--estado">{describirVencimiento(c.fecha_limite)}</span>
                     </span>
                     <span className="alerta__dato">{formatearMoneda(c.saldo)}</span>
                   </div>

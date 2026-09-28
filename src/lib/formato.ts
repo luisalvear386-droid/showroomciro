@@ -40,3 +40,31 @@ export function diasHasta(fechaIso: string, hoy: Date = new Date()): number {
   const base = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())
   return Math.round((objetivo - base) / 86_400_000)
 }
+
+/** 'YYYY-MM-DD' → Date a medianoche local (sin el corrimiento de `new Date('YYYY-MM-DD')`, que es UTC). */
+export function fechaDesdeIso(fechaIso: string): Date {
+  const [anio, mes, dia] = fechaIso.split('-').map(Number)
+  return new Date(anio, mes - 1, dia)
+}
+
+/** Date → 'YYYY-MM-DD' en hora local (toISOString usaría UTC y de noche daría el día siguiente). */
+export function fechaIsoLocal(fecha: Date): string {
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0')
+  const dia = String(fecha.getDate()).padStart(2, '0')
+  return `${fecha.getFullYear()}-${mes}-${dia}`
+}
+
+/** "04 sep" */
+export function formatearFechaCorta(fecha: Date): string {
+  return fecha.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' }).replace('.', '')
+}
+
+/** "04 sep 2026" */
+export function formatearFechaConAnio(fecha: Date): string {
+  return fecha.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '')
+}
+
+/** "04/09/2026" */
+export function formatearFechaNumerica(fecha: Date): string {
+  return fecha.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}

@@ -1,0 +1,610 @@
+/* Cuentas — Agenda, según prototipos/Fiados Agenda.dc.html */
+
+.cuentas {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Tono según estado (cuentas_vista): oliva al día, coral por vencer, vino vencido */
+.cuentas--al_dia {
+  --tono: var(--color-oliva);
+  --tono-fondo: #f0f2e7;
+  --tono-borde: #dce1cb;
+}
+
+.cuentas--por_vencer {
+  --tono: var(--color-coral);
+  --tono-fondo: #fbeee8;
+  --tono-borde: #f0d6c9;
+}
+
+.cuentas--vencido {
+  --tono: var(--color-vino);
+  --tono-fondo: #f6e7e4;
+  --tono-borde: #e3c7c2;
+}
+
+/* Pagadas: neutras, para que no compitan con las activas */
+.cuentas--pagado {
+  --tono: var(--color-texto-tenue);
+  --tono-fondo: #f3ede3;
+  --tono-borde: var(--color-lino);
+}
+
+.cuentas__encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cuentas__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.cuentas__resumen {
+  margin: 0;
+  min-height: 1.4em;
+  font-size: 14.5px;
+  color: var(--color-texto-medio);
+}
+
+/* ---------- Filtros ---------- */
+
+.cuentas__filtros {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cuentas__vistas {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #f1e6d6;
+  border-radius: 12px;
+}
+
+.cuentas__vista {
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-family: var(--fuente-ui);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-texto-medio);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cuentas__vista[aria-pressed='true'] {
+  background: var(--color-card);
+  color: var(--color-cacao);
+  font-weight: 600;
+  box-shadow: 0 2px 8px -4px rgba(74, 52, 42, 0.4);
+}
+
+.cuentas__buscador {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 16px;
+  background: #fff;
+  border: 1px solid var(--color-lino);
+  border-radius: 12px;
+  color: var(--color-canela);
+}
+
+.cuentas__buscador:focus-within {
+  border-color: var(--color-canela);
+  box-shadow: 0 0 0 3px rgba(184, 122, 86, 0.15);
+}
+
+.cuentas__buscador input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  padding: 12px 0;
+  font-family: var(--fuente-ui);
+  font-size: 14.5px;
+  color: var(--color-cacao);
+}
+
+.cuentas__buscador input::placeholder {
+  color: #c7b69c;
+}
+
+.cuentas__leyenda {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--color-texto-medio);
+}
+
+.cuentas__leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.cuentas__leyenda-item::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tono);
+}
+
+/* ---------- Lista ---------- */
+
+.cuentas__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cuentas__tabla-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+}
+
+.cuentas__tabla-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.cuentas__tabla {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.cuentas__tabla th {
+  text-align: left;
+  padding: 13px 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-texto-tenue);
+  font-weight: 600;
+  background: var(--color-crema);
+  border-bottom: 1px solid var(--color-lino);
+}
+
+.cuentas__tabla td {
+  padding: 13px 14px;
+}
+
+.cuentas__tabla th:first-child,
+.cuentas__tabla td:first-child {
+  padding-left: 20px;
+}
+
+.cuentas__tabla th:last-child,
+.cuentas__tabla td:last-child {
+  padding-right: 20px;
+}
+
+.cuentas__tabla .num {
+  text-align: right;
+}
+
+.cuentas__fila {
+  border-bottom: 1px solid #f0e6d8;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.cuentas__fila:hover {
+  background: #fbf5ec;
+}
+
+.cuentas__orden {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cuentas__orden:hover {
+  color: var(--color-canela);
+}
+
+.cuentas__cliente {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.cuentas__avatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--tono-fondo);
+  border: 1px solid var(--tono-borde);
+  color: var(--tono);
+}
+
+.cuentas__cliente-nombre {
+  font-weight: 600;
+}
+
+.cuentas__telefono {
+  color: #6b5545;
+  white-space: nowrap;
+}
+
+.cuentas__monto {
+  display: block;
+  font-family: var(--fuente-titulos);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cuentas__monto--pagado {
+  color: var(--color-texto-medio);
+}
+
+.cuentas__monto-original {
+  display: block;
+  font-size: 11.5px;
+  color: var(--color-texto-tenue);
+  white-space: nowrap;
+}
+
+.cuentas__vencimiento {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.cuentas__relativo {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tono);
+}
+
+.cuentas__estado {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--tono-fondo);
+  border: 1px solid var(--tono-borde);
+  color: var(--tono);
+}
+
+.cuentas__cobrar {
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--color-canela);
+  color: #fff8f0;
+  font-family: var(--fuente-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cuentas__cobrar:hover {
+  background: #a56a48;
+}
+
+.cuentas__ver {
+  padding: 7px 14px;
+  border: 1px solid var(--color-lino);
+  border-radius: 9px;
+  background: #fff;
+  color: #6b5545;
+  font-family: var(--fuente-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cuentas__ver:hover {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.cuentas__vacio {
+  padding: 44px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-texto-tenue);
+}
+
+/* Acceso a la vista calendario debajo de la lista */
+.cuentas__ir-calendario {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-lino);
+  border-radius: 15px;
+  background: var(--color-card);
+  font-family: var(--fuente-ui);
+  color: var(--color-cacao);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cuentas__ir-calendario:hover {
+  border-color: var(--color-canela);
+}
+
+.cuentas__mini {
+  display: grid;
+  grid-template-columns: repeat(7, 9px);
+  gap: 3px;
+  flex: none;
+}
+
+.cuentas__mini-dia {
+  width: 9px;
+  height: 9px;
+  border-radius: 2.5px;
+  background: #eadcc8;
+}
+
+.cuentas__mini-dia--vacio {
+  background: #f5ede1;
+}
+
+.cuentas__mini-dia--evento {
+  background: var(--tono);
+}
+
+.cuentas__ir-textos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cuentas__ir-titulo {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cuentas__ir-detalle {
+  font-size: 12.5px;
+  color: var(--color-texto-medio);
+}
+
+.cuentas__ir-flecha {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-canela);
+  white-space: nowrap;
+}
+
+/* ---------- Saldadas ---------- */
+
+.cuentas__pagadas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cuentas__pagadas-toggle {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 14px;
+  border: 1px solid var(--color-lino);
+  border-radius: 11px;
+  background: transparent;
+  font-family: var(--fuente-ui);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-texto-medio);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cuentas__pagadas-toggle:hover {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.cuentas__pagadas-cantidad {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #f0f2e7;
+  border: 1px solid #dce1cb;
+  font-size: 11.5px;
+  color: var(--color-oliva);
+}
+
+.cuentas__tabla-card--pagadas {
+  box-shadow: none;
+}
+
+/* ---------- Calendario ---------- */
+
+.cuentas__calendario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px 26px;
+  background: var(--color-card);
+  border: 1px solid var(--color-lino);
+  border-radius: 16px;
+  box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+}
+
+.cuentas__calendario-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cuentas__mes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cuentas__mes-nombre {
+  margin: 0;
+  min-width: 190px;
+  text-align: center;
+  font-family: var(--fuente-titulos);
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.cuentas__mes-paso {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-lino);
+  border-radius: 9px;
+  background: var(--color-card);
+  font-size: 17px;
+  line-height: 1;
+  color: #6b5545;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cuentas__mes-paso:hover {
+  border-color: var(--color-canela);
+  color: var(--color-canela);
+}
+
+.cuentas__mes-resumen {
+  font-size: 12.5px;
+  color: var(--color-texto-tenue);
+}
+
+.cuentas__grilla-scroll {
+  overflow-x: auto;
+}
+
+.cuentas__grilla {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 560px;
+}
+
+.cuentas__dia-semana {
+  padding-bottom: 2px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-texto-tenue);
+}
+
+.cuentas__celda {
+  min-height: 76px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 7px;
+  border-radius: 11px;
+  border: 1px solid #efe4d3;
+  background: #fff;
+}
+
+.cuentas__celda--vacia {
+  border: 0;
+  background: transparent;
+}
+
+.cuentas__celda--hoy {
+  border-color: var(--color-canela);
+  background: #fbf3ea;
+}
+
+.cuentas__celda-numero {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-texto-tenue);
+}
+
+.cuentas__celda--hoy .cuentas__celda-numero {
+  font-weight: 700;
+  color: var(--color-canela);
+}
+
+.cuentas__evento {
+  display: block;
+  width: 100%;
+  padding: 3px 6px;
+  border-radius: 7px;
+  border: 1px solid var(--tono-borde);
+  background: var(--tono-fondo);
+  color: var(--tono);
+  font-family: var(--fuente-ui);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.cuentas__evento:hover {
+  border-color: var(--tono);
+}
+
+@media (max-width: 768px) {
+  .cuentas__calendario {
+    padding: 18px 16px 20px;
+  }
+
+  .cuentas__buscador {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+}

@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { NavLink, Outlet, useMatch } from 'react-router'
 import { RequireRole } from '../auth/require-role'
 import { useCaja } from '../caja/use-caja'
 import { useConsulta } from '../hooks/use-consulta'
+import type { ContextoLayout } from '../hooks/use-refrescar-alertas-cuentas'
 import { contarCuentasEnAlerta } from '../lib/alertas'
 import type { Rol } from '../lib/auth'
 import { formatearFechaLarga, formatearHora } from '../lib/formato'
@@ -84,7 +85,8 @@ function EstadoCajaSidebar() {
 
 /** Layout de las pantallas internas: sidebar (desktop) o menú inferior (mobile) + header. */
 export function AppLayout() {
-  const { datos: cuentasEnAlerta } = useConsulta(contarCuentasEnAlerta)
+  const { datos: cuentasEnAlerta, recargar: refrescarAlertasCuentas } = useConsulta(contarCuentasEnAlerta)
+  const contexto = useMemo<ContextoLayout>(() => ({ refrescarAlertasCuentas }), [refrescarAlertasCuentas])
   const badge = cuentasEnAlerta ?? 0
   // El POS ocupa todo el alto: catálogo y carrito con scroll propio (prototipo Ventas POS)
   const esPos = useMatch('/ventas') !== null
@@ -124,7 +126,7 @@ export function AppLayout() {
         </header>
 
         <main className="layout__contenido">
-          <Outlet />
+          <Outlet context={contexto} />
         </main>
       </div>
 
