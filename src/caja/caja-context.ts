@@ -8,6 +8,8 @@ export interface CajaContextValue {
   error: boolean
   /** Vuelve a consultar `caja_actual_resumen()` y devuelve el resultado. */
   refrescar: () => Promise<CajaActual | null>
+  /** Descarta la caja en memoria (al cerrarla y salir): nadie sigue operando con su id. */
+  limpiar: () => void
 }
 
 export const CajaContext = createContext<CajaContextValue | null>(null)

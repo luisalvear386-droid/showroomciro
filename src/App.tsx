@@ -6,6 +6,8 @@ import { CajaProvider } from './caja/caja-provider'
 import { RequireCajaAbierta } from './caja/require-caja-abierta'
 import { AppLayout } from './components/app-layout'
 import { AperturaCajaPage } from './pages/apertura-caja-page'
+import { CajaCierrePage } from './pages/caja-cierre-page'
+import { CajaHistorialPage } from './pages/caja-historial-page'
 import { CuentaNuevaPage } from './pages/cuenta-nueva-page'
 import { CuentasPage } from './pages/cuentas-page'
 import { DashboardPage } from './pages/dashboard-page'
@@ -37,12 +39,13 @@ function App() {
                   <Route path="productos" element={<ProductosPage />} />
                   <Route path="productos/nuevo" element={<ProductoFormPage />} />
                   <Route path="productos/:id/editar" element={<ProductoFormPage />} />
-                  <Route path="caja" element={<EnConstruccionPage titulo="Caja" modulo={8} />} />
+                  <Route path="caja" element={<CajaCierrePage />} />
                   <Route path="cuentas" element={<CuentasPage />} />
                   {/* Detalle/Cobro: modal sobre la agenda */}
                   <Route path="cuentas/:id" element={<CuentasPage />} />
 
                   <Route element={<RequireRole roles={['dueño']} />}>
+                    <Route path="caja/historial" element={<CajaHistorialPage />} />
                     <Route path="reportes" element={<EnConstruccionPage titulo="Reportes" modulo={9} />} />
                     <Route path="usuarios" element={<EnConstruccionPage titulo="Usuarios" modulo={9} />} />
                     <Route

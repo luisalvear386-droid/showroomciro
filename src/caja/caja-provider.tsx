@@ -42,9 +42,15 @@ export function CajaProvider() {
     }
   }, [])
 
+  // Vuelve a "sin consultar" y no a null: null mandaría a /apertura-caja antes de salir
+  const limpiar = useCallback(() => {
+    setCaja(undefined)
+    setError(false)
+  }, [])
+
   const value = useMemo<CajaContextValue>(
-    () => ({ caja, error: error && caja === undefined, refrescar }),
-    [caja, error, refrescar],
+    () => ({ caja, error: error && caja === undefined, refrescar, limpiar }),
+    [caja, error, refrescar, limpiar],
   )
 
   return (
