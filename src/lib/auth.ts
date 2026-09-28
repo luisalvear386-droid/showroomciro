@@ -1,4 +1,5 @@
-import { supabase } from './supabase'
+import type { User } from '@supabase/supabase-js'
+import { CLAVE_SESION, supabase } from './supabase'
 
 export type Rol = 'dueño' | 'vendedor'
 
@@ -37,7 +38,50 @@ export async function obtenerPerfil(userId: string): Promise<Perfil | null> {
   return data as Perfil | null
 }
 
-export type ResultadoLogin = { ok: true } | { ok: false; error: string }
+/** Margen con el que supabase-js da el token por vencido y lo renueva (EXPIRY_MARGIN_MS). */
+const MARGEN_VENCIMIENTO_MS = 90 * 1000
+
+export interface SesionGuardada {
+  usuario: User
+  /** true si supabase-js va a tener que renovar el token antes de usarlo. */
+  vencida: boolean
+}
+
+/**
+ * Sesión que supabase-js dejó guardada, aunque no la haya podido restaurar.
+ *
+ * Con el access token vencido y sin red, supabase-js no puede renovarlo: reintenta ~30 s,
+ * avisa `INITIAL_SESSION` con null y deja la sesión en localStorage (solo la borra si el
+ * servidor rechaza el refresh token). Probado en el Módulo 11 con supabase-js 2.117.
+ */
+export function leerSesionGuardada(): SesionGuardada | null {
+  try {
+    const crudo = localStorage.getItem(CLAVE_SESION)
+    if (!crudo) return null
+    const sesion = JSON.parse(crudo) as { refresh_token?: unknown; expires_at?: unknown; user?: { id?: unknown } }
+    if (typeof sesion.refresh_token !== 'string' || typeof sesion.user?.id !== 'string') return null
+    const expiraEn = typeof sesion.expires_at === 'number' ? sesion.expires_at * 1000 : 0
+    return { usuario: sesion.user as User, vencida: expiraEn - Date.now() < MARGEN_VENCIMIENTO_MS }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Borra la sesión guardada a mano. Hace falta al salir sin red con el token vencido:
+ * ahí `signOut()` devuelve el error de red antes de borrarla, y el próximo arranque la
+ * volvería a encontrar. El refresh token sigue vigente en el servidor hasta que venza.
+ */
+export function borrarSesionGuardada(): void {
+  try {
+    localStorage.removeItem(CLAVE_SESION)
+    localStorage.removeItem(`${CLAVE_SESION}-user`)
+  } catch {
+    // Sin acceso a localStorage tampoco hay sesión guardada que borrar
+  }
+}
+
+export type ResultadoLogin ={ ok: true } | { ok: false; error: string }
 
 /**
  * Login por usuario/contraseña. El usuario nunca ve el email técnico.

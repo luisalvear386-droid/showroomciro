@@ -9,6 +9,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
   )
 }
 
+/**
+ * Clave con la que supabase-js guarda la sesión en localStorage (su default, porque no se
+ * le pasa `storageKey`). La lee el modo "sesión offline" de <AuthProvider>.
+ */
+export const CLAVE_SESION = `sb-${new URL(supabaseUrl).hostname.split('.')[0]}-auth-token`
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
