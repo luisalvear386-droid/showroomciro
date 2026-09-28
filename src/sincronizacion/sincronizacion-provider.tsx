@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Outlet } from 'react-router'
 import { useAuth } from '../auth/use-auth'
+import { useNavegadorEnLinea } from '../hooks/use-navegador-en-linea'
 import { sincronizarCola, type ResultadoSincronizacion } from '../lib/cola-ventas'
 import { db } from '../lib/db-local'
 import { SincronizacionContext, type SincronizacionContextValue } from './sincronizacion-context'
@@ -36,6 +37,22 @@ export function SincronizacionProvider() {
     [usuarioId],
     0,
   )
+  // Resto de la cola (todas las ventas, de cualquier usuario) y ventas con otro total
+  const resto = useLiveQuery(
+    async () => {
+      const [cola, diferencias] = await Promise.all([
+        db.ventasPendientes.toArray(),
+        usuarioId ? db.ventasConDiferencia.where('usuario_id').equals(usuarioId).count() : 0,
+      ]).catch(() => [[], 0] as const)
+      return {
+        conError: cola.filter((v) => v.usuario_id === usuarioId && v.estado === 'con_error').length,
+        deOtros: cola.filter((v) => v.usuario_id !== usuarioId).length,
+        conDiferencia: diferencias,
+      }
+    },
+    [usuarioId],
+  )
+  const navegadorEnLinea = useNavegadorEnLinea()
   const [enCurso, setEnCurso] = useState(0)
   const [ultimo, setUltimo] = useState<ResultadoSincronizacion | null>(null)
   const [fallosSeguidos, setFallosSeguidos] = useState(0)
@@ -97,9 +114,21 @@ export function SincronizacionProvider() {
     return () => window.clearTimeout(temporizador)
   }, [pendientes, ultimo, fallosSeguidos, sesionOffline, sesionRechazada, sincronizar])
 
+  const sinConexion =
+    !navegadorEnLinea || sesionOffline || (ultimo?.estado === 'sin-conexion' && pendientes > 0)
+
   const value = useMemo<SincronizacionContextValue>(
-    () => ({ pendientes, sincronizando: enCurso > 0, ultimo, sincronizar }),
-    [pendientes, enCurso, ultimo, sincronizar],
+    () => ({
+      pendientes,
+      conError: resto?.conError ?? 0,
+      deOtros: resto?.deOtros ?? 0,
+      conDiferencia: resto?.conDiferencia ?? 0,
+      conexion: sinConexion ? 'sin-conexion' : 'en-linea',
+      sincronizando: enCurso > 0,
+      ultimo,
+      sincronizar,
+    }),
+    [pendientes, resto, sinConexion, enCurso, ultimo, sincronizar],
   )
 
   return (

@@ -8,6 +8,7 @@ import type { ContextoLayout } from '../hooks/use-refrescar-alertas-cuentas'
 import { contarCuentasEnAlerta } from '../lib/alertas'
 import type { Rol } from '../lib/auth'
 import { formatearFechaLarga, formatearHora } from '../lib/formato'
+import { EstadoSincronizacion } from './estado-sincronizacion'
 import { IconoNavegacion, type IconoNav } from './iconos-nav'
 import { MenuUsuario } from './menu-usuario'
 import './app-layout.css'
@@ -136,6 +137,8 @@ export function AppLayout() {
             <span className="layout__header-nombre">{conVolver ? 'Usuarios' : 'ShowroomCiro'}</span>
             <span className="layout__header-fecha">{esPos ? 'Punto de venta' : formatearFechaLarga(new Date())}</span>
           </div>
+          {/* Ventas sin sincronizar (Módulo 11): solo en el mostrador, desde el celular no se vende */}
+          {!esMobile && <EstadoSincronizacion />}
           <MenuUsuario />
         </header>
 

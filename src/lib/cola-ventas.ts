@@ -260,3 +260,8 @@ export function motivoBloqueoCierre(ventas: VentaPendiente[], usuarioId: string)
   }
   return null
 }
+
+/** Da por vista una venta que la base registró con otro total (deja de avisarse). */
+export async function marcarDiferenciaVista(id: string): Promise<void> {
+  await db.ventasConDiferencia.delete(id)
+}

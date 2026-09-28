@@ -230,7 +230,10 @@ export function CajaCierrePage() {
 
           {bloqueo && (
             <div className="mensaje-error" role="alert">
-              {bloqueo}
+              {bloqueo}{' '}
+              <Link to="/ventas/pendientes" className="cierre__ver-ventas">
+                Ver ventas
+              </Link>
             </div>
           )}
 

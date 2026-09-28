@@ -1,0 +1,73 @@
+/* Ventas sin sincronizar (Módulo 11). Tabla y detalle reusan caja-historial-page.css;
+   acá solo lo propio: estados de la cola, motivo del error y acciones. */
+
+.pendientes__estado--pendiente {
+  background: var(--color-crema);
+  border-color: var(--color-lino);
+  color: var(--color-canela);
+}
+
+.pendientes__estado--error {
+  background: #f6e7e4;
+  border-color: #e3c7c2;
+  color: var(--color-vino);
+}
+
+.pendientes__estado--otro {
+  background: #f3ede3;
+  border-color: var(--color-lino);
+  color: var(--color-texto-tenue);
+}
+
+.pendientes__subtitulo {
+  margin: 8px 0 0;
+  font-family: var(--fuente-titulos);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.pendientes__motivo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pendientes__ayuda {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-texto-medio);
+}
+
+.pendientes__item {
+  align-items: center;
+}
+
+.pendientes__item-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pendientes__item-variante {
+  font-size: 12px;
+  color: var(--color-texto-tenue);
+}
+
+.pendientes__item-derecha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pendientes__ajustar {
+  padding: 7px 12px;
+  font-size: 12.5px;
+}
+
+.pendientes__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

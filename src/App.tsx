@@ -19,6 +19,7 @@ import { ProductosPage } from './pages/productos-page'
 import { ReportesPage } from './pages/reportes-page'
 import { UsuariosPage } from './pages/usuarios-page'
 import { VentasPage } from './pages/ventas-page'
+import { VentasPendientesPage } from './pages/ventas-pendientes-page'
 import { SincronizacionProvider } from './sincronizacion/sincronizacion-provider'
 
 function App() {
@@ -58,6 +59,8 @@ function App() {
                     <Route element={<SoloEscritorio />}>
                       {/* Destinos de "Nueva Venta" / "Nueva Cuenta" del Dashboard (sin ítem de menú) */}
                       <Route path="ventas" element={<VentasPage />} />
+                      {/* Cola offline (Módulo 11): desde el indicador del header y el Cierre de Caja */}
+                      <Route path="ventas/pendientes" element={<VentasPendientesPage />} />
                       <Route path="cuentas/nueva" element={<CuentaNuevaPage />} />
                       <Route path="productos" element={<ProductosPage />} />
                       <Route path="productos/nuevo" element={<ProductoFormPage />} />

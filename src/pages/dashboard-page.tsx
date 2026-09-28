@@ -8,6 +8,7 @@ import { obtenerCuentasEnAlerta, obtenerStockBajo } from '../lib/alertas'
 import { refrescarCatalogo } from '../lib/catalogo-local'
 import { describirVencimiento } from '../lib/cuentas'
 import { formatearFechaLarga, formatearHora, formatearMoneda } from '../lib/formato'
+import { useSincronizacion } from '../sincronizacion/use-sincronizacion'
 import './dashboard-page.css'
 
 function MensajePanel({ cargando, error, vacio }: { cargando: boolean; error: boolean; vacio: string }) {
@@ -22,6 +23,9 @@ export function DashboardPage() {
   const { perfil, sesionOffline } = useAuth()
   const { caja, refrescar } = useCaja()
   const esMobile = useEsMobile()
+  const cola = useSincronizacion()
+  // Ventas de esta computadora que todavía no llegaron a la base: no están en el total
+  const sinSincronizar = cola.pendientes + cola.conError + cola.deOtros
   const navigate = useNavigate()
   const stock = useConsulta(obtenerStockBajo)
   const cuentas = useConsulta(obtenerCuentasEnAlerta)
@@ -75,7 +79,8 @@ export function DashboardPage() {
           <span className={caja ? 'kpi__detalle kpi__detalle--ok' : 'kpi__detalle'}>
             <span className="kpi__punto" aria-hidden="true" />
             {caja
-              ? `${caja.cantidad_ventas} ${caja.cantidad_ventas === 1 ? 'venta' : 'ventas'}`
+              ? `${caja.cantidad_ventas} ${caja.cantidad_ventas === 1 ? 'venta' : 'ventas'}` +
+                (sinSincronizar > 0 ? ` · ${sinSincronizar} sin sincronizar` : '')
               : 'Sin caja abierta'}
           </span>
         </div>
