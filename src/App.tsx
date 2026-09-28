@@ -15,6 +15,8 @@ import { EnConstruccionPage } from './pages/en-construccion-page'
 import { LoginPage } from './pages/login-page'
 import { ProductoFormPage } from './pages/producto-form-page'
 import { ProductosPage } from './pages/productos-page'
+import { ReportesPage } from './pages/reportes-page'
+import { UsuariosPage } from './pages/usuarios-page'
 import { VentasPage } from './pages/ventas-page'
 
 function App() {
@@ -30,10 +32,12 @@ function App() {
               {/* Paso bloqueante post-login: se saltea solo si ya hay una caja abierta */}
               <Route path="apertura-caja" element={<AperturaCajaPage />} />
 
-              {/* Consulta de solo lectura: la apertura obligatoria bloquea la venta, no esto */}
+              {/* Consulta y gestión, no venta: la apertura obligatoria bloquea la venta, no esto */}
               <Route element={<RequireRole roles={['dueño']} />}>
                 <Route element={<AppLayout />}>
                   <Route path="caja/historial" element={<CajaHistorialPage />} />
+                  <Route path="reportes" element={<ReportesPage />} />
+                  <Route path="usuarios" element={<UsuariosPage />} />
                 </Route>
               </Route>
 
@@ -52,8 +56,6 @@ function App() {
                   <Route path="cuentas/:id" element={<CuentasPage />} />
 
                   <Route element={<RequireRole roles={['dueño']} />}>
-                    <Route path="reportes" element={<EnConstruccionPage titulo="Reportes" modulo={9} />} />
-                    <Route path="usuarios" element={<EnConstruccionPage titulo="Usuarios" modulo={9} />} />
                     <Route
                       path="configuracion"
                       element={<EnConstruccionPage titulo="Configuración" modulo={10} />}
