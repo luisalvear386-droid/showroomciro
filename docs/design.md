@@ -42,6 +42,11 @@ Insertar en `ajustes_stock` no modificaba `variantes.stock` por sí solo — hac
 
 **Pendiente para el Módulo 6:** `variantes.stock` sigue siendo editable por `UPDATE` directo (lo necesita el POS para descontar al vender). Evaluar ahí si conviene resolverlo con una función dedicada, con el mismo criterio que `cerrar_caja()`.
 
+### Venta atómica (Módulo 6)
+Se agregó `registrar_venta(p_venta_id, p_caja_id, p_medio_pago, p_items)` (migración 0008), con el mismo criterio que `cerrar_caja()` y `aplicar_ajuste_stock()`: inserta la venta y sus ítems, y descuenta `variantes.stock`, todo en una sola transacción. `p_venta_id` lo genera el cliente para que sea idempotente — necesario para el Módulo 11: un reintento de sincronización offline con el mismo id no duplica la venta. El precio de cada ítem se toma del precio actual de `productos`, no del que mande el cliente. El `INSERT` directo sobre `ventas`/`venta_items` y el `UPDATE` directo sobre `variantes.stock` quedaron deshabilitados para todos los roles — la única vía es esta función.
+
+**Pendiente para el Módulo 11:** la función rechaza ventas contra una caja cerrada; una venta offline que se sincronice después del cierre de esa caja va a fallar, y además quedaría con la fecha de sincronización en vez de la fecha real de la venta. Resolver ahí.
+
 ### Modo Offline-First (Ventas/POS)
 > Se simplifica respecto a la primera versión: como el celular del Dueño/a ahora **solo consulta** (no vende), ya no hay dos puntos generando ventas al mismo tiempo. Se elimina la necesidad de resolución de conflictos de stock entre dispositivos.
 

@@ -61,11 +61,11 @@
 ---
 
 ## Módulo 6 — Frontend: Ventas (POS)
-- [ ] Pantalla **Ventas (POS)**: buscador + grilla visual + carrito.
-- [ ] Modal de **selección de variante** (talle/color).
-- [ ] **Checkout**: solo medios de pago directos (efectivo/transferencia/tarjeta), sin opción de fiado.
-- [ ] Impresión de ticket vía `window.print()` con formato de impresora térmica.
-- [ ] Redirección automática al Dashboard al confirmar la venta.
+- [x] Pantalla **Ventas (POS)**: buscador + grilla visual + carrito.
+- [x] Modal de **selección de variante** (talle/color).
+- [x] **Checkout**: solo medios de pago directos (efectivo/transferencia/tarjeta), sin opción de fiado.
+- [x] Impresión de ticket vía `window.print()` con formato de impresora térmica.
+- [x] Redirección automática al Dashboard al confirmar la venta.
 
 ---
 
@@ -112,7 +112,8 @@
 - [ ] Configurar **TestSprite MCP** con la API key.
 - [ ] Ejecutar la batería de pruebas E2E contra `@docs/prd.md`, puerto local y credenciales de prueba (Dueño/a y Vendedor).
 - [ ] Revisar el reporte de TestSprite y corregir los tests fallidos.
+- [ ] Reset de datos de prueba (ventas, ajustes de stock, cajas y productos de prueba cargados durante el desarrollo) y carga del stock real contado a mano, antes de habilitar el sistema en producción.
 
 ---
 
-**Estado: Módulos 0 a 5 completos. Arrancando Módulo 6 (Frontend: Ventas / POS).**
+**Estado: Módulos 0 a 6 completos. Arrancando Módulo 7 (Frontend: Cuentas).**
