@@ -1,0 +1,117 @@
+/* Configuración (mobile), según prototipos/Mobile Configuración.dc.html */
+
+.configuracion {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.configuracion__titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.configuracion__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.configuracion__bajada {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--color-texto-medio);
+}
+
+.configuracion__seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.configuracion__seccion-titulo {
+  margin: 0;
+  padding-left: 2px;
+  font-family: var(--fuente-ui);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b5545;
+  font-weight: 600;
+}
+
+.configuracion__opcion {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 16px;
+  border: 1px solid var(--color-lino);
+  border-radius: 16px;
+  background: var(--color-card);
+  color: var(--color-cacao);
+  text-decoration: none;
+  box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+  transition: border-color 0.15s;
+}
+
+.configuracion__opcion:hover {
+  border-color: var(--color-canela);
+  color: var(--color-cacao);
+}
+
+.configuracion__opcion-icono {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: #f5e7da;
+  border: 1px solid #e8d2be;
+  color: var(--color-canela);
+}
+
+.configuracion__opcion-textos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.configuracion__opcion-nombre {
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.configuracion__opcion-detalle {
+  font-size: 12.5px;
+  color: var(--color-texto-medio);
+}
+
+.configuracion__opcion-flecha {
+  flex: none;
+  font-size: 19px;
+  line-height: 1;
+  color: var(--color-texto-suave);
+}
+
+.configuracion__reservado {
+  height: 64px;
+  border-radius: 16px;
+  border: 1px dashed var(--color-lino);
+  background: #fbf5ec;
+}
+
+.configuracion__nota {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #6b5545;
+}

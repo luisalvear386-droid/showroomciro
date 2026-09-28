@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useAuth } from '../auth/use-auth'
 import { useConsulta } from '../hooks/use-consulta'
 import { normalizarNombreUsuario, type Perfil } from '../lib/auth'
-import { cambiarActivoUsuario, crearVendedor, obtenerUsuarios } from '../lib/usuarios'
+import { cambiarActivoUsuario, crearVendedor, obtenerUsuarios, resumirUsuarios } from '../lib/usuarios'
 import './usuarios-page.css'
 
 const ETIQUETA_ROL: Record<Perfil['rol'], string> = { dueño: 'Dueño/a', vendedor: 'Vendedor' }
@@ -124,7 +124,6 @@ export function UsuariosPage() {
   const [errorAccion, setErrorAccion] = useState('')
 
   const usuarios = datos ?? []
-  const activos = usuarios.filter((u) => u.activo).length
 
   async function alternarActivo(u: Perfil) {
     setErrorAccion('')
@@ -144,11 +143,7 @@ export function UsuariosPage() {
       <div className="usuarios__encabezado">
         <div className="usuarios__titulos">
           <h1 className="usuarios__titulo">Usuarios</h1>
-          <p className="usuarios__bajada">
-            {datos === undefined
-              ? ' '
-              : `${usuarios.length} ${usuarios.length === 1 ? 'usuario' : 'usuarios'} · ${activos} ${activos === 1 ? 'activo' : 'activos'}`}
-          </p>
+          <p className="usuarios__bajada">{datos === undefined ? ' ' : resumirUsuarios(usuarios)}</p>
         </div>
         <button
           type="button"

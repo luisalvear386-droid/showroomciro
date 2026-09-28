@@ -1,8 +1,9 @@
 import { useMemo, type ReactNode } from 'react'
-import { NavLink, Outlet, useMatch } from 'react-router'
+import { Link, NavLink, Outlet, useLocation, useMatch } from 'react-router'
 import { RequireRole } from '../auth/require-role'
 import { useCaja } from '../caja/use-caja'
 import { useConsulta } from '../hooks/use-consulta'
+import { useEsMobile } from '../hooks/use-es-mobile'
 import type { ContextoLayout } from '../hooks/use-refrescar-alertas-cuentas'
 import { contarCuentasEnAlerta } from '../lib/alertas'
 import type { Rol } from '../lib/auth'
@@ -22,6 +23,8 @@ interface ItemNav {
 
 interface ItemNavMobile extends ItemNav {
   icono: IconoNav
+  /** Pantalla a la que se entra desde este ítem y que lo deja marcado como activo. */
+  subRuta?: string
 }
 
 /** Sidebar desktop (design.md → Navegación). Sin ítem "Ventas": el POS se abre desde el Dashboard. */
@@ -42,7 +45,7 @@ const NAV_MOBILE: ItemNavMobile[] = [
   { ruta: '/', etiqueta: 'Dashboard', icono: 'dashboard' },
   { ruta: '/cuentas', etiqueta: 'Cuentas', icono: 'cuentas', conBadgeCuentas: true },
   { ruta: '/reportes', etiqueta: 'Reportes', icono: 'reportes', roles: ['dueño'] },
-  { ruta: '/configuracion', etiqueta: 'Configuración', icono: 'configuracion', roles: ['dueño'] },
+  { ruta: '/configuracion', etiqueta: 'Configuración', icono: 'configuracion', roles: ['dueño'], subRuta: '/usuarios' },
 ]
 
 function SoloRoles({ roles, children }: { roles?: Rol[]; children: ReactNode }) {
@@ -90,6 +93,11 @@ export function AppLayout() {
   const badge = cuentasEnAlerta ?? 0
   // El POS ocupa todo el alto: catálogo y carrito con scroll propio (prototipo Ventas POS)
   const esPos = useMatch('/ventas') !== null
+  // En el celular, Gestión de Usuarios se abre desde Configuración y vuelve a ella (prototipo Mobile Configuración)
+  const esMobile = useEsMobile()
+  const { pathname } = useLocation()
+  const enUsuarios = useMatch('/usuarios') !== null
+  const conVolver = esMobile && enUsuarios
 
   return (
     <div className={esPos ? 'layout layout--pos' : 'layout'}>
@@ -118,8 +126,14 @@ export function AppLayout() {
       <div className="layout__principal">
         <header className="layout__header">
           <div className="layout__header-titulos">
-            <div className="layout__logo layout__logo--mobile" aria-hidden="true" />
-            <span className="layout__header-nombre">ShowroomCiro</span>
+            {conVolver ? (
+              <Link to="/configuracion" className="layout__volver" aria-label="Volver a Configuración">
+                ←
+              </Link>
+            ) : (
+              <div className="layout__logo layout__logo--mobile" aria-hidden="true" />
+            )}
+            <span className="layout__header-nombre">{conVolver ? 'Usuarios' : 'ShowroomCiro'}</span>
             <span className="layout__header-fecha">{esPos ? 'Punto de venta' : formatearFechaLarga(new Date())}</span>
           </div>
           <MenuUsuario />
@@ -133,7 +147,15 @@ export function AppLayout() {
       <nav className="layout__tabs" aria-label="Principal">
         {NAV_MOBILE.map((item) => (
           <SoloRoles key={item.ruta} roles={item.roles}>
-            <NavLink to={item.ruta} end={item.ruta === '/'} className="layout__tab">
+            <NavLink
+              to={item.ruta}
+              end={item.ruta === '/'}
+              className={({ isActive }) =>
+                isActive || (item.subRuta !== undefined && pathname.startsWith(item.subRuta))
+                  ? 'layout__tab active'
+                  : 'layout__tab'
+              }
+            >
               <span className="layout__tab-icono">
                 <IconoNavegacion nombre={item.icono} />
                 {item.conBadgeCuentas && <Badge cantidad={badge} className="layout__tab-badge" />}

@@ -354,3 +354,150 @@
     padding: 18px 16px 20px;
   }
 }
+
+/* ---------- Mobile (Configuración → Gestionar Usuarios), según prototipos/Mobile Configuración.dc.html ---------- */
+
+@media (max-width: 768px) {
+  .usuarios {
+    gap: 16px;
+  }
+
+  .usuarios__titulo {
+    font-size: 28px;
+  }
+
+  .usuarios__bajada {
+    font-size: 13.5px;
+  }
+
+  .usuarios__encabezado {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .usuarios__nuevo {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    font-size: 15.5px;
+  }
+
+  /* Con el formulario abierto el botón se oculta: el alta se cierra con la × del formulario */
+  .usuarios__nuevo--activo {
+    display: none;
+  }
+
+  .usuarios__form {
+    gap: 14px;
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .usuarios__campos {
+    grid-template-columns: 1fr;
+  }
+
+  .usuarios__form-acciones {
+    flex-direction: column;
+  }
+
+  .usuarios__crear,
+  .usuarios__form-acciones .boton-cancelar {
+    width: 100%;
+  }
+
+  /* La tabla pasa a una tarjeta por usuario */
+  .usuarios__card {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .usuarios__tabla,
+  .usuarios__tabla tbody {
+    display: block;
+    min-width: 0;
+  }
+
+  .usuarios__tabla thead {
+    display: none;
+  }
+
+  .usuarios__tabla tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .usuarios__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'persona estado'
+      'rol estado'
+      'acciones acciones';
+    align-items: center;
+    padding: 15px 16px;
+    border: 1px solid var(--color-lino);
+    border-radius: 16px;
+    background: var(--color-card);
+    box-shadow: 0 10px 26px -24px rgba(74, 52, 42, 0.5);
+  }
+
+  .usuarios__tabla td,
+  .usuarios__tabla td:first-child,
+  .usuarios__tabla td:last-child {
+    padding: 0;
+  }
+
+  .usuarios__tabla td:nth-child(1) {
+    grid-area: persona;
+  }
+
+  /* Rol debajo del nombre, alineado con él (avatar 32px + gap 11px) */
+  .usuarios__tabla td.usuarios__rol {
+    grid-area: rol;
+    padding-left: 43px;
+    font-size: 12px;
+  }
+
+  .usuarios__tabla td:nth-child(3) {
+    grid-area: estado;
+  }
+
+  .usuarios__tabla td.usuarios__acciones {
+    grid-area: acciones;
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  .usuarios__tabla td.usuarios__acciones:empty {
+    display: none;
+  }
+
+  .usuarios__accion {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .usuarios__propia {
+    display: block;
+    padding: 11px;
+    border-radius: 12px;
+    border: 1px dashed var(--color-lino);
+    background: var(--color-crema);
+    color: #6b5545;
+    font-weight: 500;
+  }
+
+  .usuarios__vacio {
+    padding: 28px 16px;
+    border: 1px dashed var(--color-lino);
+    border-radius: 16px;
+  }
+}

@@ -42,3 +42,9 @@ export async function cambiarActivoUsuario(id: string, activo: boolean): Promise
     error: `No se pudo ${activo ? 'reactivar' : 'desactivar'} el usuario. Revisá la conexión e intentá de nuevo.`,
   }
 }
+
+/** "4 usuarios · 3 activos" — resumen de Gestión de Usuarios y de su acceso en Configuración (mobile). */
+export function resumirUsuarios(usuarios: Perfil[]): string {
+  const activos = usuarios.filter((u) => u.activo).length
+  return `${usuarios.length} ${usuarios.length === 1 ? 'usuario' : 'usuarios'} · ${activos} ${activos === 1 ? 'activo' : 'activos'}`
+}

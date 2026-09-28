@@ -427,3 +427,32 @@
     gap: 6px;
   }
 }
+
+/* Mobile (acceso remoto del Dueño/a, solo consulta) */
+@media (max-width: 768px) {
+  .reportes {
+    gap: 16px;
+  }
+
+  .reportes__encabezado {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .reportes__titulo {
+    font-size: 28px;
+  }
+
+  .reportes__bajada {
+    font-size: 13.5px;
+  }
+
+  .reportes__periodo {
+    flex: 1;
+  }
+
+  .reportes__card-titulo {
+    font-size: 19px;
+  }
+}

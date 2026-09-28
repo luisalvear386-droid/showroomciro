@@ -466,3 +466,24 @@
     height: auto;
   }
 }
+
+/* Mobile: "←" del header en Gestión de Usuarios, de vuelta a Configuración (prototipo Mobile Configuración) */
+.layout__volver {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-lino);
+  border-radius: 11px;
+  background: var(--color-card);
+  color: #6b5545;
+  font-size: 17px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.layout__volver:hover {
+  color: var(--color-canela);
+}
