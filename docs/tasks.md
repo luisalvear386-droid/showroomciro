@@ -82,9 +82,9 @@
 
 ---
 
-## Módulo 9 — Frontend: Reportes y Usuarios (desktop)
+## Módulo 9 — Frontend: Reportes y Usuarios (desktop) ✅ COMPLETO
 - [x] Pantalla **Reportes** (solo Dueño/a): ventas por período, top productos, ticket promedio, cuentas pendientes — fuera del bloqueo de apertura de caja (ver `design.md`).
-- [ ] Pantalla **Gestión de Usuarios** (solo Dueño/a) — frontend listo; alta vía RPC `crear_vendedor()` (migración `0011_crear_vendedor.sql`). **Pendiente: aplicar 0011 en Supabase y probar el alta.**
+- [x] Pantalla **Gestión de Usuarios** (solo Dueño/a): alta de Vendedores vía RPC `crear_vendedor()` (migración `0011_crear_vendedor.sql`) y desactivar/reactivar vía `perfiles.activo` — fuera del bloqueo de apertura de caja (ver `design.md`).
 
 ---
 
@@ -116,4 +116,4 @@
 
 ---
 
-**Estado: Módulos 0 a 8 completos. Arrancando Módulo 9 (Frontend: Reportes y Usuarios).**
+**Estado: Módulos 0 a 9 completos. Arrancando Módulo 10 (Frontend: Mobile — acceso remoto).**
