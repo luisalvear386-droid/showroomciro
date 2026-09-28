@@ -704,4 +704,41 @@
     border: 1px dashed var(--color-lino);
     border-radius: 16px;
   }
+
+  /* Calendario: el mes entero entra en el ancho, sin scroll horizontal. Cada vencimiento queda
+     como una barra del color de su estado; al tocarla abre el detalle (nombre y saldo). */
+  .cuentas__mes-nombre {
+    min-width: 0;
+    font-size: 19px;
+  }
+
+  .cuentas__grilla {
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .cuentas__dia-semana {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .cuentas__celda {
+    min-height: 48px;
+    gap: 3px;
+    padding: 4px;
+    border-radius: 9px;
+  }
+
+  .cuentas__celda-numero {
+    font-size: 11px;
+  }
+
+  .cuentas__evento {
+    height: 14px;
+    padding: 0;
+    border-radius: 5px;
+    background: var(--tono);
+    border-color: var(--tono);
+    font-size: 0;
+  }
 }

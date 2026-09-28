@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
-import { useAuth, useTieneRol } from '../auth/use-auth'
+import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
 import { PantallaCarga } from '../components/pantalla-carga'
 import { useEsMobile } from '../hooks/use-es-mobile'
@@ -16,7 +16,6 @@ const MENSAJE_MONTO_INVALIDO = 'Ingresá un monto válido (ej. 20.000).'
 export function AperturaCajaPage() {
   const { perfil, logout } = useAuth()
   const { caja, error: errorCaja, refrescar } = useCaja()
-  const esDueno = useTieneRol('dueño')
   const esMobile = useEsMobile()
   const navigate = useNavigate()
 
@@ -25,8 +24,8 @@ export function AperturaCajaPage() {
   const [enviando, setEnviando] = useState(false)
   const [saliendo, setSaliendo] = useState(false)
 
-  // El Dueño/a desde el celular no opera caja (acceso remoto de solo consulta): ni siquiera por URL
-  if (esDueno && esMobile) return <Navigate to="/" replace />
+  // Desde el celular nadie opera caja (acceso de solo consulta, cualquier rol): ni siquiera por URL
+  if (esMobile) return <Navigate to="/" replace />
 
   if (errorCaja) {
     return (
