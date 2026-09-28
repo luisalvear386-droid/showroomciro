@@ -285,6 +285,13 @@
   stroke: var(--color-oliva);
 }
 
+/* Venta guardada sin conexión: en la cola, todavía sin registrar en la base */
+.checkout__check--pendiente {
+  background: var(--color-crema);
+  border-color: var(--color-lino);
+  stroke: var(--color-canela);
+}
+
 .checkout__exito-textos {
   display: flex;
   flex-direction: column;

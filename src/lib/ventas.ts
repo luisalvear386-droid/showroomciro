@@ -47,44 +47,69 @@ export interface ItemPedido {
   cantidad: number
 }
 
+export interface PedidoVenta {
+  /** Generado en el cliente: reintentar con el mismo id nunca duplica la venta. */
+  id: string
+  caja_id: string
+  medio_pago: MedioPago
+  items: ItemPedido[]
+  /** Hora en que se hizo la venta (ISO). Sin ella, la base usa la hora de llegada. */
+  fecha?: string
+}
+
 /**
- * Registra la venta de forma atómica vía `registrar_venta()` (0008): inserta la venta y
- * sus ítems y descuenta stock en una sola transacción, con los precios actuales de la base.
+ * Registra la venta de forma atómica vía `registrar_venta()` (0008, 0012): inserta la venta
+ * y sus ítems y descuenta stock en una sola transacción, con los precios actuales de la base.
+ * Si ya estaba registrada (reintento), devuelve esa misma venta.
  *
- * `ventaId` lo genera el cliente: reintentar con el mismo id nunca duplica la venta
- * (la función devuelve la ya registrada). Después lee los ítems para el ticket.
+ * `timeoutMs`: corta la espera (sin internet pero con red local, el pedido puede quedar
+ * colgado). No hay riesgo de duplicar: si el pedido llegó igual, el reintento lo encuentra.
  */
-export async function registrarVenta(
-  ventaId: string,
-  cajaId: string,
-  medioPago: MedioPago,
-  items: ItemPedido[],
-): Promise<VentaRegistrada> {
-  const { data, error } = await supabase.rpc('registrar_venta', {
-    p_venta_id: ventaId,
-    p_caja_id: cajaId,
-    p_medio_pago: medioPago,
-    p_items: items,
+export async function registrarVenta(pedido: PedidoVenta, { timeoutMs }: { timeoutMs?: number } = {}): Promise<Venta> {
+  let consulta = supabase.rpc('registrar_venta', {
+    p_venta_id: pedido.id,
+    p_caja_id: pedido.caja_id,
+    p_medio_pago: pedido.medio_pago,
+    p_items: pedido.items,
+    p_fecha: pedido.fecha ?? null,
   })
+  if (timeoutMs !== undefined) consulta = consulta.abortSignal(AbortSignal.timeout(timeoutMs))
+  const { data, error } = await consulta
   if (error) throw error
 
   const fila = data as Venta
-  const venta: Venta = { ...fila, total: Number(fila.total) }
+  return { ...fila, total: Number(fila.total) }
+}
 
-  const { data: filasItems, error: errorItems } = await supabase
+/** Ítems de una venta registrada, con los precios que tomó la base (para el ticket). */
+export async function obtenerItemsVenta(ventaId: string): Promise<ItemVendido[]> {
+  const { data, error } = await supabase
     .from('venta_items')
     .select('variante_id, cantidad, precio_unitario')
     .eq('venta_id', ventaId)
-  if (errorItems) throw errorItems
-
-  return {
-    venta,
-    items: (filasItems as ItemVendido[]).map((i) => ({ ...i, precio_unitario: Number(i.precio_unitario) })),
-  }
+  if (error) throw error
+  return (data as ItemVendido[]).map((i) => ({ ...i, precio_unitario: Number(i.precio_unitario) }))
 }
 
 function esErrorPostgrest(error: unknown): error is PostgrestError {
   return typeof error === 'object' && error !== null && 'code' in error && 'message' in error
+}
+
+/** 57014 timeout de sentencia, 40001/40P01 conflicto de concurrencia, 53300 sin conexiones libres. */
+const CODIGOS_TRANSITORIOS = new Set(['57014', '40001', '40P01', '53300'])
+
+/**
+ * true si la venta no llegó a una respuesta de la base: sin conexión, timeout o una falla
+ * del servidor sin código. Esas ventas quedan en la cola y se reintentan con el mismo id.
+ *
+ * Los errores de la base traen siempre código (SQLSTATE, o PGRSTxxx de PostgREST); los de
+ * red, postgrest-js los devuelve con código vacío. También son transitorios los de
+ * conexión de PostgREST con la base (PGRST000–003) y los SQLSTATE de timeout, conflicto de
+ * concurrencia o falta de conexiones.
+ */
+export function esErrorTransitorio(error: unknown): boolean {
+  if (!esErrorPostgrest(error)) return true
+  return error.code === '' || /^PGRST00[0-3]$/.test(error.code) || CODIGOS_TRANSITORIOS.has(error.code) || error.code.startsWith('08')
 }
 
 /** Errores de `registrar_venta()` cuyo mensaje ya está escrito para mostrarse en el POS. */

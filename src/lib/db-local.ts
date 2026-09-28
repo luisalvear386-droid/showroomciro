@@ -61,6 +61,19 @@ class BaseLocal extends Dexie {
 export const db = new BaseLocal()
 
 // ---------------------------------------------------------------------------
+// Catálogo del POS
+// ---------------------------------------------------------------------------
+
+/** Reemplaza el catálogo entero en una transacción: nunca queda a medio escribir. */
+export async function guardarCatalogo(productos: ProductoListado[]): Promise<void> {
+  await db.transaction('rw', db.productos, db.estado, async () => {
+    await db.productos.clear()
+    await db.productos.bulkPut(productos)
+    await db.estado.put({ clave: 'catalogo', actualizado_en: new Date().toISOString() })
+  })
+}
+
+// ---------------------------------------------------------------------------
 // Caché de perfil y caja
 // ---------------------------------------------------------------------------
 // Es un respaldo para arrancar sin conexión: si IndexedDB no está disponible (navegador en

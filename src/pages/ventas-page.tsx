@@ -6,13 +6,13 @@ import { CheckoutModal } from '../components/checkout-modal'
 import { FotoProducto } from '../components/producto-visual'
 import { TicketVenta } from '../components/ticket-venta'
 import { VarianteModal } from '../components/variante-modal'
-import { useConsulta } from '../hooks/use-consulta'
+import { useCatalogoLocal } from '../hooks/use-catalogo-local'
+import { venderDesdeMostrador } from '../lib/cola-ventas'
 import { formatearMoneda } from '../lib/formato'
-import { codigoProducto, obtenerProductos, type ProductoListado, type Variante } from '../lib/productos'
+import { codigoProducto, type ProductoListado, type Variante } from '../lib/productos'
 import {
   esErrorSinStock,
   mensajeErrorVenta,
-  registrarVenta,
   type ItemCarrito,
   type MedioPago,
   type VentaRegistrada,
@@ -20,11 +20,6 @@ import {
 import './ventas-page.css'
 
 const TODAS = 'Todos'
-
-/** Solo productos activos: los dados de baja no se ofrecen en el mostrador. */
-function obtenerCatalogo(): Promise<ProductoListado[]> {
-  return obtenerProductos({ soloActivos: true })
-}
 
 /** Minúsculas y sin tildes, para buscar "pantalon" y encontrar "Pantalón". */
 function normalizar(texto: string): string {
@@ -57,12 +52,15 @@ function claseStock(stock: number, bajo: boolean): string {
 /**
  * Ventas (POS), según prototipos/Ventas POS.dc.html. Se entra solo desde "Nueva Venta" del
  * Dashboard; al confirmar la venta se imprime el ticket y se vuelve al Dashboard.
+ *
+ * Funciona sin conexión (Módulo 11): el catálogo sale de la base local y la venta queda en
+ * la cola hasta que se pueda registrar; el ticket sale marcado "pendiente de sincronizar".
  */
 export function VentasPage() {
-  const { perfil } = useAuth()
+  const { perfil, sesionOffline } = useAuth()
   const { caja } = useCaja()
   const navigate = useNavigate()
-  const catalogo = useConsulta(obtenerCatalogo)
+  const catalogo = useCatalogoLocal()
 
   const [busqueda, setBusqueda] = useState('')
   const [categoria, setCategoria] = useState(TODAS)
@@ -72,9 +70,11 @@ export function VentasPage() {
   const [enviando, setEnviando] = useState(false)
   const [errorVenta, setErrorVenta] = useState<string | null>(null)
   const [registrada, setRegistrada] = useState<VentaRegistrada | null>(null)
+  /** true si la venta quedó en la cola (sin registrar todavía en la base). */
+  const [pendiente, setPendiente] = useState(false)
   const buscador = useRef<HTMLInputElement>(null)
 
-  const productos = useMemo(() => catalogo.datos ?? [], [catalogo.datos])
+  const productos = useMemo(() => catalogo.productos ?? [], [catalogo.productos])
 
   // F2 enfoca el buscador (atajo que muestra el prototipo)
   useEffect(() => {
@@ -178,24 +178,33 @@ export function VentasPage() {
   }, [])
 
   async function confirmar(medio: MedioPago) {
-    if (!caja || carrito.items.length === 0) return
+    if (!caja || !perfil || carrito.items.length === 0) return
     setEnviando(true)
     setErrorVenta(null)
-    try {
-      const resultado = await registrarVenta(
-        carrito.ventaId,
-        caja.caja_id,
-        medio,
-        carrito.items.map((i) => ({ variante_id: i.variante_id, cantidad: i.cantidad })),
-      )
-      setRegistrada(resultado)
-    } catch (error) {
+    const resultado = await venderDesdeMostrador(
+      {
+        id: carrito.ventaId,
+        caja_id: caja.caja_id,
+        usuario_id: perfil.id,
+        medio_pago: medio,
+        items: carrito.items,
+        total_cobrado: total,
+        creada_en: new Date().toISOString(),
+        estado: 'pendiente',
+        intentos: 0,
+      },
+      { sesionOffline },
+    )
+    setEnviando(false)
+
+    if (resultado.tipo === 'rechazada') {
       // El carrito queda intacto; con falta de stock se recarga el catálogo para ver lo que quedó
-      setErrorVenta(mensajeErrorVenta(error))
-      if (esErrorSinStock(error)) catalogo.recargar()
-    } finally {
-      setEnviando(false)
+      setErrorVenta(mensajeErrorVenta(resultado.error))
+      if (esErrorSinStock(resultado.error)) catalogo.recargar()
+      return
     }
+    setPendiente(resultado.tipo === 'pendiente')
+    setRegistrada(resultado.registrada)
   }
 
   // Dueño/a en el celular sin caja abierta (única ruta en la que no se exige abrirla)
@@ -208,7 +217,7 @@ export function VentasPage() {
   }
 
   let mensajeGrilla: string | null = null
-  if (catalogo.datos === undefined) mensajeGrilla = catalogo.error ? null : 'Cargando productos…'
+  if (catalogo.productos === undefined) mensajeGrilla = catalogo.error ? null : 'Cargando productos…'
   else if (productos.length === 0) mensajeGrilla = 'No hay productos activos para vender.'
   else if (visibles.length === 0) mensajeGrilla = 'No hay productos que coincidan con la búsqueda.'
 
@@ -249,7 +258,7 @@ export function VentasPage() {
           ))}
         </div>
 
-        {catalogo.error && catalogo.datos === undefined && (
+        {catalogo.error && (
           <div className="mensaje-error pos__error" role="alert">
             No se pudo cargar el catálogo. Revisá la conexión.
             <button type="button" className="boton-secundario" onClick={catalogo.recargar}>
@@ -391,13 +400,19 @@ export function VentasPage() {
           enviando={enviando}
           error={errorVenta}
           registrada={registrada?.venta ?? null}
+          pendiente={pendiente}
           onVolver={volverAlCarrito}
           onConfirmar={(medio) => void confirmar(medio)}
         />
       )}
 
       {registrada && (
-        <TicketVenta registrada={registrada} carrito={carrito.items} vendedor={perfil?.nombre_usuario ?? ''} />
+        <TicketVenta
+          registrada={registrada}
+          carrito={carrito.items}
+          vendedor={perfil?.nombre_usuario ?? ''}
+          pendiente={pendiente}
+        />
       )}
     </div>
   )

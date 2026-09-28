@@ -8,6 +8,11 @@ interface TicketVentaProps {
   /** Datos descriptivos de cada variante (nombre, talle, color), tomados del carrito. */
   carrito: ItemCarrito[]
   vendedor: string
+  /**
+   * Venta en la cola, sin registrar todavía en la base: importes con los precios del
+   * catálogo local y marca "pendiente de sincronizar".
+   */
+  pendiente: boolean
 }
 
 /**
@@ -15,9 +20,10 @@ interface TicketVentaProps {
  * fuera de #root: la hoja de impresión oculta todo lo demás y el navegador imprime solo
  * esto vía `window.print()`. En pantalla no se ve.
  *
- * Importes y total salen de la venta registrada (precios de la base), no del carrito.
+ * Importes y total salen de la venta registrada (precios de la base), no del carrito;
+ * salvo en una venta pendiente, que todavía no pasó por la base.
  */
-export function TicketVenta({ registrada, carrito, vendedor }: TicketVentaProps) {
+export function TicketVenta({ registrada, carrito, vendedor, pendiente }: TicketVentaProps) {
   const { venta, items } = registrada
   const fecha = new Date(venta.fecha)
   const porVariante = new Map(carrito.map((i) => [i.variante_id, i]))
@@ -26,6 +32,7 @@ export function TicketVenta({ registrada, carrito, vendedor }: TicketVentaProps)
   return createPortal(
     <div className="ticket">
       <div className="ticket__marca">ShowroomCiro</div>
+      {pendiente && <div className="ticket__pendiente">Pendiente de sincronizar</div>}
       <div className="ticket__linea">
         <span>{fecha.toLocaleDateString('es-AR')}</span>
         <span>{formatearHora(fecha)}</span>

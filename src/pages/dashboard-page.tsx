@@ -5,6 +5,7 @@ import { useCaja } from '../caja/use-caja'
 import { useConsulta } from '../hooks/use-consulta'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { obtenerCuentasEnAlerta, obtenerStockBajo } from '../lib/alertas'
+import { refrescarCatalogo } from '../lib/catalogo-local'
 import { describirVencimiento } from '../lib/cuentas'
 import { formatearFechaLarga, formatearHora, formatearMoneda } from '../lib/formato'
 import './dashboard-page.css'
@@ -18,7 +19,7 @@ function MensajePanel({ cargando, error, vacio }: { cargando: boolean; error: bo
 
 /** Dashboard/Inicio — según prototipos/Dashboard ShowroomCiro.dc.html y Mobile Dashboard.dc.html */
 export function DashboardPage() {
-  const { perfil } = useAuth()
+  const { perfil, sesionOffline } = useAuth()
   const { caja, refrescar } = useCaja()
   const esMobile = useEsMobile()
   const navigate = useNavigate()
@@ -29,6 +30,12 @@ export function DashboardPage() {
   useEffect(() => {
     refrescar().catch(() => undefined)
   }, [refrescar])
+
+  // Deja el catálogo del POS guardado en la base local por si después se corta internet
+  // (Módulo 11). Solo en el mostrador: desde el celular no se vende.
+  useEffect(() => {
+    if (!esMobile && !sesionOffline) refrescarCatalogo().catch(() => undefined)
+  }, [esMobile, sesionOffline])
 
   const stockBajo = stock.datos ?? []
   const cuentasEnAlerta = cuentas.datos ?? []

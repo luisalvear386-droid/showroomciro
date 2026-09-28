@@ -10,6 +10,8 @@ interface CheckoutModalProps {
   error: string | null
   /** Venta ya registrada: muestra la confirmación mientras se imprime el ticket. */
   registrada: Venta | null
+  /** La venta quedó en la cola sin conexión: todavía no se registró en la base. */
+  pendiente: boolean
   onVolver: () => void
   onConfirmar: (medio: MedioPago) => void
 }
@@ -18,7 +20,16 @@ interface CheckoutModalProps {
  * Cobro de la venta, según prototipos/Checkout Venta.dc.html. Solo medios de pago directos:
  * sin opción de fiado/cuenta (requirements.md sección 4).
  */
-export function CheckoutModal({ items, total, enviando, error, registrada, onVolver, onConfirmar }: CheckoutModalProps) {
+export function CheckoutModal({
+  items,
+  total,
+  enviando,
+  error,
+  registrada,
+  pendiente,
+  onVolver,
+  onConfirmar,
+}: CheckoutModalProps) {
   const [medio, setMedio] = useState<MedioPago>('efectivo')
   const [pagaConTexto, setPagaConTexto] = useState('')
 
@@ -37,17 +48,28 @@ export function CheckoutModal({ items, total, enviando, error, registrada, onVol
     return (
       <div className="modal-fondo">
         <div className="checkout checkout--exito" role="dialog" aria-modal="true" aria-labelledby="checkout-exito-titulo">
-          <span className="checkout__check" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 12.5l5.2 5.2L20 7" />
-            </svg>
-          </span>
+          {pendiente ? (
+            <span className="checkout__check checkout__check--pendiente" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="8.5" />
+                <path d="M12 7.5V12l3 2" />
+              </svg>
+            </span>
+          ) : (
+            <span className="checkout__check" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 12.5l5.2 5.2L20 7" />
+              </svg>
+            </span>
+          )}
           <div className="checkout__exito-textos">
             <h2 id="checkout-exito-titulo" className="checkout__exito-titulo">
-              Venta registrada
+              {pendiente ? 'Venta guardada' : 'Venta registrada'}
             </h2>
             <p className="checkout__exito-detalle">
-              Cobrada en {etiqueta.toLowerCase()}. Ya se descontó el stock de las variantes vendidas.
+              {pendiente
+                ? `Cobrada en ${etiqueta.toLowerCase()}. No hay conexión: se registra sola cuando vuelva internet.`
+                : `Cobrada en ${etiqueta.toLowerCase()}. Ya se descontó el stock de las variantes vendidas.`}
             </p>
           </div>
           <div className="checkout__exito-total">
