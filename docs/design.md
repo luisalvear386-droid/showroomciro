@@ -143,6 +143,9 @@ Menú inferior tipo app con 4 secciones: **Dashboard, Cuentas, Reportes, Configu
 > El Vendedor en mobile ve únicamente Dashboard y Cuentas (Configuración queda oculta, ya que solo contiene Gestión de Usuarios, exclusiva del Dueño/a). El Dueño/a en mobile no pasa por Apertura de Caja aunque no haya ninguna abierta — el celular nunca opera caja, así que no tiene sentido bloquearlo ahí.
 
 15. **Configuración (mobile)** — pantalla nueva, con acceso a Gestión de Usuarios (mismo alcance que la versión desktop: alta y baja de Vendedores).
+   > `/configuracion`, solo Dueño/a y fuera del bloqueo de apertura (igual que `/usuarios`). "Gestionar Usuarios" lleva a la misma pantalla `/usuarios` del desktop, adaptada con CSS (tarjetas en vez de tabla) y con "←" en el header de vuelta a Configuración; no hay una versión aparte. Sin el campo "Nombre completo" del prototipo, por lo mismo que en desktop.
+
+> **Solo consulta, impuesto por ruta (Módulo 10):** Dashboard, Cuentas y Reportes mobile son las mismas pantallas y consultas del desktop, adaptadas con CSS; en mobile se ocultan "Nueva Venta"/"Nueva Cuenta" y el formulario de cobro. Además, en el celular las rutas de escritura (`/ventas`, `/cuentas/nueva`, `/productos*`, `/caja`) redirigen al Dashboard aunque se entre por URL (guard `SoloEscritorio`), y `/apertura-caja` redirige al Dashboard al Dueño/a. "Mobile" es el mismo corte de ancho del layout (≤ 768px).
 
 ### Componentes transversales
 - Sidebar fijo (desktop) con accesos a Dashboard, Productos, Caja, Cuentas, Reportes (+ Usuarios si es Dueño/a). Sin ítem "Ventas".

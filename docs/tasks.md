@@ -89,10 +89,10 @@
 ---
 
 ## Módulo 10 — Frontend: Mobile (acceso remoto)
-- [ ] **Dashboard mobile** (solo consulta).
-- [ ] **Cuentas mobile** (solo consulta).
-- [ ] **Reportes mobile** (solo consulta).
-- [ ] **Configuración mobile** → Gestión de Usuarios (única sección con acción real permitida desde el celular).
+- [x] **Dashboard mobile** (solo consulta).
+- [x] **Cuentas mobile** (solo consulta).
+- [x] **Reportes mobile** (solo consulta).
+- [x] **Configuración mobile** → Gestión de Usuarios (única sección con acción real permitida desde el celular).
 
 ---
 
@@ -116,4 +116,4 @@
 
 ---
 
-**Estado: Módulos 0 a 9 completos. Arrancando Módulo 10 (Frontend: Mobile — acceso remoto).**
+**Estado: Módulos 0 a 10 completos. Arrancando Módulo 11 (Offline-first — POS del mostrador).**
