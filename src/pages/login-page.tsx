@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router'
+import { marcarEnLogin } from '../lib/actualizacion-pwa'
 import { login } from '../lib/auth'
 import { useAuth } from '../auth/use-auth'
 import { PantallaCarga } from '../components/pantalla-carga'
@@ -18,6 +19,11 @@ export function LoginPage() {
   const [mostrarClave, setMostrarClave] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
+
+  // Sin sesión (inicio o fin del turno): buen momento para aplicar una versión nueva de la app
+  useEffect(() => {
+    if (!cargando && !usuario) return marcarEnLogin()
+  }, [cargando, usuario])
 
   if (cargando && !enviando) return <PantallaCarga />
   if (usuario && perfil && !enviando) return <Navigate to={destino} replace />
