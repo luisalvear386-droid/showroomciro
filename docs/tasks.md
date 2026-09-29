@@ -96,12 +96,12 @@
 
 ---
 
-## Módulo 11 — Offline-first (POS del mostrador)
-- [ ] Cacheo local del catálogo de productos (Dexie/IndexedDB), actualizado cuando hay conexión.
-- [ ] Cola local de ventas pendientes cuando no hay internet.
-- [ ] Sincronización automática de la cola al recuperar conexión.
-- [ ] Indicador visual en el POS de estado de conexión / ventas pendientes de sincronizar.
-- [ ] Service Worker para que la PWA funcione sin conexión.
+## Módulo 11 — Offline-first (POS del mostrador) ✅ COMPLETO
+- [x] Cacheo local del catálogo de productos (Dexie/IndexedDB), actualizado cuando hay conexión — más perfil y caja guardados y modo "sesión offline" para arrancar sin red con el token vencido (ver `design.md`).
+- [x] Cola local de ventas pendientes cuando no hay internet — toda venta se encola antes de enviarse; stock visible descontado por la cola; ticket marcado "Pendiente de sincronizar". Fecha real de la venta vía `p_fecha` (migración `0012_registrar_venta_fecha.sql`).
+- [x] Sincronización automática de la cola al recuperar conexión — en orden, con reintentos; rechazos de la base quedan "con error" para resolverlos a mano. Cierre de caja bloqueado con ventas sin sincronizar y aviso al cerrar sesión (ver `design.md`).
+- [x] Indicador visual en el POS de estado de conexión / ventas pendientes de sincronizar — en el header, más la pantalla Ventas sin sincronizar (`/ventas/pendientes`), resueltos en el estilo existente sin pase de Claude Design.
+- [x] Service Worker para que la PWA funcione sin conexión — `vite-plugin-pwa`; la API de Supabase no pasa por su caché; versiones nuevas se aplican en el login. Íconos **provisorios** desde el mockup del logo: regenerar con `scripts/generar-iconos-pwa.cjs --fuente` cuando esté el archivo original (commit aparte).
 
 ---
 
@@ -116,4 +116,4 @@
 
 ---
 
-**Estado: Módulos 0 a 10 completos. Arrancando Módulo 11 (Offline-first — POS del mostrador).**
+**Estado: Módulos 0 a 11 completos. Arrancando Módulo 12 (QA y pruebas automatizadas).**
