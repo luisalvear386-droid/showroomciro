@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router'
+import { Navigate, Outlet, useOutletContext } from 'react-router'
 import { useEsMobile } from '../hooks/use-es-mobile'
 
 /**
@@ -9,6 +9,8 @@ import { useEsMobile } from '../hooks/use-es-mobile'
  */
 export function SoloEscritorio() {
   const esMobile = useEsMobile()
+  // Reenvía el contexto de AppLayout (ej. refrescarAlertasCuentas): un <Outlet> anidado no lo hereda
+  const contextoLayout = useOutletContext()
   if (esMobile) return <Navigate to="/" replace />
-  return <Outlet />
+  return <Outlet context={contextoLayout} />
 }

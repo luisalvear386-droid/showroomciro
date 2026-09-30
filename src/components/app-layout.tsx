@@ -49,6 +49,27 @@ const NAV_MOBILE: ItemNavMobile[] = [
   { ruta: '/configuracion', etiqueta: 'Configuración', icono: 'configuracion', roles: ['dueño'], subRuta: '/usuarios' },
 ]
 
+/**
+ * Subtítulo del header: la sección actual, como en los prototipos ("Caja · Historial").
+ * El Dashboard muestra la fecha del día y el POS "Punto de venta" (prototipos Dashboard y Ventas POS).
+ */
+function subtituloHeader(pathname: string): string {
+  if (pathname === '/') return formatearFechaLarga(new Date())
+  if (pathname === '/ventas') return 'Punto de venta'
+  if (pathname === '/ventas/pendientes') return 'Ventas sin sincronizar'
+  if (pathname === '/productos/nuevo') return 'Productos · Nuevo producto'
+  if (pathname.startsWith('/productos/')) return 'Productos · Editar producto'
+  if (pathname === '/productos') return 'Productos'
+  if (pathname === '/cuentas/nueva') return 'Cuentas · Nueva cuenta'
+  if (pathname.startsWith('/cuentas')) return 'Cuentas'
+  if (pathname === '/caja/historial') return 'Caja · Historial'
+  if (pathname === '/caja') return 'Caja · Cierre del día'
+  if (pathname === '/reportes') return 'Reportes'
+  if (pathname === '/usuarios') return 'Usuarios'
+  if (pathname === '/configuracion') return 'Configuración'
+  return ''
+}
+
 function SoloRoles({ roles, children }: { roles?: Rol[]; children: ReactNode }) {
   if (!roles) return <>{children}</>
   return (
@@ -135,7 +156,7 @@ export function AppLayout() {
               <div className="layout__logo layout__logo--mobile" aria-hidden="true" />
             )}
             <span className="layout__header-nombre">{conVolver ? 'Usuarios' : 'ShowroomCiro'}</span>
-            <span className="layout__header-fecha">{esPos ? 'Punto de venta' : formatearFechaLarga(new Date())}</span>
+            <span className="layout__header-seccion">{subtituloHeader(pathname)}</span>
           </div>
           {/* Ventas sin sincronizar (Módulo 11): solo en el mostrador, desde el celular no se vende */}
           {!esMobile && <EstadoSincronizacion />}

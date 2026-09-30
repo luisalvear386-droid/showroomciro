@@ -4,7 +4,7 @@ import { useCerrarSesion } from '../hooks/use-cerrar-sesion'
 import type { Rol } from '../lib/auth'
 
 const ETIQUETA_ROL: Record<Rol, string> = {
-  dueño: 'Dueño',
+  dueño: 'Dueño/a',
   vendedor: 'Vendedor',
 }
 

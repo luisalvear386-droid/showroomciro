@@ -156,6 +156,10 @@
   color: var(--color-cacao);
 }
 
+.usuarios__campo input::placeholder {
+  color: #c7b69c;
+}
+
 .usuarios__campo input:focus {
   outline: none;
   border-color: var(--color-canela);
