@@ -175,6 +175,20 @@ Menú inferior tipo app con 4 secciones: **Dashboard, Cuentas, Reportes, Configu
 - Alertas (stock bajo y cuentas por vencer) visibles en el panel del Dashboard y como badge numérico en el ítem "Cuentas" del menú — sin ícono de campana/notificaciones separado.
 - Bloque de usuario en el header clickeable → "Cerrar sesión". Logout automático al confirmar Cierre de Caja.
   > Módulo 11: con ventas propias sin sincronizar, "Cerrar sesión" (menú de usuario y Apertura de Caja) pide confirmación con el modal del Cierre de Caja: las ventas quedan guardadas en la computadora y se sincronizan la próxima vez que entre ese usuario.
+- **Subtítulo del header** (Módulo 12): la sección actual, como en los prototipos ("Productos · Nuevo producto", "Caja · Historial"…); el Dashboard muestra la fecha y el POS "Punto de venta". Ventas sin sincronizar, fuera de los prototipos, usa "Ventas sin sincronizar". En mobile no se muestra. El rol del Dueño/a se muestra como "Dueño/a" en el header y en Usuarios.
+
+### Backlog visual (validación del Módulo 12)
+Diferencias contra los prototipos detectadas en la validación visual manual, anotadas sin tocar código por ahora (a decidir si se ajustan o se aceptan como están):
+- **Ventas (POS):** las tarjetas de la grilla no llevan la etiqueta de categoría sobre la foto; el filtro de categorías muestra solo las que tienen productos.
+- **Modal de variante:** debajo del nombre muestra el SKU de la variante elegida en vez del código del producto.
+- **Productos (listado y alta):** columna y campo **Costo** (solo Dueño/a) que no están en el prototipo; en el alta la categoría arranca en "Elegí una categoría" en vez de venir preseleccionada. La ayuda de la foto dice "JPG, PNG o WebP · máx 5 MB" (lo que aceptan el código y el bucket), no "JPG o PNG · máx 2 MB" del prototipo.
+- **Cuentas — Alta:** el campo de fecha ocupa todo el ancho y los atajos 7/15/30 días quedan debajo (en el prototipo van en la misma fila). La ayuda dice "3 días antes" en vez de "cinco días antes": es lo correcto, sale de `dias_aviso_por_vencer` de `cuentas_vista` (0003).
+- **Cuentas — Detalle/Cobro:** falta el botón "Imprimir recibo" de la cuenta saldada.
+- **Cuentas — Agenda:** flecha de orden en "Fecha límite ↑" y botones ‹ › de mes en el calendario, que el prototipo no tiene.
+- **Caja — Cierre:** el subtítulo no dice quién abrió la caja ("… abierta a las 09:40 por Marcos" en el prototipo).
+- **Usuarios / Configuración:** el resumen dice "N usuarios · N activos" en vez de "N cuentas · N activas" (evita confundir con el módulo Cuentas).
+- **Mobile — Usuarios:** la cuenta propia dice "Tu cuenta" en vez de "Tu cuenta · no se puede desactivar"; el formulario suma un botón "Cancelar" además de la ×.
+- **Estados vacíos** (Dashboard, Agenda, Historial, Reportes): textos propios ("Todo en orden", "No hay cuentas pendientes de cobro."…) que los prototipos no tienen porque siempre muestran datos.
 - **Indicador de conexión / ventas sin sincronizar** (Módulo 11, solo mostrador): pastillas en el header, a la izquierda del bloque de usuario, con los tonos de los badges de diferencia del Historial de Caja — oliva "En línea", canela "N por sincronizar" / "Sincronizando N…", coral "Sin conexión · N pendientes", vino "N para revisar" (ventas con error o registradas con otro total). Con algo en la cola lleva a Ventas sin sincronizar. Fuera de los prototipos: resuelto en el estilo existente (decisión aprobada en el Módulo 11).
 
 ---
