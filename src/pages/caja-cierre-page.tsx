@@ -1,7 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router'
-import { RequireRole } from '../auth/require-role'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
 import { useEsMobile } from '../hooks/use-es-mobile'
@@ -168,11 +167,6 @@ export function CajaCierrePage() {
             {formatearFechaLarga(apertura)} · abierta a las {formatearHora(apertura)}
           </p>
         </div>
-        <RequireRole roles={['dueño']} fallback={null}>
-          <Link to="/caja/historial" className="cierre__historial">
-            Ver historial
-          </Link>
-        </RequireRole>
       </div>
 
       <div className="cierre__columnas">

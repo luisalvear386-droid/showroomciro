@@ -1,6 +1,4 @@
 import { useCallback, useState } from 'react'
-import { Link } from 'react-router'
-import { useCaja } from '../caja/use-caja'
 import { useConsulta } from '../hooks/use-consulta'
 import { obtenerHistorialCajas, type JornadaCaja } from '../lib/caja'
 import {
@@ -110,7 +108,6 @@ function DetalleJornada({ jornada, onCerrar }: { jornada: JornadaCaja; onCerrar:
  * Sin el botón "Exportar" del prototipo: no está en requirements.md.
  */
 export function CajaHistorialPage() {
-  const { caja } = useCaja()
   const [desde, setDesde] = useState(() => haceDias(7))
   const [hasta, setHasta] = useState(() => haceDias(0))
   const [rango, setRango] = useState<number | null>(7)
@@ -147,12 +144,6 @@ export function CajaHistorialPage() {
               : `${jornadas.length} ${jornadas.length === 1 ? 'jornada' : 'jornadas'} en el rango · ${conDiferencia} con diferencia`}
           </p>
         </div>
-        {/* Se entra también sin caja abierta: ahí no hay cierre al que volver */}
-        {caja && (
-          <Link to="/caja" className="historial__volver">
-            Volver al cierre
-          </Link>
-        )}
       </div>
 
       <div className="historial__filtros">

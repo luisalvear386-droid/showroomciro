@@ -68,6 +68,14 @@ export function DashboardPage() {
             >
               Nueva Cuenta
             </button>
+            {/* Acceso rápido al Cierre de Caja (no tiene ítem en el menú) */}
+            <button
+              type="button"
+              className="dashboard__accion dashboard__accion--secundaria"
+              onClick={() => navigate('/caja')}
+            >
+              Cerrar Caja
+            </button>
           </div>
         )}
       </div>

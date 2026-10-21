@@ -36,13 +36,6 @@
   color: var(--color-texto-medio);
 }
 
-.cierre__historial {
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .cierre__columnas {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

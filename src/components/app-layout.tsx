@@ -28,12 +28,15 @@ interface ItemNavMobile extends ItemNav {
   subRuta?: string
 }
 
-/** Sidebar desktop (design.md → Navegación). Sin ítem "Ventas": el POS se abre desde el Dashboard. */
+/**
+ * Sidebar desktop (design.md → Navegación). Sin ítem "Ventas": el POS se abre desde el Dashboard.
+ * Sin ítem de Cierre de Caja: se abre desde el acceso rápido "Cerrar Caja" del Dashboard.
+ */
 const NAV_DESKTOP: ItemNav[] = [
   { ruta: '/', etiqueta: 'Dashboard' },
   { ruta: '/productos', etiqueta: 'Productos' },
-  { ruta: '/caja', etiqueta: 'Caja' },
   { ruta: '/cuentas', etiqueta: 'Cuentas', conBadgeCuentas: true },
+  { ruta: '/caja/historial', etiqueta: 'Historial de Caja', roles: ['dueño'] },
   { ruta: '/reportes', etiqueta: 'Reportes', roles: ['dueño'] },
   { ruta: '/usuarios', etiqueta: 'Usuarios', roles: ['dueño'] },
 ]
@@ -50,7 +53,7 @@ const NAV_MOBILE: ItemNavMobile[] = [
 ]
 
 /**
- * Subtítulo del header: la sección actual, como en los prototipos ("Caja · Historial").
+ * Subtítulo del header: la sección actual, como en los prototipos ("Productos · Nuevo producto").
  * El Dashboard muestra la fecha del día y el POS "Punto de venta" (prototipos Dashboard y Ventas POS).
  */
 function subtituloHeader(pathname: string): string {
@@ -62,8 +65,8 @@ function subtituloHeader(pathname: string): string {
   if (pathname === '/productos') return 'Productos'
   if (pathname === '/cuentas/nueva') return 'Cuentas · Nueva cuenta'
   if (pathname.startsWith('/cuentas')) return 'Cuentas'
-  if (pathname === '/caja/historial') return 'Caja · Historial'
-  if (pathname === '/caja') return 'Caja · Cierre del día'
+  if (pathname === '/caja/historial') return 'Historial de Caja'
+  if (pathname === '/caja') return 'Cierre de Caja'
   if (pathname === '/reportes') return 'Reportes'
   if (pathname === '/usuarios') return 'Usuarios'
   if (pathname === '/configuracion') return 'Configuración'
