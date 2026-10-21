@@ -50,11 +50,8 @@ export function LoginPage() {
     <div className="login">
       <div className="login__contenedor">
         <div className="login__marca">
-          <div className="login__logo" aria-hidden="true">
-            logo
-            <br />
-            futuro
-          </div>
+          {/* Generado por scripts/generar-iconos-pwa.cjs a partir del logo de la tienda */}
+          <img className="login__logo" src="/logo-ciro-rey.png" alt="Ciro Rey Showroom" width={112} height={112} />
           <div className="login__titulos">
             <h1 className="login__titulo">ShowroomCiro</h1>
             <p className="login__subtitulo">Sistema de gestión</p>

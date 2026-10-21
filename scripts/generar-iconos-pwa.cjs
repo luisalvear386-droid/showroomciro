@@ -2,7 +2,8 @@
  * Genera los íconos de la PWA (public/pwa-192x192.png y public/pwa-512x512.png) a partir del
  * logo de la tienda ("Ciro Rey Showroom"): logo centrado sobre negro sólido, dentro del 80%
  * central del lienzo (zona segura de los íconos "maskable": Android recorta en círculo, iOS
- * redondea las esquinas).
+ * redondea las esquinas). También genera public/logo-ciro-rey.png, el logo de la pantalla de
+ * Login: la insignia negra redonda con el exterior transparente.
  *
  * Usa `sharp` (devDependency):
  *
@@ -23,6 +24,8 @@ const TAMANIOS = [512, 192]
 const DESTINO = path.join(__dirname, '..', 'public')
 /** Radio de la zona segura "maskable": 40% del lado (círculo del 80% central). */
 const ZONA_SEGURA = 0.4
+/** Logo del Login: lado en px (se muestra a 112px, así queda nítido en pantallas 3x). */
+const LADO_LOGIN = 384
 
 async function desdeMockup(archivo) {
   const LADO = 580 // px de la foto: el logo (radio ~221) queda dentro de la zona segura
@@ -57,7 +60,8 @@ async function desdeMockup(archivo) {
       salida[o + 2] = Math.round(b * f * borde)
     }
   }
-  return sharp(salida, { raw: { width: LADO, height: LADO, channels: 3 } }).png().toBuffer()
+  const imagen = await sharp(salida, { raw: { width: LADO, height: LADO, channels: 3 } }).png().toBuffer()
+  return { imagen, radio: RADIO }
 }
 
 async function desdeFuente(archivo) {
@@ -93,7 +97,7 @@ async function desdeFuente(archivo) {
     .png()
     .toBuffer()
   const meta = await sharp(logo).metadata()
-  return sharp({ create: { width: LADO, height: LADO, channels: 3, background: '#000000' } })
+  const imagen = await sharp({ create: { width: LADO, height: LADO, channels: 3, background: '#000000' } })
     .composite([{
       input: logo,
       left: Math.round(LADO / 2 - (cx - x0) * escala),
@@ -101,7 +105,29 @@ async function desdeFuente(archivo) {
     }])
     .png()
     .toBuffer()
-    .then((b) => (meta.width > LADO || meta.height > LADO ? Promise.reject(new Error('El logo no entra en el lienzo.')) : b))
+  if (meta.width > LADO || meta.height > LADO) throw new Error('El logo no entra en el lienzo.')
+  return { imagen, radio: LADO / 2 }
+}
+
+/** Insignia redonda: recorta el círculo de `radio` px del centro y deja transparente el resto. */
+async function logoLogin({ imagen, radio }) {
+  const { width } = await sharp(imagen).metadata()
+  // Un 8% de negro de margen: en el mockup la "y" de "Rey" toca el borde del círculo
+  const radioConMargen = Math.min(width / 2, radio * 1.08)
+  const lado = Math.round(radioConMargen * 2)
+  const desde = Math.round(width / 2 - radioConMargen)
+  const r = LADO_LOGIN / 2
+  const mascara = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${LADO_LOGIN}" height="${LADO_LOGIN}">` +
+      `<circle cx="${r}" cy="${r}" r="${r}"/></svg>`,
+  )
+  return sharp(imagen)
+    .extract({ left: desde, top: desde, width: lado, height: lado })
+    .resize(LADO_LOGIN, LADO_LOGIN, { kernel: 'lanczos3' })
+    .ensureAlpha()
+    .composite([{ input: mascara, blend: 'dest-in' }])
+    .png({ compressionLevel: 9 })
+    .toBuffer()
 }
 
 async function main() {
@@ -113,9 +139,12 @@ async function main() {
   const base = modo === '--mockup' ? await desdeMockup(archivo) : await desdeFuente(archivo)
   for (const tam of TAMANIOS) {
     const destino = path.join(DESTINO, `pwa-${tam}x${tam}.png`)
-    await sharp(base).resize(tam, tam, { kernel: 'lanczos3' }).png({ compressionLevel: 9 }).toFile(destino)
+    await sharp(base.imagen).resize(tam, tam, { kernel: 'lanczos3' }).png({ compressionLevel: 9 }).toFile(destino)
     console.log('Generado', path.relative(process.cwd(), destino))
   }
+  const destinoLogo = path.join(DESTINO, 'logo-ciro-rey.png')
+  await sharp(await logoLogin(base)).toFile(destinoLogo)
+  console.log('Generado', path.relative(process.cwd(), destinoLogo))
 }
 
 main().catch((e) => {
