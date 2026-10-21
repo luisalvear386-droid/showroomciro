@@ -11,6 +11,7 @@ import { formatearFechaLarga, formatearHora } from '../lib/formato'
 import { EstadoSincronizacion } from './estado-sincronizacion'
 import { IconoNavegacion, type IconoNav } from './iconos-nav'
 import { MenuUsuario } from './menu-usuario'
+import { PiePagina } from './pie-pagina'
 import './app-layout.css'
 
 interface ItemNav {
@@ -128,7 +129,8 @@ export function AppLayout() {
     <div className={esPos ? 'layout layout--pos' : 'layout'}>
       <aside className="layout__sidebar">
         <div className="layout__marca">
-          <div className="layout__logo" aria-hidden="true" />
+          {/* Mismo logo que el Login (public/logo-ciro-rey.png) */}
+          <img className="layout__logo" src="/logo-ciro-rey.png" alt="" width={42} height={42} />
           <span className="layout__nombre">ShowroomCiro</span>
         </div>
 
@@ -156,7 +158,7 @@ export function AppLayout() {
                 ←
               </Link>
             ) : (
-              <div className="layout__logo layout__logo--mobile" aria-hidden="true" />
+              <img className="layout__logo layout__logo--mobile" src="/logo-ciro-rey.png" alt="" width={32} height={32} />
             )}
             <span className="layout__header-nombre">{conVolver ? 'Usuarios' : 'ShowroomCiro'}</span>
             <span className="layout__header-seccion">{subtituloHeader(pathname)}</span>
@@ -169,6 +171,8 @@ export function AppLayout() {
         <main className="layout__contenido">
           <Outlet context={contexto} />
         </main>
+
+        <PiePagina />
       </div>
 
       <nav className="layout__tabs" aria-label="Principal">

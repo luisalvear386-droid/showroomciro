@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
 import { PantallaCarga } from '../components/pantalla-carga'
+import { PiePagina } from '../components/pie-pagina'
 import { useCerrarSesion } from '../hooks/use-cerrar-sesion'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { abrirCaja } from '../lib/caja'
@@ -173,6 +174,8 @@ export function AperturaCajaPage() {
           </button>
         </p>
       </div>
+
+      <PiePagina />
 
       {aviso}
     </div>

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { PiePagina } from './pie-pagina'
 
 interface PantallaCargaProps {
   mensaje?: string
@@ -10,6 +11,7 @@ export function PantallaCarga({ mensaje = 'Cargando…', children }: PantallaCar
     <div className="pantalla-centrada" role="status" aria-live="polite">
       <p className="pantalla-centrada__mensaje">{mensaje}</p>
       {children}
+      <PiePagina />
     </div>
   )
 }

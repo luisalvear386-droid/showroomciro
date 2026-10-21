@@ -30,12 +30,29 @@
 }
 
 .layout__logo {
-  width: 34px;
-  height: 34px;
+  display: block;
+  width: 42px;
+  height: 42px;
   flex: none;
-  border-radius: 11px;
-  background: #f1e6d6;
-  border: 1px dashed var(--color-lino);
+  border-radius: 50%;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Vista ampliada del logo al pasar el mouse (solo con puntero: en el celular no hay hover) */
+@media (hover: hover) {
+  .layout__sidebar .layout__logo:hover {
+    z-index: 10;
+    transform: scale(1.15);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout__logo {
+    transition: none;
+  }
 }
 
 .layout__nombre {
@@ -350,7 +367,6 @@
     display: block;
     width: 32px;
     height: 32px;
-    border-radius: 10px;
   }
 
   .layout__header-nombre {
@@ -383,7 +399,12 @@
   }
 
   .layout__contenido {
-    padding: 20px 18px calc(108px + env(safe-area-inset-bottom));
+    padding: 20px 18px 4px;
+  }
+
+  /* El menú inferior es fijo: el pie deja su lugar para no quedar tapado */
+  .layout__principal > .pie-pagina {
+    padding-bottom: calc(108px + env(safe-area-inset-bottom));
   }
 
   .layout__tabs {

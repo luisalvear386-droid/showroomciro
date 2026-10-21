@@ -1,0 +1,9 @@
+.pie-pagina {
+  flex: none;
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--color-texto-tenue);
+}

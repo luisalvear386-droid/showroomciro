@@ -3,14 +3,16 @@
 .login {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
+  padding: 48px 24px 0;
   box-sizing: border-box;
   background: var(--color-crema);
 }
 
+/* Centrado vertical; el pie de página queda debajo */
 .login__contenedor {
+  margin: auto 0;
   width: 100%;
   max-width: 420px;
   display: flex;
@@ -32,6 +34,21 @@
   height: 112px;
   border-radius: 50%;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Leve zoom al pasar el mouse, igual que el logo del sidebar (solo con puntero) */
+@media (hover: hover) {
+  .login__logo:hover {
+    transform: scale(1.15);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login__logo {
+    transition: none;
+  }
 }
 
 .login__titulos {
@@ -202,4 +219,8 @@
   font-size: 12.5px;
   color: #a89479;
   line-height: 1.6;
+}
+
+.login > .pie-pagina {
+  margin-top: 32px;
 }

@@ -4,6 +4,7 @@ import { marcarEnLogin } from '../lib/actualizacion-pwa'
 import { login } from '../lib/auth'
 import { useAuth } from '../auth/use-auth'
 import { PantallaCarga } from '../components/pantalla-carga'
+import { PiePagina } from '../components/pie-pagina'
 import './login-page.css'
 
 interface LocationState {
@@ -119,6 +120,8 @@ export function LoginPage() {
 
         <p className="login__ayuda">Acceso interno del local. Si no recordás tu clave, pedísela al dueño.</p>
       </div>
+
+      <PiePagina />
     </div>
   )
 }
