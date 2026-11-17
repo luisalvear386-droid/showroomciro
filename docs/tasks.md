@@ -34,11 +34,12 @@
   - [ ] La política `fotos_productos_delete` existe en `storage.objects`.
   - [ ] Al reemplazar la foto de un producto, el archivo anterior desaparece del bucket `fotos-productos` y la foto nueva se ve en el listado y en el POS.
   - [ ] La foto de un producto dado de baja no se borra.
-- [ ] **0.3 Venta duplicada** (`src/pages/ventas-page.tsx`, `carritoNuevo` / `cambiarItems`).
-  - [ ] Si `registrar_venta` falla por un error transitorio (red, timeout), el carrito conserva su `ventaId` aunque después se agreguen, quiten o cambien cantidades.
-  - [ ] El `ventaId` se renueva solo cuando la venta se confirma o cuando el usuario cancela la venta a propósito (vaciar el carrito o salir del POS).
-  - [ ] Si el primer intento sí llegó a la base y el carrito cambió, el reintento no crea una segunda venta ni descuenta stock dos veces.
-  - [ ] Un error que no es transitorio (sin stock, permiso) no bloquea el carrito.
+- [ ] **0.3 Venta duplicada** (`src/pages/ventas-page.tsx`).
+  - [x] El id de la venta (`ventaId`) es uno solo mientras el POS está abierto: no cambia aunque se agreguen, quiten o cambien cantidades, ni después de un intento fallido.
+  - [x] Se renueva solo cuando la venta se confirma (se vuelve al Dashboard) o cuando el vendedor sale del POS a propósito: "Nueva Venta" del Dashboard abre el POS de cero. El prototipo del POS no tiene botón "Vaciar carrito", así que no se agregó.
+  - [x] Si el primer intento sí llegó a la base y el carrito cambió, el reintento devuelve esa misma venta (no crea otra ni descuenta stock dos veces). El modal avisa que la venta quedó distinta del carrito, el ticket muestra lo registrado y no se vuelve solo al Dashboard.
+  - [x] Un error que no es transitorio (sin stock, permiso) no bloquea el carrito.
+  - [ ] Probado a mano con los productos "PRUEBA - …" (corte de red al confirmar, cambio del carrito y reintento).
 - [ ] **0.4 Confirmación antes de "Dar de baja" un producto** (menú "⋯" del listado de Productos).
   - [ ] "Dar de baja" abre un modal de confirmación con el nombre del producto. Usa el modal de confirmación que ya existe.
   - [ ] Cancelar no cambia nada. Confirmar da de baja igual que hoy.

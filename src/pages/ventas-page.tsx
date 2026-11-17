@@ -42,18 +42,22 @@ function normalizar(texto: string): string {
     .replace(/[̀-ͯ]/g, '')
 }
 
-interface Carrito {
-  items: ItemCarrito[]
+/** Venta registrada, con el aviso de si quedó distinta del carrito que se estaba cobrando. */
+interface VentaConfirmada extends VentaRegistrada {
   /**
-   * Id de la venta, generado en el cliente (ver `registrar_venta()`). Se renueva con cada
-   * cambio del carrito: reintentar el mismo carrito reusa el id (si el primer intento sí
-   * llegó a registrarse, no se duplica), pero un carrito distinto es siempre otra venta.
+   * true si la base devolvió una venta que no coincide con el carrito actual: un intento
+   * anterior que se dio por fallido sí había llegado, y después se cambió el carrito.
    */
-  ventaId: string
+  difiere: boolean
+  /** Todo lo que se mandó con este id: el ticket saca de acá nombre, talle y color. */
+  articulos: ItemCarrito[]
 }
 
-function carritoNuevo(items: ItemCarrito[] = []): Carrito {
-  return { items, ventaId: crypto.randomUUID() }
+/** Mismas variantes con las mismas cantidades (el orden no importa). */
+function mismosItems(vendidos: ItemVendido[], carrito: ItemCarrito[]): boolean {
+  if (vendidos.length !== carrito.length) return false
+  const cantidades = new Map(carrito.map((i) => [i.variante_id, i.cantidad]))
+  return vendidos.every((v) => cantidades.get(v.variante_id) === v.cantidad)
 }
 
 function claseStock(stock: number, bajo: boolean): string {
@@ -67,7 +71,8 @@ function claseStock(stock: number, bajo: boolean): string {
  * Dashboard; al confirmar la venta se imprime el ticket y se vuelve al Dashboard.
  *
  * Sin conexión no se confirma la venta: el carrito queda armado y se confirma cuando vuelve
- * internet. Si se corta justo al confirmar, el reintento usa el mismo id (no se duplica).
+ * internet. Si se corta justo al confirmar, el reintento usa el mismo id (no se duplica),
+ * aunque mientras tanto se haya cambiado el carrito (ver `ventaId`).
  */
 export function VentasPage() {
   const { perfil } = useAuth()
@@ -79,11 +84,21 @@ export function VentasPage() {
   const [busqueda, setBusqueda] = useState('')
   const [categoria, setCategoria] = useState(TODAS)
   const [elegido, setElegido] = useState<ProductoListado | null>(null)
-  const [carrito, setCarrito] = useState<Carrito>(() => carritoNuevo())
+  const [carrito, setCarrito] = useState<ItemCarrito[]>([])
+  /**
+   * Id de la venta, generado en el cliente (ver `registrar_venta()`). Es uno solo mientras
+   * el POS está abierto y no cambia aunque cambie el carrito: si un intento falló pero sí
+   * había llegado a la base, el reintento devuelve esa venta en vez de registrar otra.
+   * Se renueva solo al confirmar (se vuelve al Dashboard) o al salir del POS a propósito:
+   * "Nueva Venta" del Dashboard abre el POS de cero, con id nuevo.
+   */
+  const [ventaId] = useState(() => crypto.randomUUID())
+  /** Todo lo que se mandó con este id, para que el ticket nombre cada artículo vendido. */
+  const enviados = useRef(new Map<string, ItemCarrito>())
   const [cobrando, setCobrando] = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [errorVenta, setErrorVenta] = useState<string | null>(null)
-  const [registrada, setRegistrada] = useState<VentaRegistrada | null>(null)
+  const [registrada, setRegistrada] = useState<VentaConfirmada | null>(null)
   const buscador = useRef<HTMLInputElement>(null)
 
   const productos = useMemo(() => catalogo.datos ?? [], [catalogo.datos])
@@ -110,11 +125,12 @@ export function VentasPage() {
 
   // Venta confirmada: imprime el ticket y vuelve al Dashboard. `window.print()` bloquea
   // hasta que se cierra el diálogo; el timeout deja pintar antes la confirmación y el ticket.
+  // Si la venta quedó distinta del carrito, no vuelve sola: el vendedor tiene que leer el aviso.
   useEffect(() => {
     if (!registrada) return
     const id = window.setTimeout(() => {
       window.print()
-      navigate('/', { replace: true })
+      if (!registrada.difiere) navigate('/', { replace: true })
     }, 150)
     return () => window.clearTimeout(id)
   }, [registrada, navigate])
@@ -144,16 +160,14 @@ export function VentasPage() {
     return mapa
   }, [productos])
 
-  const enCarrito = useMemo(
-    () => new Map(carrito.items.map((i) => [i.variante_id, i.cantidad])),
-    [carrito.items],
-  )
+  const enCarrito = useMemo(() => new Map(carrito.map((i) => [i.variante_id, i.cantidad])), [carrito])
 
-  const cantidadItems = carrito.items.reduce((t, i) => t + i.cantidad, 0)
-  const total = carrito.items.reduce((t, i) => t + i.precio * i.cantidad, 0)
+  const cantidadItems = carrito.reduce((t, i) => t + i.cantidad, 0)
+  const total = carrito.reduce((t, i) => t + i.precio * i.cantidad, 0)
 
+  /** Cambia el carrito sin tocar el id de la venta (ver `ventaId`). */
   function cambiarItems(cambiar: (items: ItemCarrito[]) => ItemCarrito[]) {
-    setCarrito((c) => carritoNuevo(cambiar(c.items)))
+    setCarrito(cambiar)
     setErrorVenta(null)
   }
 
@@ -197,30 +211,35 @@ export function VentasPage() {
   }, [])
 
   async function confirmar(medio: MedioPago) {
-    if (!caja || carrito.items.length === 0 || !enLinea) return
+    if (!caja || carrito.length === 0 || !enLinea) return
     setEnviando(true)
     setErrorVenta(null)
+    for (const i of carrito) enviados.current.set(i.variante_id, i)
     try {
       const venta = await registrarVenta(
         {
-          id: carrito.ventaId,
+          id: ventaId,
           caja_id: caja.caja_id,
           medio_pago: medio,
-          items: carrito.items.map((i) => ({ variante_id: i.variante_id, cantidad: i.cantidad })),
+          items: carrito.map((i) => ({ variante_id: i.variante_id, cantidad: i.cantidad })),
         },
         { timeoutMs: TIMEOUT_VENTA_MS },
       )
       // Si justo se corta al leer los ítems, el ticket sale con los precios del carrito
-      const items = await obtenerItemsVenta(venta.id).catch(() =>
-        carrito.items.map<ItemVendido>((i) => ({
+      const leidos = await obtenerItemsVenta(venta.id).catch(() => null)
+      const items =
+        leidos ??
+        carrito.map<ItemVendido>((i) => ({
           variante_id: i.variante_id,
           cantidad: i.cantidad,
           precio_unitario: i.precio,
-        })),
-      )
-      setRegistrada({ venta, items })
+        }))
+      // Sin los ítems de la base, la comparación se hace por total
+      const difiere =
+        venta.medio_pago !== medio || (leidos ? !mismosItems(leidos, carrito) : Math.abs(venta.total - total) > 0.005)
+      setRegistrada({ venta, items, difiere, articulos: [...enviados.current.values()] })
     } catch (error) {
-      // El carrito (y su id) queda intacto; con falta de stock se recarga el catálogo
+      // El carrito y el id quedan intactos; con falta de stock se recarga el catálogo
       setErrorVenta(mensajeErrorVenta(error))
       if (esErrorSinStock(error)) catalogo.recargar()
     } finally {
@@ -326,10 +345,10 @@ export function VentasPage() {
         </div>
 
         <div className="pos__carrito-items">
-          {carrito.items.length === 0 && (
+          {carrito.length === 0 && (
             <p className="pos__carrito-vacio">Elegí un producto de la grilla para empezar la venta.</p>
           )}
-          {carrito.items.map((i) => {
+          {carrito.map((i) => {
             const tope = stockPorVariante.get(i.variante_id) ?? i.cantidad
             return (
               <div key={i.variante_id} className="pos-item">
@@ -397,7 +416,7 @@ export function VentasPage() {
           <button
             type="button"
             className="boton-primario pos__cobrar"
-            disabled={carrito.items.length === 0}
+            disabled={carrito.length === 0}
             onClick={() => setCobrando(true)}
           >
             Cobrar
@@ -416,20 +435,22 @@ export function VentasPage() {
 
       {cobrando && (
         <CheckoutModal
-          items={carrito.items}
+          items={carrito}
           total={total}
           enviando={enviando}
           error={errorVenta}
           registrada={registrada?.venta ?? null}
+          difiere={registrada?.difiere ?? false}
           onVolver={volverAlCarrito}
           onConfirmar={(medio) => void confirmar(medio)}
+          onSalir={() => navigate('/', { replace: true })}
         />
       )}
 
       {registrada && (
         <TicketVenta
           registrada={registrada}
-          carrito={carrito.items}
+          carrito={registrada.articulos}
           vendedor={perfil?.nombre_usuario ?? ''}
         />
       )}

@@ -12,8 +12,15 @@ interface CheckoutModalProps {
   error: string | null
   /** Venta ya registrada: muestra la confirmación mientras se imprime el ticket. */
   registrada: Venta | null
+  /**
+   * La venta registrada no coincide con el carrito: un intento que se dio por fallido sí había
+   * llegado a la base. Se avisa y no se vuelve solo al Dashboard.
+   */
+  difiere: boolean
   onVolver: () => void
   onConfirmar: (medio: MedioPago) => void
+  /** Vuelve al Dashboard después de leer el aviso de `difiere`. */
+  onSalir: () => void
 }
 
 /**
@@ -26,8 +33,10 @@ export function CheckoutModal({
   enviando,
   error,
   registrada,
+  difiere,
   onVolver,
   onConfirmar,
+  onSalir,
 }: CheckoutModalProps) {
   const [medio, setMedio] = useState<MedioPago>('efectivo')
   const [pagaConTexto, setPagaConTexto] = useState('')
@@ -65,7 +74,20 @@ export function CheckoutModal({
             <span className="checkout__rotulo">Total</span>
             <span className="checkout__exito-monto">{formatearMoneda(registrada.total)}</span>
           </div>
-          <p className="checkout__exito-aviso">Imprimiendo ticket… Al terminar volvés al Dashboard.</p>
+          {difiere ? (
+            <>
+              <div className="mensaje-error" role="alert">
+                Esta venta ya se había registrado antes del corte, con el carrito de ese momento. Los cambios
+                posteriores no se aplicaron: el ticket muestra lo que quedó registrado. Si falta algo, hacé una venta
+                nueva desde el Dashboard.
+              </div>
+              <button type="button" className="boton-primario" onClick={onSalir} autoFocus>
+                Volver al Dashboard
+              </button>
+            </>
+          ) : (
+            <p className="checkout__exito-aviso">Imprimiendo ticket… Al terminar volvés al Dashboard.</p>
+          )}
         </div>
       </div>
     )
