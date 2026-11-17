@@ -2,9 +2,11 @@ import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
-import { PantallaCarga } from '../components/pantalla-carga'
+import { AvisoSinConexion } from '../components/estado-conexion'
+import { PantallaCarga, PantallaSinConexion } from '../components/pantalla-carga'
 import { PiePagina } from '../components/pie-pagina'
 import { useCerrarSesion } from '../hooks/use-cerrar-sesion'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { abrirCaja } from '../lib/caja'
 import { formatearFechaLarga, parsearMonto } from '../lib/formato'
@@ -17,9 +19,10 @@ const MENSAJE_MONTO_INVALIDO = 'Ingresá un monto válido (ej. 20.000).'
 /** Pantalla bloqueante post-login — según prototipos/Apertura de Caja.dc.html */
 export function AperturaCajaPage() {
   const { perfil } = useAuth()
-  const { pedirSalida, saliendo, aviso } = useCerrarSesion()
+  const { cerrarSesion, saliendo } = useCerrarSesion()
   const { caja, error: errorCaja, refrescar } = useCaja()
   const esMobile = useEsMobile()
+  const enLinea = useEnLinea()
   const navigate = useNavigate()
 
   const [monto, setMonto] = useState('')
@@ -29,6 +32,7 @@ export function AperturaCajaPage() {
   // Desde el celular nadie opera caja (acceso de solo consulta, cualquier rol): ni siquiera por URL
   if (esMobile) return <Navigate to="/" replace />
 
+  if (errorCaja && !enLinea) return <PantallaSinConexion />
   if (errorCaja) {
     return (
       <PantallaCarga mensaje="No se pudo consultar el estado de la caja. Revisá la conexión e intentá de nuevo.">
@@ -44,6 +48,7 @@ export function AperturaCajaPage() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!enLinea) return
     if (!monto.trim()) {
       setError(MENSAJE_MONTO_VACIO)
       return
@@ -153,9 +158,10 @@ export function AperturaCajaPage() {
               </div>
             )}
 
-            <button type="submit" className="apertura__abrir" disabled={enviando}>
+            <button type="submit" className="apertura__abrir" disabled={enviando || !enLinea}>
               {enviando ? 'Abriendo…' : 'Abrir Caja'}
             </button>
+            <AvisoSinConexion className="apertura__sin-conexion" />
           </form>
         </div>
 
@@ -167,7 +173,7 @@ export function AperturaCajaPage() {
           <button
             type="button"
             className="apertura__salir-boton"
-            onClick={() => void pedirSalida()}
+            onClick={() => void cerrarSesion()}
             disabled={enviando || saliendo}
           >
             {saliendo ? 'Cerrando sesión…' : 'Cerrar sesión'}
@@ -176,8 +182,6 @@ export function AperturaCajaPage() {
       </div>
 
       <PiePagina />
-
-      {aviso}
     </div>
   )
 }

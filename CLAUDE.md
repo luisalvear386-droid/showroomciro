@@ -4,7 +4,7 @@
 Sistema de gestión interno para **ShowroomCiro**, una tienda de ropa de un (1) local físico único. No es un producto multi-tenant ni SaaS — es un sistema a medida para un solo negocio.
 
 ## Stack técnico
-- **Frontend:** React + Vite + TypeScript, PWA offline-first (Dexie.js sobre IndexedDB para el POS del mostrador). Deploy en Vercel.
+- **Frontend:** React + Vite + TypeScript, PWA instalable (Service Worker con la interfaz en caché). Requiere conexión para operar: el modo offline-first quedó descartado por ahora. Deploy en Vercel.
 - **Backend/Datos:** Supabase — PostgreSQL + Autenticación + Storage (fotos de producto). La lógica de negocio custom (SKU, diferencia de caja, estado de cuentas) se resuelve con funciones y vistas SQL/PL-pgSQL nativas de Postgres, no con Edge Functions.
 - **Autenticación:** login por usuario/contraseña (sin email visible al usuario), mapeado internamente a un email técnico para Supabase Auth. Roles: **Dueño/a** y **Vendedor**, impuestos con Row Level Security (RLS) en Postgres — no solo validados en el frontend.
 
@@ -24,7 +24,7 @@ Sistema de gestión interno para **ShowroomCiro**, una tienda de ropa de un (1) 
 - Acceso remoto (celular, solo Dueño/a): **solo consulta**, con **una única excepción**: la gestión de usuarios (alta/baja de Vendedores) sí permite acción real desde el celular, dentro de "Configuración".
 - **Sin ítem "Ventas" en el menú de navegación** — la pantalla de venta (POS) se accede solo vía el botón de acción "Nueva Venta" del Dashboard, y al confirmar la venta se vuelve automáticamente al Dashboard.
 - **Sin ícono de campana de notificaciones** — las alertas (stock bajo, cuentas por vencer) se muestran en el panel de Alertas del Dashboard y como badge en el ítem "Cuentas" del menú.
-- **Modo offline-first** en el POS del mostrador: debe poder seguir vendiendo sin internet y sincronizar al reconectar (ver design.md, sección "Modo Offline-First"). Apertura/cierre de caja y gestión de productos/usuarios SÍ requieren conexión.
+- **Sin modo offline (descartado por ahora):** la app requiere conexión. Sin internet muestra la pastilla "Sin conexión" y bloquea vender, cobrar, abrir/cerrar caja y guardar cambios hasta que vuelva la red, sin perder el carrito ni duplicar ventas (ver design.md, sección "Modo offline (descartado por ahora)"). No reintroducir venta ni guardado sin conexión sin confirmarlo con Marcos.
 
 ## Convenciones de código
 - Nombres de archivos y carpetas: `kebab-case`.
@@ -38,7 +38,7 @@ Sistema de gestión interno para **ShowroomCiro**, una tienda de ropa de un (1) 
 2. **Funciones y vistas SQL** de lógica de negocio (generación de SKU, diferencia de caja, estado de cuentas).
 3. **Autenticación** (usuario/contraseña + roles).
 4. **Frontend** conectado directo a Supabase real — sin datos mockeados, el schema ya está definido.
-5. **Capa offline-first** (Dexie + Service Worker) sobre el POS del mostrador.
+5. ~~**Capa offline-first** (Dexie + Service Worker) sobre el POS del mostrador.~~ Implementada en el Módulo 11 y **descartada por ahora** (queda solo la PWA instalable y el aviso "Sin conexión").
 6. **Pruebas E2E** (Chrome DevTools MCP + TestSprite).
 
 Ver el detalle módulo por módulo en `/docs/tasks.md`. **No cambiar este orden sin señalarlo explícitamente como una desviación a confirmar con Marcos.**

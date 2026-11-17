@@ -11,7 +11,7 @@ function aplicar(): void {
 }
 
 /**
- * Registra el Service Worker de la PWA (Módulo 11).
+ * Registra el Service Worker de la PWA (Módulo 11; el modo offline se descartó, la PWA instalable queda).
  *
  * Una versión nueva se instala y se activa sola (`registerType: 'autoUpdate'`): desde ahí el
  * Service Worker sirve los archivos nuevos. La página abierta sigue con el código con el que
@@ -41,8 +41,8 @@ export function registrarServiceWorker(): void {
 
 /**
  * La pantalla de login está a la vista: el turno terminó (cierre de caja o cierre de sesión) o
- * todavía no empezó. Si se activó una versión nueva, se recarga para usarla. Las ventas
- * pendientes no se pierden: están en IndexedDB. Devuelve la función para cuando se sale.
+ * todavía no empezó. Si se activó una versión nueva, se recarga para usarla. Devuelve la
+ * función para cuando se sale.
  */
 export function marcarEnLogin(): () => void {
   enLogin = true

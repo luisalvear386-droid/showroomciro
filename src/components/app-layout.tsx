@@ -8,7 +8,7 @@ import type { ContextoLayout } from '../hooks/use-refrescar-alertas-cuentas'
 import { contarCuentasEnAlerta } from '../lib/alertas'
 import type { Rol } from '../lib/auth'
 import { formatearFechaLarga, formatearHora } from '../lib/formato'
-import { EstadoSincronizacion } from './estado-sincronizacion'
+import { EstadoConexion } from './estado-conexion'
 import { IconoNavegacion, type IconoNav } from './iconos-nav'
 import { MenuUsuario } from './menu-usuario'
 import { PiePagina } from './pie-pagina'
@@ -60,7 +60,6 @@ const NAV_MOBILE: ItemNavMobile[] = [
 function subtituloHeader(pathname: string): string {
   if (pathname === '/') return formatearFechaLarga(new Date())
   if (pathname === '/ventas') return 'Punto de venta'
-  if (pathname === '/ventas/pendientes') return 'Ventas sin sincronizar'
   if (pathname === '/productos/nuevo') return 'Productos · Nuevo producto'
   if (pathname.startsWith('/productos/')) return 'Productos · Editar producto'
   if (pathname === '/productos') return 'Productos'
@@ -163,8 +162,8 @@ export function AppLayout() {
             <span className="layout__header-nombre">{conVolver ? 'Usuarios' : 'ShowroomCiro'}</span>
             <span className="layout__header-seccion">{subtituloHeader(pathname)}</span>
           </div>
-          {/* Ventas sin sincronizar (Módulo 11): solo en el mostrador, desde el celular no se vende */}
-          {!esMobile && <EstadoSincronizacion />}
+          {/* Solo mientras no hay conexión: se bloquea todo lo que escribe en la base */}
+          <EstadoConexion />
           <MenuUsuario />
         </header>
 

@@ -2,13 +2,13 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
+import { AvisoSinConexion } from '../components/estado-conexion'
 import { useConsulta } from '../hooks/use-consulta'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { obtenerCuentasEnAlerta, obtenerStockBajo } from '../lib/alertas'
-import { refrescarCatalogo } from '../lib/catalogo-local'
 import { describirVencimiento } from '../lib/cuentas'
 import { formatearFechaLarga, formatearHora, formatearMoneda } from '../lib/formato'
-import { useSincronizacion } from '../sincronizacion/use-sincronizacion'
 import './dashboard-page.css'
 
 function MensajePanel({ cargando, error, vacio }: { cargando: boolean; error: boolean; vacio: string }) {
@@ -20,12 +20,10 @@ function MensajePanel({ cargando, error, vacio }: { cargando: boolean; error: bo
 
 /** Dashboard/Inicio — según prototipos/Dashboard ShowroomCiro.dc.html y Mobile Dashboard.dc.html */
 export function DashboardPage() {
-  const { perfil, sesionOffline } = useAuth()
+  const { perfil } = useAuth()
   const { caja, refrescar } = useCaja()
   const esMobile = useEsMobile()
-  const cola = useSincronizacion()
-  // Ventas de esta computadora que todavía no llegaron a la base: no están en el total
-  const sinSincronizar = cola.pendientes + cola.conError + cola.deOtros
+  const enLinea = useEnLinea()
   const navigate = useNavigate()
   const stock = useConsulta(obtenerStockBajo)
   const cuentas = useConsulta(obtenerCuentasEnAlerta)
@@ -34,12 +32,6 @@ export function DashboardPage() {
   useEffect(() => {
     refrescar().catch(() => undefined)
   }, [refrescar])
-
-  // Deja el catálogo del POS guardado en la base local por si después se corta internet
-  // (Módulo 11). Solo en el mostrador: desde el celular no se vende.
-  useEffect(() => {
-    if (!esMobile && !sesionOffline) refrescarCatalogo().catch(() => undefined)
-  }, [esMobile, sesionOffline])
 
   const stockBajo = stock.datos ?? []
   const cuentasEnAlerta = cuentas.datos ?? []
@@ -57,25 +49,36 @@ export function DashboardPage() {
         </div>
         {/* Mobile es acceso remoto de solo consulta: sin acciones de venta ni alta de cuentas */}
         {!esMobile && (
-          <div className="dashboard__acciones">
-            <button type="button" className="dashboard__accion" onClick={() => navigate('/ventas')}>
-              Nueva Venta
-            </button>
-            <button
-              type="button"
-              className="dashboard__accion dashboard__accion--secundaria"
-              onClick={() => navigate('/cuentas/nueva')}
-            >
-              Nueva Cuenta
-            </button>
-            {/* Acceso rápido al Cierre de Caja (no tiene ítem en el menú) */}
-            <button
-              type="button"
-              className="dashboard__accion dashboard__accion--secundaria"
-              onClick={() => navigate('/caja')}
-            >
-              Cerrar Caja
-            </button>
+          <div className="dashboard__acciones-bloque">
+            {/* Sin conexión no se vende, no se abren cuentas ni se cierra la caja */}
+            <div className="dashboard__acciones">
+              <button
+                type="button"
+                className="dashboard__accion"
+                onClick={() => navigate('/ventas')}
+                disabled={!enLinea}
+              >
+                Nueva Venta
+              </button>
+              <button
+                type="button"
+                className="dashboard__accion dashboard__accion--secundaria"
+                onClick={() => navigate('/cuentas/nueva')}
+                disabled={!enLinea}
+              >
+                Nueva Cuenta
+              </button>
+              {/* Acceso rápido al Cierre de Caja (no tiene ítem en el menú) */}
+              <button
+                type="button"
+                className="dashboard__accion dashboard__accion--secundaria"
+                onClick={() => navigate('/caja')}
+                disabled={!enLinea}
+              >
+                Cerrar Caja
+              </button>
+            </div>
+            <AvisoSinConexion />
           </div>
         )}
       </div>
@@ -87,8 +90,7 @@ export function DashboardPage() {
           <span className={caja ? 'kpi__detalle kpi__detalle--ok' : 'kpi__detalle'}>
             <span className="kpi__punto" aria-hidden="true" />
             {caja
-              ? `${caja.cantidad_ventas} ${caja.cantidad_ventas === 1 ? 'venta' : 'ventas'}` +
-                (sinSincronizar > 0 ? ` · ${sinSincronizar} sin sincronizar` : '')
+              ? `${caja.cantidad_ventas} ${caja.cantidad_ventas === 1 ? 'venta' : 'ventas'}`
               : 'Sin caja abierta'}
           </span>
         </div>

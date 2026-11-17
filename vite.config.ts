@@ -7,13 +7,13 @@ export default defineConfig({
   plugins: [
     react(),
     /*
-     * PWA offline-first del mostrador (Módulo 11, design.md → "Modo Offline-First").
+     * PWA instalable (ícono, pantalla completa y carga rápida de la interfaz). El modo offline
+     * quedó descartado (design.md → "Modo offline (descartado por ahora)"): sin conexión la
+     * app avisa y bloquea, no vende ni guarda nada.
      *
-     * El Service Worker solo guarda la app (JS, CSS, HTML, íconos) y las fotos/fuentes que se
-     * van viendo. Los datos NO: ninguna llamada a la API de Supabase (REST, RPC, Auth) pasa por
-     * su caché; lo que hace falta sin conexión lo guarda la app en IndexedDB (src/lib/db-local.ts).
-     * Qué pantallas funcionan sin conexión lo decide la app, no el Service Worker: todas las
-     * rutas son el mismo index.html.
+     * El Service Worker solo guarda la app (JS, CSS, HTML, íconos), las fuentes y las fotos de
+     * producto. Ningún dato: las llamadas a la API de Supabase (REST, RPC, Auth) van siempre
+     * a la red. Todas las rutas son el mismo index.html.
      */
     VitePWA({
       // Una versión nueva se activa sola, pero la página recién se recarga en el login (fin del
@@ -42,7 +42,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
-        // SPA: cualquier ruta (/, /ventas, /caja…) sin conexión se sirve con index.html
+        // SPA: cualquier ruta (/, /ventas, /caja…) se sirve con index.html, también sin conexión
+        // (así la app abre y muestra "Sin conexión" en vez del error del navegador)
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
         // Una versión nueva se activa apenas se instala, sin esperar mensajes de la página
@@ -54,8 +55,9 @@ export default defineConfig({
         clientsClaim: true,
         runtimeCaching: [
           {
-            // Fotos de producto (bucket público `fotos-productos`). Llevan ?v=<timestamp>, así que
-            // una foto nueva es otra URL: se pueden servir de la caché sin revalidar.
+            // Fotos de producto (bucket público `fotos-productos`), para que la grilla del POS cargue
+            // rápido. Cada foto subida tiene un nombre único (src/lib/productos.ts → subirFoto),
+            // así que una foto nueva es otra URL: se pueden servir de la caché sin revalidar.
             urlPattern: ({ url }) =>
               url.hostname.endsWith('.supabase.co') && url.pathname.startsWith('/storage/v1/object/public/'),
             handler: 'CacheFirst',

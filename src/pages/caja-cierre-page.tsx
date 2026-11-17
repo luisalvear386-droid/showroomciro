@@ -1,18 +1,14 @@
-import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router'
+import { Navigate, useNavigate } from 'react-router'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
+import { AvisoSinConexion } from '../components/estado-conexion'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { useEsMobile } from '../hooks/use-es-mobile'
-import { useSincronizacion } from '../sincronizacion/use-sincronizacion'
 import { cerrarCaja } from '../lib/caja'
-import { motivoBloqueoCierre, ventasSinRegistrarDeCaja } from '../lib/cola-ventas'
-import type { VentaPendiente } from '../lib/db-local'
 import { formatearFechaLarga, formatearHora, formatearMoneda, parsearMonto } from '../lib/formato'
 import '../components/confirmar-modal.css'
 import './caja-cierre-page.css'
-
-const SIN_VENTAS: VentaPendiente[] = []
 
 interface ConfirmarCierreModalProps {
   montoContado: number
@@ -24,6 +20,7 @@ interface ConfirmarCierreModalProps {
 function ConfirmarCierreModal({ montoContado, onVolver, onConfirmar }: ConfirmarCierreModalProps) {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const enLinea = useEnLinea()
 
   useEffect(() => {
     function alPresionar(e: KeyboardEvent) {
@@ -73,6 +70,7 @@ function ConfirmarCierreModal({ montoContado, onVolver, onConfirmar }: Confirmar
             {error}
           </div>
         )}
+        <AvisoSinConexion />
 
         <div className="confirmar-cierre__botones">
           <button type="button" className="boton-cancelar" onClick={onVolver} disabled={enviando}>
@@ -82,7 +80,7 @@ function ConfirmarCierreModal({ montoContado, onVolver, onConfirmar }: Confirmar
             type="button"
             className="boton-primario confirmar-cierre__confirmar"
             onClick={() => void confirmar()}
-            disabled={enviando}
+            disabled={enviando || !enLinea}
             autoFocus
           >
             {enviando ? 'Cerrando caja…' : 'Cerrar Caja'}
@@ -99,15 +97,12 @@ function ConfirmarCierreModal({ montoContado, onVolver, onConfirmar }: Confirmar
  * Desvío del prototipo: el cierre es a conteo ciego (decisión del Módulo 2, ver design.md).
  * No se muestran el efectivo vendido, el monto esperado ni la diferencia antes de confirmar;
  * `cerrar_caja()` los calcula y quedan en el Historial. Tampoco va la "Nota sobre la
- * diferencia": `cajas` no tiene dónde guardarla.
- *
- * Módulo 11: no se puede cerrar con ventas de esta caja que todavía no llegaron a la base
- * (quedarían fuera del monto esperado). Antes de cerrar se sincroniza la cola.
+ * diferencia": `cajas` no tiene dónde guardarla. Sin conexión no se puede cerrar.
  */
 export function CajaCierrePage() {
-  const { usuario, logout } = useAuth()
+  const { logout } = useAuth()
   const { caja, limpiar } = useCaja()
-  const { sincronizar } = useSincronizacion()
+  const enLinea = useEnLinea()
   const esMobile = useEsMobile()
   const navigate = useNavigate()
 
@@ -115,20 +110,13 @@ export function CajaCierrePage() {
   const [error, setError] = useState<string | null>(null)
   const [montoAConfirmar, setMontoAConfirmar] = useState<number | null>(null)
 
-  const cajaActualId = caja?.caja_id
-  const sinRegistrar = useLiveQuery(
-    () => (cajaActualId ? ventasSinRegistrarDeCaja(cajaActualId).catch(() => SIN_VENTAS) : SIN_VENTAS),
-    [cajaActualId],
-    SIN_VENTAS,
-  )
-  const bloqueo = usuario ? motivoBloqueoCierre(sinRegistrar, usuario.id) : null
-
   // Desde el celular no se opera caja (requirements.md §8); sin caja abierta no hay nada que cerrar
   if (esMobile || !caja) return <Navigate to="/" replace />
   const cajaId = caja.caja_id
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!enLinea) return
     const monto = parsearMonto(contado)
     if (monto === null) {
       setError('Ingresá un monto válido (ej. 127.300).')
@@ -138,13 +126,6 @@ export function CajaCierrePage() {
   }
 
   async function confirmarCierre(montoContado: number): Promise<string | null> {
-    // Última oportunidad de subir las ventas pendientes; si igual queda alguna, no se cierra
-    if (usuario) {
-      await sincronizar({ esperar: true })
-      const motivo = motivoBloqueoCierre(await ventasSinRegistrarDeCaja(cajaId).catch(() => SIN_VENTAS), usuario.id)
-      if (motivo) return motivo
-    }
-
     const resultado = await cerrarCaja(cajaId, montoContado)
     // Si la RPC falla, la sesión sigue abierta y se muestra el error en el modal
     if (!resultado.ok) return resultado.error
@@ -222,14 +203,7 @@ export function CajaCierrePage() {
             </div>
           )}
 
-          {bloqueo && (
-            <div className="mensaje-error" role="alert">
-              {bloqueo}{' '}
-              <Link to="/ventas/pendientes" className="cierre__ver-ventas">
-                Ver ventas
-              </Link>
-            </div>
-          )}
+          <AvisoSinConexion />
 
           <p className="cierre__aviso">Al cerrar la caja, tu sesión se cerrará automáticamente.</p>
 
@@ -237,7 +211,7 @@ export function CajaCierrePage() {
             <button type="button" className="boton-cancelar" onClick={() => navigate('/')}>
               Cancelar
             </button>
-            <button type="submit" className="boton-primario cierre__cerrar" disabled={!tieneConteo || bloqueo !== null}>
+            <button type="submit" className="boton-primario cierre__cerrar" disabled={!tieneConteo || !enLinea}>
               Cerrar Caja
             </button>
           </div>

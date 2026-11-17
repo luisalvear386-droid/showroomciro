@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { AvisoSinConexion } from '../components/estado-conexion'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { useRefrescarAlertasCuentas } from '../hooks/use-refrescar-alertas-cuentas'
 import { crearCuenta, DIAS_AVISO_POR_VENCER, mensajeErrorAlta, type CuentaNueva } from '../lib/cuentas'
 import {
@@ -31,6 +33,7 @@ function fechaEnDias(dias: number): string {
 export function CuentaNuevaPage() {
   const navigate = useNavigate()
   const refrescarAlertasCuentas = useRefrescarAlertasCuentas()
+  const enLinea = useEnLinea()
 
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
@@ -80,6 +83,7 @@ export function CuentaNuevaPage() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!enLinea) return
     if (enviando) return
     const datos = validar()
     if (!datos) return
@@ -249,11 +253,13 @@ export function CuentaNuevaPage() {
           </div>
         )}
 
+        <AvisoSinConexion />
+
         <div className="cuenta-nueva__botones">
           <Link to="/" className="boton-cancelar cuenta-nueva__cancelar" aria-disabled={enviando}>
             Cancelar
           </Link>
-          <button type="submit" className="boton-primario cuenta-nueva__guardar" disabled={enviando}>
+          <button type="submit" className="boton-primario cuenta-nueva__guardar" disabled={enviando || !enLinea}>
             {enviando ? 'Guardando…' : 'Guardar Cuenta'}
           </button>
         </div>

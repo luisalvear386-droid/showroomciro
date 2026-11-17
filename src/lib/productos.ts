@@ -78,24 +78,43 @@ export function validarFoto(archivo: File): string | null {
   return null
 }
 
+/** Ruta dentro del bucket a partir de la URL pública guardada (sin `?v=`), o null si no es del bucket. */
+function rutaDeFoto(url: string): string | null {
+  const prefijo = `/storage/v1/object/public/${BUCKET_FOTOS}/`
+  const inicio = url.indexOf(prefijo)
+  if (inicio === -1) return null
+  return decodeURIComponent(url.slice(inicio + prefijo.length).split('?')[0])
+}
+
 /**
- * Sube la foto en la ruta fija `<producto_id>.<ext>` (pisa la anterior) y guarda la URL
- * pública en `productos.foto_url` con `?v=<timestamp>`, para que el navegador no siga
- * mostrando la versión cacheada.
+ * Sube la foto con un nombre único (`<producto_id>/<uuid>.<ext>`), guarda su URL pública en
+ * `productos.foto_url` y borra la anterior. Nunca se pisa un archivo: el Service Worker
+ * guarda las fotos en caché por URL (vite.config.ts), y una URL nueva nunca muestra la vieja.
+ *
+ * El borrado de la anterior es "si se puede": requiere la política de 0013 y, si falla, la
+ * foto nueva ya quedó guardada (la vieja queda huérfana en el bucket, sin efecto en la app).
  */
 async function subirFoto(productoId: string, archivo: File): Promise<void> {
-  const ruta = `${productoId}.${EXTENSION_POR_TIPO[archivo.type]}`
-  const { error } = await supabase.storage
-    .from(BUCKET_FOTOS)
-    .upload(ruta, archivo, { upsert: true, contentType: archivo.type })
+  const { data: actual, error: errorActual } = await supabase
+    .from('productos')
+    .select('foto_url')
+    .eq('id', productoId)
+    .single()
+  if (errorActual) throw errorActual
+
+  const ruta = `${productoId}/${crypto.randomUUID()}.${EXTENSION_POR_TIPO[archivo.type]}`
+  const { error } = await supabase.storage.from(BUCKET_FOTOS).upload(ruta, archivo, { contentType: archivo.type })
   if (error) throw error
 
   const { publicUrl } = supabase.storage.from(BUCKET_FOTOS).getPublicUrl(ruta).data
-  const { error: errorUpdate } = await supabase
-    .from('productos')
-    .update({ foto_url: `${publicUrl}?v=${Date.now()}` })
-    .eq('id', productoId)
+  const { error: errorUpdate } = await supabase.from('productos').update({ foto_url: publicUrl }).eq('id', productoId)
   if (errorUpdate) throw errorUpdate
+
+  const anterior = actual.foto_url ? rutaDeFoto(actual.foto_url as string) : null
+  if (anterior) {
+    const { error: errorBorrado } = await supabase.storage.from(BUCKET_FOTOS).remove([anterior])
+    if (errorBorrado) console.warn('No se pudo borrar la foto anterior del producto.', errorBorrado)
+  }
 }
 
 // ---------------------------------------------------------------------------

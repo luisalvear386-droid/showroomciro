@@ -6,20 +6,33 @@ import { CheckoutModal } from '../components/checkout-modal'
 import { FotoProducto } from '../components/producto-visual'
 import { TicketVenta } from '../components/ticket-venta'
 import { VarianteModal } from '../components/variante-modal'
-import { useCatalogoLocal } from '../hooks/use-catalogo-local'
-import { venderDesdeMostrador } from '../lib/cola-ventas'
+import { useConsulta } from '../hooks/use-consulta'
+import { useEnLinea } from '../hooks/use-en-linea'
+import { alVolverLaConexion } from '../lib/conexion'
 import { formatearMoneda } from '../lib/formato'
-import { codigoProducto, type ProductoListado, type Variante } from '../lib/productos'
+import { codigoProducto, obtenerProductos, type ProductoListado, type Variante } from '../lib/productos'
 import {
   esErrorSinStock,
   mensajeErrorVenta,
+  obtenerItemsVenta,
+  registrarVenta,
   type ItemCarrito,
+  type ItemVendido,
   type MedioPago,
   type VentaRegistrada,
 } from '../lib/ventas'
 import './ventas-page.css'
 
 const TODAS = 'Todos'
+
+/** Cuánto se espera la respuesta de la venta antes de avisar que no se pudo confirmar. */
+const TIMEOUT_VENTA_MS = 10000
+
+/** Catálogo del POS: solo productos activos (los dados de baja no se ofrecen en el mostrador). */
+async function obtenerCatalogo(): Promise<ProductoListado[]> {
+  const productos = await obtenerProductos({ soloActivos: true })
+  return productos.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
+}
 
 /** Minúsculas y sin tildes, para buscar "pantalon" y encontrar "Pantalón". */
 function normalizar(texto: string): string {
@@ -53,14 +66,15 @@ function claseStock(stock: number, bajo: boolean): string {
  * Ventas (POS), según prototipos/Ventas POS.dc.html. Se entra solo desde "Nueva Venta" del
  * Dashboard; al confirmar la venta se imprime el ticket y se vuelve al Dashboard.
  *
- * Funciona sin conexión (Módulo 11): el catálogo sale de la base local y la venta queda en
- * la cola hasta que se pueda registrar; el ticket sale marcado "pendiente de sincronizar".
+ * Sin conexión no se confirma la venta: el carrito queda armado y se confirma cuando vuelve
+ * internet. Si se corta justo al confirmar, el reintento usa el mismo id (no se duplica).
  */
 export function VentasPage() {
-  const { perfil, sesionOffline } = useAuth()
+  const { perfil } = useAuth()
   const { caja } = useCaja()
   const navigate = useNavigate()
-  const catalogo = useCatalogoLocal()
+  const enLinea = useEnLinea()
+  const catalogo = useConsulta(obtenerCatalogo)
 
   const [busqueda, setBusqueda] = useState('')
   const [categoria, setCategoria] = useState(TODAS)
@@ -70,11 +84,16 @@ export function VentasPage() {
   const [enviando, setEnviando] = useState(false)
   const [errorVenta, setErrorVenta] = useState<string | null>(null)
   const [registrada, setRegistrada] = useState<VentaRegistrada | null>(null)
-  /** true si la venta quedó en la cola (sin registrar todavía en la base). */
-  const [pendiente, setPendiente] = useState(false)
   const buscador = useRef<HTMLInputElement>(null)
 
-  const productos = useMemo(() => catalogo.productos ?? [], [catalogo.productos])
+  const productos = useMemo(() => catalogo.datos ?? [], [catalogo.datos])
+
+  // No se pudo cargar el catálogo por falta de conexión: se vuelve a pedir cuando vuelve
+  const { error: errorCatalogo, recargar: recargarCatalogo } = catalogo
+  useEffect(() => {
+    if (!errorCatalogo) return
+    return alVolverLaConexion(recargarCatalogo)
+  }, [errorCatalogo, recargarCatalogo])
 
   // F2 enfoca el buscador (atajo que muestra el prototipo)
   useEffect(() => {
@@ -178,33 +197,35 @@ export function VentasPage() {
   }, [])
 
   async function confirmar(medio: MedioPago) {
-    if (!caja || !perfil || carrito.items.length === 0) return
+    if (!caja || carrito.items.length === 0 || !enLinea) return
     setEnviando(true)
     setErrorVenta(null)
-    const resultado = await venderDesdeMostrador(
-      {
-        id: carrito.ventaId,
-        caja_id: caja.caja_id,
-        usuario_id: perfil.id,
-        medio_pago: medio,
-        items: carrito.items,
-        total_cobrado: total,
-        creada_en: new Date().toISOString(),
-        estado: 'pendiente',
-        intentos: 0,
-      },
-      { sesionOffline },
-    )
-    setEnviando(false)
-
-    if (resultado.tipo === 'rechazada') {
-      // El carrito queda intacto; con falta de stock se recarga el catálogo para ver lo que quedó
-      setErrorVenta(mensajeErrorVenta(resultado.error))
-      if (esErrorSinStock(resultado.error)) catalogo.recargar()
-      return
+    try {
+      const venta = await registrarVenta(
+        {
+          id: carrito.ventaId,
+          caja_id: caja.caja_id,
+          medio_pago: medio,
+          items: carrito.items.map((i) => ({ variante_id: i.variante_id, cantidad: i.cantidad })),
+        },
+        { timeoutMs: TIMEOUT_VENTA_MS },
+      )
+      // Si justo se corta al leer los ítems, el ticket sale con los precios del carrito
+      const items = await obtenerItemsVenta(venta.id).catch(() =>
+        carrito.items.map<ItemVendido>((i) => ({
+          variante_id: i.variante_id,
+          cantidad: i.cantidad,
+          precio_unitario: i.precio,
+        })),
+      )
+      setRegistrada({ venta, items })
+    } catch (error) {
+      // El carrito (y su id) queda intacto; con falta de stock se recarga el catálogo
+      setErrorVenta(mensajeErrorVenta(error))
+      if (esErrorSinStock(error)) catalogo.recargar()
+    } finally {
+      setEnviando(false)
     }
-    setPendiente(resultado.tipo === 'pendiente')
-    setRegistrada(resultado.registrada)
   }
 
   // Dueño/a en el celular sin caja abierta (única ruta en la que no se exige abrirla)
@@ -217,7 +238,7 @@ export function VentasPage() {
   }
 
   let mensajeGrilla: string | null = null
-  if (catalogo.productos === undefined) mensajeGrilla = catalogo.error ? null : 'Cargando productos…'
+  if (catalogo.datos === undefined) mensajeGrilla = catalogo.error ? null : 'Cargando productos…'
   else if (productos.length === 0) mensajeGrilla = 'No hay productos activos para vender.'
   else if (visibles.length === 0) mensajeGrilla = 'No hay productos que coincidan con la búsqueda.'
 
@@ -258,7 +279,7 @@ export function VentasPage() {
           ))}
         </div>
 
-        {catalogo.error && (
+        {catalogo.error && catalogo.datos === undefined && (
           <div className="mensaje-error pos__error" role="alert">
             No se pudo cargar el catálogo. Revisá la conexión.
             <button type="button" className="boton-secundario" onClick={catalogo.recargar}>
@@ -400,7 +421,6 @@ export function VentasPage() {
           enviando={enviando}
           error={errorVenta}
           registrada={registrada?.venta ?? null}
-          pendiente={pendiente}
           onVolver={volverAlCarrito}
           onConfirmar={(medio) => void confirmar(medio)}
         />
@@ -411,7 +431,6 @@ export function VentasPage() {
           registrada={registrada}
           carrito={carrito.items}
           vendedor={perfil?.nombre_usuario ?? ''}
-          pendiente={pendiente}
         />
       )}
     </div>

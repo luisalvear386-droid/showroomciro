@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useTieneRol } from '../auth/use-auth'
+import { AvisoSinConexion } from '../components/estado-conexion'
 import { FotoProducto } from '../components/producto-visual'
 import { useConsulta } from '../hooks/use-consulta'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { formatearMoneda } from '../lib/formato'
 import {
   cambiarActivo,
@@ -45,6 +47,7 @@ export function ProductosPage() {
   const [pagina, setPagina] = useState(0)
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null)
   const [cambiando, setCambiando] = useState<string | null>(null)
+  const enLinea = useEnLinea()
   const [error, setError] = useState<string | null>(null)
 
   const lista = useMemo(() => productos.datos ?? [], [productos.datos])
@@ -153,6 +156,8 @@ export function ProductosPage() {
           {error}
         </div>
       )}
+      {/* Dar de baja / Reactivar quedan bloqueados */}
+      <AvisoSinConexion />
 
       <div className="productos__tabla-card">
         <div className="productos__tabla-scroll">
@@ -216,7 +221,7 @@ export function ProductosPage() {
                             title={p.activo ? 'Dar de baja' : 'Reactivar'}
                             aria-label={`Más acciones para ${p.nombre}`}
                             aria-expanded={menuAbierto === p.id}
-                            disabled={cambiando === p.id}
+                            disabled={cambiando === p.id || !enLinea}
                             onClick={() => setMenuAbierto(menuAbierto === p.id ? null : p.id)}
                           >
                             ⋯

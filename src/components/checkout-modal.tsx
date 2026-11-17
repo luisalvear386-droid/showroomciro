@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { formatearMoneda, parsearMonto } from '../lib/formato'
 import { MEDIOS_PAGO, type ItemCarrito, type MedioPago, type Venta } from '../lib/ventas'
+import { AvisoSinConexion } from './estado-conexion'
 import './checkout-modal.css'
 
 interface CheckoutModalProps {
@@ -10,15 +12,13 @@ interface CheckoutModalProps {
   error: string | null
   /** Venta ya registrada: muestra la confirmación mientras se imprime el ticket. */
   registrada: Venta | null
-  /** La venta quedó en la cola sin conexión: todavía no se registró en la base. */
-  pendiente: boolean
   onVolver: () => void
   onConfirmar: (medio: MedioPago) => void
 }
 
 /**
  * Cobro de la venta, según prototipos/Checkout Venta.dc.html. Solo medios de pago directos:
- * sin opción de fiado/cuenta (requirements.md sección 4).
+ * sin opción de fiado/cuenta (requirements.md sección 4). Sin conexión no se puede confirmar.
  */
 export function CheckoutModal({
   items,
@@ -26,12 +26,12 @@ export function CheckoutModal({
   enviando,
   error,
   registrada,
-  pendiente,
   onVolver,
   onConfirmar,
 }: CheckoutModalProps) {
   const [medio, setMedio] = useState<MedioPago>('efectivo')
   const [pagaConTexto, setPagaConTexto] = useState('')
+  const enLinea = useEnLinea()
 
   const bloqueado = enviando || registrada !== null
 
@@ -48,28 +48,17 @@ export function CheckoutModal({
     return (
       <div className="modal-fondo">
         <div className="checkout checkout--exito" role="dialog" aria-modal="true" aria-labelledby="checkout-exito-titulo">
-          {pendiente ? (
-            <span className="checkout__check checkout__check--pendiente" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="8.5" />
-                <path d="M12 7.5V12l3 2" />
-              </svg>
-            </span>
-          ) : (
-            <span className="checkout__check" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 12.5l5.2 5.2L20 7" />
-              </svg>
-            </span>
-          )}
+          <span className="checkout__check" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12.5l5.2 5.2L20 7" />
+            </svg>
+          </span>
           <div className="checkout__exito-textos">
             <h2 id="checkout-exito-titulo" className="checkout__exito-titulo">
-              {pendiente ? 'Venta guardada' : 'Venta registrada'}
+              Venta registrada
             </h2>
             <p className="checkout__exito-detalle">
-              {pendiente
-                ? `Cobrada en ${etiqueta.toLowerCase()}. No hay conexión: se registra sola cuando vuelva internet.`
-                : `Cobrada en ${etiqueta.toLowerCase()}. Ya se descontó el stock de las variantes vendidas.`}
+              Cobrada en {etiqueta.toLowerCase()}. Ya se descontó el stock de las variantes vendidas.
             </p>
           </div>
           <div className="checkout__exito-total">
@@ -176,6 +165,7 @@ export function CheckoutModal({
               {error}
             </div>
           )}
+          <AvisoSinConexion />
         </div>
 
         <div className="checkout__pie">
@@ -186,7 +176,7 @@ export function CheckoutModal({
             type="button"
             className="boton-primario checkout__confirmar"
             onClick={() => onConfirmar(medio)}
-            disabled={bloqueado}
+            disabled={bloqueado || !enLinea}
           >
             {enviando ? 'Registrando…' : 'Confirmar Venta'}
           </button>

@@ -279,3 +279,8 @@
 .apertura > .pie-pagina {
   margin-top: 32px;
 }
+
+.apertura__sin-conexion {
+  margin-top: -14px;
+  text-align: center;
+}

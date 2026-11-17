@@ -46,7 +46,7 @@
 
 ## 6. Módulo de Caja
 - **Apertura de caja**: registro de monto inicial.
-- **Cierre de caja**: conteo de efectivo físico + cálculo automático de diferencia vs. lo esperado según ventas del día.
+- **Cierre de caja**: conteo de efectivo físico **a ciegas** (antes de confirmar no se muestran el monto esperado ni la diferencia). Al cerrar, el sistema calcula automáticamente la diferencia vs. lo esperado según las ventas de la caja, y el Dueño/a la ve en el Historial de Caja.
 - Historial de aperturas/cierres por día y por usuario.
 
 ## 7. Reportes y Estadísticas (solo Dueño/a)
@@ -56,9 +56,9 @@
 - (Ganancia neta y análisis por talle/color/categoría quedan como posible ampliación post-v1, no fueron priorizados).
 
 ## 8. Acceso y plataforma
-- Aplicación web responsive.
+- Aplicación web responsive, instalable como PWA (ícono y carga rápida de la interfaz). **Requiere conexión a internet para operar:** sin conexión avisa "Sin conexión" y bloquea vender, cobrar, abrir/cerrar caja y guardar cambios hasta que vuelva la red.
 - Uso normal: computadora del mostrador.
-- Uso remoto (Dueño/a, desde el celular): **solo consulta** de ventas/stock/reportes/cuentas. No permite registrar ventas ni operar caja desde el celular — esas acciones quedan atadas al mostrador físico. Decisión tomada para eliminar el riesgo de venta concurrente/doble descuento de stock entre el mostrador (que puede operar offline) y el celular.
+- Uso remoto (Dueño/a, desde el celular): **solo consulta** de ventas/stock/reportes/cuentas. No permite registrar ventas ni operar caja desde el celular — esas acciones quedan atadas al mostrador físico. Decisión tomada para eliminar el riesgo de venta concurrente/doble descuento de stock entre el mostrador y el celular.
 - **Excepción explícita:** la gestión de usuarios (alta/baja de Vendedores) sí puede hacerse desde el celular, dentro de una sección "Configuración" — no tiene el riesgo de concurrencia que motivó restringir las ventas remotas.
 - No hay ícono/campanita de notificaciones separado en el header. Las alertas (stock bajo, cuentas por vencer) se muestran directamente en el panel de Alertas del Dashboard y como badge numérico en el ítem "Cuentas" del menú.
 
@@ -75,6 +75,7 @@
 - ❌ Múltiples sucursales.
 - ❌ Lector de código de barras (posible integración futura sobre el SKU interno).
 - ❌ Módulo de proveedores (no se gestionan proveedores en el sistema en v1).
+- ❌ Venta sin conexión / modo offline (se implementó en el Módulo 11 y se descartó por complejidad; a evaluar en el futuro, ver `design.md`).
 
 ---
 **Estado: Requisitos, Diseño (UI/UX + arquitectura) y prototipado en Claude Design APROBADOS. En ajustes puntuales post-prototipo antes de pasar a la Fase 4 (tasks.md).**

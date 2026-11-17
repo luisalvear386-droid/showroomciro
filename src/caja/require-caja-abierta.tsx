@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router'
-import { PantallaCarga } from '../components/pantalla-carga'
+import { PantallaCarga, PantallaSinConexion } from '../components/pantalla-carga'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { useCaja } from './use-caja'
 
@@ -14,7 +15,9 @@ import { useCaja } from './use-caja'
 export function RequireCajaAbierta() {
   const { caja, error, refrescar } = useCaja()
   const esMobile = useEsMobile()
+  const enLinea = useEnLinea()
 
+  if (error && !enLinea) return <PantallaSinConexion />
   if (error) {
     return (
       <PantallaCarga mensaje="No se pudo consultar el estado de la caja. Revisá la conexión e intentá de nuevo.">

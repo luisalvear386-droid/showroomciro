@@ -1,11 +1,18 @@
 import { Navigate, Outlet, useLocation } from 'react-router'
+import { useEnLinea } from '../hooks/use-en-linea'
+import { haySesionGuardada } from '../lib/auth'
 import { useAuth } from './use-auth'
-import { PantallaCarga } from '../components/pantalla-carga'
+import { PantallaCarga, PantallaSinConexion } from '../components/pantalla-carga'
 
 /** Layout de rutas protegidas: sin sesión activa redirige a /login recordando a dónde se quería ir. */
 export function RequireAuth() {
   const { usuario, perfil, cargando, logout } = useAuth()
+  const enLinea = useEnLinea()
   const location = useLocation()
+
+  // Sin conexión al arrancar: ni el login (la sesión guardada se renueva cuando vuelva
+  // internet) ni un error de perfil
+  if (!enLinea && (cargando || !perfil || (!usuario && haySesionGuardada()))) return <PantallaSinConexion />
 
   if (cargando) return <PantallaCarga />
 

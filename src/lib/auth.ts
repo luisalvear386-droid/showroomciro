@@ -1,4 +1,3 @@
-import type { User } from '@supabase/supabase-js'
 import { CLAVE_SESION, supabase } from './supabase'
 
 export type Rol = 'dueño' | 'vendedor'
@@ -38,32 +37,22 @@ export async function obtenerPerfil(userId: string): Promise<Perfil | null> {
   return data as Perfil | null
 }
 
-/** Margen con el que supabase-js da el token por vencido y lo renueva (EXPIRY_MARGIN_MS). */
-const MARGEN_VENCIMIENTO_MS = 90 * 1000
-
-export interface SesionGuardada {
-  usuario: User
-  /** true si supabase-js va a tener que renovar el token antes de usarlo. */
-  vencida: boolean
-}
-
 /**
- * Sesión que supabase-js dejó guardada, aunque no la haya podido restaurar.
+ * true si supabase-js dejó una sesión guardada, aunque no la haya podido restaurar.
  *
  * Con el access token vencido y sin red, supabase-js no puede renovarlo: reintenta ~30 s,
  * avisa `INITIAL_SESSION` con null y deja la sesión en localStorage (solo la borra si el
- * servidor rechaza el refresh token). Probado en el Módulo 11 con supabase-js 2.117.
+ * servidor rechaza el refresh token). En ese caso la app muestra "Sin conexión" en vez de
+ * mandar al login: cuando vuelva internet, la sesión se renueva sola.
  */
-export function leerSesionGuardada(): SesionGuardada | null {
+export function haySesionGuardada(): boolean {
   try {
     const crudo = localStorage.getItem(CLAVE_SESION)
-    if (!crudo) return null
-    const sesion = JSON.parse(crudo) as { refresh_token?: unknown; expires_at?: unknown; user?: { id?: unknown } }
-    if (typeof sesion.refresh_token !== 'string' || typeof sesion.user?.id !== 'string') return null
-    const expiraEn = typeof sesion.expires_at === 'number' ? sesion.expires_at * 1000 : 0
-    return { usuario: sesion.user as User, vencida: expiraEn - Date.now() < MARGEN_VENCIMIENTO_MS }
+    if (!crudo) return false
+    const sesion = JSON.parse(crudo) as { refresh_token?: unknown }
+    return typeof sesion.refresh_token === 'string'
   } catch {
-    return null
+    return false
   }
 }
 

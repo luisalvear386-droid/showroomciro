@@ -11,7 +11,7 @@ const ETIQUETA_ROL: Record<Rol, string> = {
 /** Bloque de usuario del header (nombre + rol). Al hacer clic despliega "Cerrar sesión". */
 export function MenuUsuario() {
   const { perfil } = useAuth()
-  const { pedirSalida, saliendo, aviso } = useCerrarSesion()
+  const { cerrarSesion, saliendo } = useCerrarSesion()
   const [abierto, setAbierto] = useState(false)
   const contenedor = useRef<HTMLDivElement>(null)
 
@@ -62,7 +62,7 @@ export function MenuUsuario() {
             className="menu-usuario__opcion"
             onClick={() => {
               setAbierto(false)
-              void pedirSalida()
+              void cerrarSesion()
             }}
             disabled={saliendo}
           >
@@ -71,8 +71,6 @@ export function MenuUsuario() {
           </button>
         </div>
       )}
-
-      {aviso}
     </div>
   )
 }

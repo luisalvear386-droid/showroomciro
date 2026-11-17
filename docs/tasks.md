@@ -96,24 +96,53 @@
 
 ---
 
-## Módulo 11 — Offline-first (POS del mostrador) ✅ COMPLETO
-- [x] Cacheo local del catálogo de productos (Dexie/IndexedDB), actualizado cuando hay conexión — más perfil y caja guardados y modo "sesión offline" para arrancar sin red con el token vencido (ver `design.md`).
-- [x] Cola local de ventas pendientes cuando no hay internet — toda venta se encola antes de enviarse; stock visible descontado por la cola; ticket marcado "Pendiente de sincronizar". Fecha real de la venta vía `p_fecha` (migración `0012_registrar_venta_fecha.sql`).
-- [x] Sincronización automática de la cola al recuperar conexión — en orden, con reintentos; rechazos de la base quedan "con error" para resolverlos a mano. Cierre de caja bloqueado con ventas sin sincronizar y aviso al cerrar sesión (ver `design.md`).
-- [x] Indicador visual en el POS de estado de conexión / ventas pendientes de sincronizar — en el header, más la pantalla Ventas sin sincronizar (`/ventas/pendientes`), resueltos en el estilo existente sin pase de Claude Design.
-- [x] Service Worker para que la PWA funcione sin conexión — `vite-plugin-pwa`; la API de Supabase no pasa por su caché; versiones nuevas se aplican en el login. Íconos **provisorios** desde el mockup del logo: regenerar con `scripts/generar-iconos-pwa.cjs --fuente` cuando esté el archivo original (commit aparte).
+## Módulo 11 — Offline-first (POS del mostrador) ⛔ DESCARTADO (por ahora)
+> Se implementó completo (cola de ventas en IndexedDB con Dexie, sincronización automática, pantalla "Ventas sin sincronizar", arranque sin conexión) y después se **sacó del sistema** por complejidad, para evaluarlo en el futuro (ver `design.md` → "Modo offline (descartado por ahora)"; el código queda en el historial de git, commits del Módulo 11).
+- [x] Se mantiene la **PWA instalable**: `vite-plugin-pwa` con manifest, íconos y precache de la interfaz; versiones nuevas se aplican en el login. Íconos **provisorios** desde el mockup del logo: regenerar con `scripts/generar-iconos-pwa.cjs --fuente` cuando esté el archivo original (commit aparte).
+- [x] Se eliminó todo lo de vender o guardar sin conexión: base local Dexie (catálogo, perfil y caja guardados, cola de ventas), sincronización, modo "sesión offline", pantalla `/ventas/pendientes`, indicador de ventas por sincronizar, ticket "Pendiente de sincronizar" y bloqueo del cierre por ventas sin sincronizar. Sin `dexie` ni `dexie-react-hooks`.
+- [x] Sin conexión: pastilla "Sin conexión" en el header, acciones que escriben en la base bloqueadas, el carrito no se pierde, reintento de venta con el mismo id (no duplica) y pantalla "Sin conexión" con "Reintentar" al arrancar sin red.
+- [x] La base no se tocó: la migración `0012_registrar_venta_fecha.sql` queda (`p_fecha` opcional, sin uso). Antes de sacar la cola se verificó que no quedaran ventas sin sincronizar: la app solo se usó en la PC de desarrollo (Edge, `localhost:5173`), con ventas de prueba.
+- [x] Caché de fotos de producto: se mantiene, con **nombre de archivo único** por foto y borrado de la anterior (migración `0013_storage_borrar_fotos.sql`, **pendiente de aplicar** en Supabase).
 
 ---
 
 ## Módulo 12 — QA y pruebas automatizadas
-- [ ] Validación visual manual de cada pantalla contra su prototipo de Claude Design.
+- [x] Validación visual manual de cada pantalla contra su prototipo de Claude Design (correcciones en `adff38d`; lo que quedó sin ajustar está en el backlog visual de `design.md`).
 - [ ] Validación con **Chrome DevTools MCP**: ejecutar flujos reales (alta de producto, venta completa, apertura/cierre de caja, alta de cuenta) y capturar screenshots.
-- [ ] Confirmar que `/docs/prd.md` está completo y actualizado.
-- [ ] Configurar **TestSprite MCP** con la API key.
-- [ ] Ejecutar la batería de pruebas E2E contra `@docs/prd.md`, puerto local y credenciales de prueba (Dueño/a y Vendedor).
-- [ ] Revisar el reporte de TestSprite y corregir los tests fallidos.
-- [ ] Reset de datos de prueba (ventas, ajustes de stock, cajas y productos de prueba cargados durante el desarrollo) y carga del stock real contado a mano, antes de habilitar el sistema en producción.
+- [x] Confirmar que `/docs/prd.md` está completo y actualizado (cierre a conteo ciego con la diferencia en el Historial; sin venta offline).
+- [x] Configurar **TestSprite MCP** con la API key.
+- [x] Ejecutar la batería de pruebas E2E contra `@docs/prd.md` (31 tests: 28 pasaron, TC011 falló, TC007 y TC008 bloqueados).
+- [ ] Revisar el reporte de TestSprite y corregir los tests fallidos — **abierto hasta re-correr TC011 y TC007** (ver plan abajo). Se re-corren después del próximo módulo (fotos por color), que cambia el formulario de alta de producto.
+- [ ] Pruebas con **Playwright** del comportamiento sin conexión y de la venta con conexión, sobre el build de producción (`npm run test:e2e`, `e2e/sin-conexion.spec.ts`; credenciales en `.env.e2e`, fuera del repo).
+- [ ] Reset de datos de prueba (ventas, ajustes de stock, cajas y productos de prueba cargados durante el desarrollo; ver inventario abajo) y carga del stock real contado a mano, antes de habilitar el sistema en producción.
+
+### Plan de TestSprite (para cuando se regenere)
+Regenerar el plan desde el `prd.md` actualizado, con las contraseñas nuevas, y revisar que quede así:
+- **Se eliminan TC008** ("Continue a sale offline and sync it later") **y TC019** ("Review offline sales waiting to sync"): prueban el modo offline, que se descartó. Si al regenerar aparece algún test de venta sin conexión, se saca.
+- **TC011 se reescribe** como "Cerrar la caja a conteo ciego y ver la diferencia en el Historial": el Dueño/a abre la caja, hace una venta en efectivo y va a Cerrar Caja; se verifica que **no** se muestran el monto esperado ni la diferencia, ingresa el conteo y confirma; la sesión se cierra sola. Vuelve a entrar y en `/caja/historial` ve el esperado, el contado y la diferencia de esa caja. (Falló porque el PRD viejo pedía ver la diferencia antes de cerrar.)
+- **TC007 se divide** (TestSprite no tiene un archivo de imagen para subir):
+  - En **TestSprite**: alta de producto con variante y **sin foto** (la foto es opcional), verificando que se genera el SKU.
+  - Con **Playwright**, a mano: alta con foto y variante (`setInputFiles` con una imagen de prueba); la foto se ve en el listado y en el POS.
+- TC011 y TC007 se re-corren **después del módulo de fotos por color**.
+
+### Inventario de datos de prueba cargados en la base
+Todo esto se borra en el reset antes de producción:
+- Seed del Módulo 1 (2 categorías, 1 producto con 2 variantes, usuarios `ciro` y `vendedor1`) y lo cargado a mano durante los Módulos 4–11 (productos, ventas, cuentas, cobros, ajustes de stock, cajas).
+- Lo que cargaron las corridas de TestSprite (altas de producto, ventas, cuentas, cobros, vendedores, cajas).
+- Caja abierta por `ciro` el 20/10/2026 a las 21:45, probando el sistema.
 
 ---
 
-**Estado: Módulos 0 a 11 completos. Arrancando Módulo 12 (QA y pruebas automatizadas).**
+## Pendientes antes de producción
+- [ ] Aplicar en Supabase la migración `0013_storage_borrar_fotos.sql` (borrado de la foto reemplazada).
+- [ ] Prueba en **celular real**: Safari (iPhone) y Chrome (Android) — acceso de solo consulta, Configuración → Usuarios e instalación como PWA.
+- [ ] Prueba con la **impresora térmica real** (ticket de venta).
+- [ ] Un flujo completo hecho por el **Vendedor**: alta de producto, cobro de cuenta y ajuste de stock.
+- [ ] **Confirmación antes de "Dar de baja"** un producto (hoy se da de baja directo desde el menú "⋯" del listado).
+- [ ] Resolver el **backlog visual** de `design.md` (ajustar o aceptar cada punto).
+- [ ] **Deploy a Vercel** (pausado).
+- [ ] **Regenerar el plan de TestSprite** con las contraseñas nuevas (ver "Plan de TestSprite" arriba).
+
+---
+
+**Estado: Módulos 0 a 10 completos. Módulo 11 (offline) descartado por ahora: queda la PWA instalable con aviso "Sin conexión". Módulo 12 (QA) en curso; próximo módulo: fotos por color.**

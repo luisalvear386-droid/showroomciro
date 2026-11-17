@@ -534,3 +534,7 @@
     display: none;
   }
 }
+
+.producto-form__sin-conexion {
+  text-align: right;
+}

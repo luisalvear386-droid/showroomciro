@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { ajustarStock, mensajeDeError, type TipoAjuste, type Variante } from '../lib/productos'
+import { AvisoSinConexion } from './estado-conexion'
 import { FotoProducto, PuntoColor } from './producto-visual'
 import './ajuste-stock-modal.css'
 
@@ -32,6 +34,7 @@ export function AjusteStockModal({ productoNombre, fotoUrl, variante, onCerrar, 
   const [nota, setNota] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const enLinea = useEnLinea()
 
   useEffect(() => {
     function alPresionar(e: KeyboardEvent) {
@@ -48,7 +51,7 @@ export function AjusteStockModal({ productoNombre, fotoUrl, variante, onCerrar, 
   const resultante = suma ? actual + cantidad : Math.max(actual - cantidad, 0)
   // Motivo obligatorio: un chip, un detalle escrito, o ambos
   const motivoFinal = [motivo, nota.trim()].filter(Boolean).join(' — ')
-  const puedeConfirmar = cantidad > 0 && !excede && motivoFinal !== '' && !enviando
+  const puedeConfirmar = cantidad > 0 && !excede && motivoFinal !== '' && !enviando && enLinea
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -206,6 +209,8 @@ export function AjusteStockModal({ productoNombre, fotoUrl, variante, onCerrar, 
               {error}
             </div>
           )}
+
+          <AvisoSinConexion />
 
           <div className="ajuste__botones">
             <button type="button" className="ajuste__cancelar" onClick={onCerrar} disabled={enviando}>

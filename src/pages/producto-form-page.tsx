@@ -2,8 +2,10 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'reac
 import { useLocation, useNavigate, useParams } from 'react-router'
 import { useTieneRol } from '../auth/use-auth'
 import { AjusteStockModal } from '../components/ajuste-stock-modal'
+import { AvisoSinConexion } from '../components/estado-conexion'
 import { FotoProducto, PuntoColor } from '../components/producto-visual'
 import { useConsulta } from '../hooks/use-consulta'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { parsearMonto } from '../lib/formato'
 import {
   actualizarProducto,
@@ -164,6 +166,7 @@ function FormularioProducto({ categorias, edicion, esDueno }: FormularioProducto
   const [ajustando, setAjustando] = useState<Variante | null>(null)
 
   const [guardando, setGuardando] = useState(false)
+  const enLinea = useEnLinea()
   const [errorGeneral, setErrorGeneral] = useState<string | null>(estadoNav.error ?? null)
 
   // Libera la URL temporal de la vista previa al salir de la pantalla
@@ -261,6 +264,7 @@ function FormularioProducto({ categorias, edicion, esDueno }: FormularioProducto
   // ---------------------------------------------------------------------------
 
   async function guardar() {
+    if (!enLinea) return
     if (!validarPaso1()) {
       setPaso(1)
       return
@@ -724,6 +728,8 @@ function FormularioProducto({ categorias, edicion, esDueno }: FormularioProducto
         </div>
       )}
 
+      {paso === 2 && <AvisoSinConexion className="producto-form__sin-conexion" />}
+
       <div className="producto-form__botones">
         <button
           type="button"
@@ -747,7 +753,7 @@ function FormularioProducto({ categorias, edicion, esDueno }: FormularioProducto
               Siguiente
             </button>
           ) : (
-            <button type="button" className="boton-primario" onClick={() => void guardar()} disabled={guardando}>
+            <button type="button" className="boton-primario" onClick={() => void guardar()} disabled={guardando || !enLinea}>
               {guardando ? 'Guardando…' : producto ? 'Guardar cambios' : 'Guardar Producto'}
             </button>
           )}

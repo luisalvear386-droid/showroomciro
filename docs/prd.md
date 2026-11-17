@@ -13,7 +13,8 @@ Sistema de gestión interno para ShowroomCiro, tienda de ropa de un local físic
 
 ### Apertura y cierre de caja
 - Como Vendedor o Dueño/a, quiero que el sistema me exija abrir la caja (con un monto inicial) antes de poder registrar cualquier venta.
-- Como Vendedor o Dueño/a, quiero cerrar la caja contando el efectivo físico y ver la diferencia calculada automáticamente contra lo esperado.
+- Como Vendedor o Dueño/a, quiero cerrar la caja contando el efectivo físico **a ciegas**: antes de confirmar no veo el monto esperado ni la diferencia.
+- Como Dueño/a, quiero ver en el Historial de Caja la diferencia que el sistema calculó al cerrar (esperado vs. contado) de cada caja cerrada.
 - Como Dueño/a, quiero ver el historial de aperturas y cierres de caja pasados.
 
 ### Productos e inventario
@@ -28,7 +29,7 @@ Sistema de gestión interno para ShowroomCiro, tienda de ropa de un local físic
 - Como Vendedor o Dueño/a, quiero elegir talle y color de un producto antes de agregarlo al carrito, viendo el stock disponible de esa combinación.
 - Como Vendedor o Dueño/a, quiero confirmar la venta eligiendo un medio de pago (efectivo, transferencia/QR o tarjeta).
 - Como Vendedor o Dueño/a, quiero que al confirmar la venta se imprima un ticket y vuelva automáticamente al Dashboard.
-- Como Vendedor o Dueño/a, quiero poder seguir vendiendo aunque se corte la conexión a internet, y que esas ventas se sincronicen solas al recuperar conexión.
+- Como Vendedor o Dueño/a, si se corta internet quiero ver un aviso claro de "Sin conexión" y que el sistema bloquee vender, cobrar y abrir o cerrar la caja hasta que vuelva la red, sin perder el carrito que estaba armando ni registrar una venta dos veces.
 
 ### Cuentas (clientes deudores / fiado)
 - Como Vendedor o Dueño/a, quiero abrir una cuenta nueva desde el Dashboard, cargando nombre y teléfono del cliente, el monto adeudado y la fecha límite de pago.
@@ -57,3 +58,4 @@ Sistema de gestión interno para ShowroomCiro, tienda de ropa de un local físic
 - Lector de código de barras.
 - Módulo de proveedores.
 - Registrar ventas u operar caja desde el celular.
+- Venta sin conexión (modo offline): sin internet el sistema avisa y bloquea, no vende.

@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { registrarServiceWorker } from './lib/actualizacion-pwa'
 
-// PWA: la app abre sin conexión en el mostrador (Módulo 11)
+// PWA instalable: la interfaz carga desde la caché del Service Worker (los datos no)
 registrarServiceWorker()
 
 createRoot(document.getElementById('root')!).render(

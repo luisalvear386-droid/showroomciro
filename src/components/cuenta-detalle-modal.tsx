@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { useConsulta } from '../hooks/use-consulta'
+import { useEnLinea } from '../hooks/use-en-linea'
 import {
   describirVencimiento,
   iniciales,
@@ -9,6 +10,7 @@ import {
   type Cuenta,
   type PagoCuenta,
 } from '../lib/cuentas'
+import { AvisoSinConexion } from './estado-conexion'
 import {
   fechaDesdeIso,
   formatearFechaConAnio,
@@ -49,6 +51,7 @@ function formatearMontoEditable(monto: number): string {
 export function CuentaDetalleModal({ cuentaId, puedeCobrar, onCerrar, onCobrado }: CuentaDetalleModalProps) {
   const cargar = useCallback(() => obtenerCuentaDetalle(cuentaId), [cuentaId])
   const detalle = useConsulta(cargar)
+  const enLinea = useEnLinea()
 
   const [tipo, setTipo] = useState<TipoCobro>('parcial')
   const [montoTexto, setMontoTexto] = useState('')
@@ -75,7 +78,7 @@ export function CuentaDetalleModal({ cuentaId, puedeCobrar, onCerrar, onCobrado 
   // Aviso inmediato con el saldo que se ve en pantalla. Igual se deja enviar: el que
   // decide es `registrar_pago()` con el saldo real (puede haber entrado otro cobro).
   const excede = monto > saldo
-  const puedeEnviar = monto > 0 && !enviando
+  const puedeEnviar = monto > 0 && !enviando && enLinea
   const saldoFinal = Math.max(saldo - (excede ? 0 : monto), 0)
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -237,6 +240,8 @@ export function CuentaDetalleModal({ cuentaId, puedeCobrar, onCerrar, onCobrado 
                     {errorPago ?? (excede ? 'El monto supera el saldo adeudado.' : '')}
                   </span>
                 </div>
+
+                <AvisoSinConexion />
 
                 <div className="cuenta-detalle__pie">
                   <span className="cuenta-detalle__saldo-final">

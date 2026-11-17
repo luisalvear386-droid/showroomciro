@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../auth/use-auth'
+import { AvisoSinConexion } from '../components/estado-conexion'
 import { useConsulta } from '../hooks/use-consulta'
+import { useEnLinea } from '../hooks/use-en-linea'
 import { normalizarNombreUsuario, type Perfil } from '../lib/auth'
 import { cambiarActivoUsuario, crearVendedor, obtenerUsuarios, resumirUsuarios } from '../lib/usuarios'
 import './usuarios-page.css'
@@ -20,9 +22,11 @@ function FormNuevoVendedor({
   const [contrasena, setContrasena] = useState('')
   const [error, setError] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const enLinea = useEnLinea()
 
   async function crear(e: FormEvent) {
     e.preventDefault()
+    if (!enLinea) return
     const normalizado = normalizarNombreUsuario(usuario)
     if (!normalizado || !contrasena) {
       setError('Completá los dos campos para crear la cuenta.')
@@ -96,8 +100,10 @@ function FormNuevoVendedor({
         </div>
       )}
 
+      <AvisoSinConexion />
+
       <div className="usuarios__form-acciones">
-        <button type="submit" className="usuarios__crear" disabled={guardando}>
+        <button type="submit" className="usuarios__crear" disabled={guardando || !enLinea}>
           {guardando ? 'Creando…' : 'Crear vendedor'}
         </button>
         <button type="button" className="boton-cancelar" onClick={onCerrar} disabled={guardando}>
@@ -122,6 +128,7 @@ export function UsuariosPage() {
   const [formAbierto, setFormAbierto] = useState(false)
   const [procesando, setProcesando] = useState<string | null>(null)
   const [errorAccion, setErrorAccion] = useState('')
+  const enLinea = useEnLinea()
 
   const usuarios = datos ?? []
 
@@ -165,6 +172,9 @@ export function UsuariosPage() {
         />
       )}
 
+      {/* Desactivar / Reactivar quedan bloqueados (el formulario de alta muestra su propio aviso) */}
+      {!formAbierto && <AvisoSinConexion />}
+
       {errorAccion && (
         <div className="usuarios__error" role="alert">
           <span className="usuarios__error-punto" aria-hidden="true" />
@@ -206,7 +216,7 @@ export function UsuariosPage() {
                       <button
                         type="button"
                         className={u.activo ? 'usuarios__accion' : 'usuarios__accion usuarios__accion--reactivar'}
-                        disabled={procesando !== null}
+                        disabled={procesando !== null || !enLinea}
                         onClick={() => void alternarActivo(u)}
                       >
                         {procesando === u.id ? '…' : u.activo ? 'Desactivar' : 'Reactivar'}
