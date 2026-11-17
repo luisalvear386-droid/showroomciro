@@ -16,6 +16,9 @@
 | Cambios | Si la prenda nueva es más cara, se cobra la diferencia con cualquier medio. Si es más barata, la diferencia se devuelve en efectivo. |
 | Precios | Un solo precio por producto (no varía según el medio de pago). Sin descuentos. |
 | Permisos finos | Un solo permiso configurable: **"Puede editar precios"**, por usuario Vendedor y lo activa el Dueño/a. El resto de los permisos del Vendedor no cambia. |
+| Migración de medios | Las ventas guardadas con "tarjeta" se migran a `debito`. (Al 17/11/2026 la base tiene 0 ventas.) |
+| Cobros de cuentas | `cuenta_pagos` guarda **medio de pago** (los mismos 4 medios) y **caja**. Cobrar una cuenta **exige caja abierta**, y los cobros en efectivo **suman al efectivo esperado** del cierre. |
+| Email del Dueño/a | El Dueño/a tiene **email real** y puede usar "Olvidé mi contraseña". Los Vendedores siguen con emails internos (`<usuario>@showroomciro.internal`) y solo los resetea el Dueño/a. |
 | Prueba en dispositivo real | Solo celular. ⚠️ La impresora térmica queda sin probar (ver Riesgos). |
 
 ---
@@ -31,11 +34,11 @@
 ### Fase 1 · Usuarios y control
 - **1.1 Auditoría** *(punto 21)*: tabla `auditoria` (quién, cuándo, acción, entidad, id, datos antes y después). Se registra desde las funciones SQL, no desde el frontend. Cubre como mínimo: anulación, devolución y cambio, ajuste de stock, edición de precio, movimiento de caja, alta y baja de usuario. Pantalla de consulta solo para el Dueño/a.
 - **1.2 Permiso "Puede editar precios"** *(punto 22)*: columna en `perfiles`. Se controla **en la base** (RLS o función), no solo ocultando el campo. Aplica al formulario de producto y a la edición de precios en lote (4.4).
-- **1.3 Contraseñas** *(punto 20)*: que cada usuario pueda cambiar su contraseña, y que el Dueño/a pueda resetear la de un Vendedor desde Usuarios. ⚠️ Verificar si `crear_vendedor` usa emails reales. Si no, la recuperación por email no sirve para los vendedores y el reseteo del Dueño/a pasa a ser el único camino.
+- **1.3 Contraseñas y email del Dueño/a** *(punto 20)*: que cada usuario pueda cambiar su contraseña, y que el Dueño/a pueda resetear la de un Vendedor desde Usuarios. `crear_vendedor` usa emails internos inventados, así que para los Vendedores el reseteo del Dueño/a es el único camino. El Dueño/a pasa a tener **email real** y "Olvidé mi contraseña" en el Login; sigue entrando con su nombre de usuario.
 
 ### Fase 2 · Cobros y caja
-- **2.1 Pagos por venta + medios nuevos** *(puntos 4 y 7)*: nueva tabla `venta_pagos` (venta, medio, monto). Sacar el medio de pago de `ventas`. Enum de medios: `efectivo | debito | transferencia | qr_mp`. Migrar las ventas existentes (un pago por venta; definir a qué se mapea "tarjeta"). UI del POS: agregar varios pagos, ver lo que falta, y vuelto solo sobre el efectivo. Actualizar `registrar_venta` y el ticket.
-- **2.2 Movimientos de caja** *(punto 10)*: tabla `caja_movimientos` con los tipos `gasto | retiro | ingreso_cambio | devolucion`, más monto, motivo y usuario. El efectivo esperado del cierre = apertura + ventas en efectivo + ingresos − gastos − retiros − devoluciones.
+- **2.1 Pagos por venta + medios nuevos** *(puntos 4 y 7)*: nueva tabla `venta_pagos` (venta, medio, monto). Sacar el medio de pago de `ventas`. Enum de medios: `efectivo | debito | transferencia | qr_mp`. Migrar las ventas existentes (un pago por venta; "tarjeta" pasa a `debito`; al 17/11/2026 no hay ventas). UI del POS: agregar varios pagos, ver lo que falta, y vuelto solo sobre el efectivo. Actualizar `registrar_venta` y el ticket.
+- **2.2 Movimientos de caja** *(punto 10)*: tabla `caja_movimientos` con los tipos `gasto | retiro | ingreso_cambio | devolucion`, más monto, motivo y usuario. **Cobros de cuentas en la caja**: `cuenta_pagos` suma `medio_pago` y `caja_id`, `registrar_pago` exige caja abierta. El efectivo esperado del cierre = apertura + ventas en efectivo + cobros de cuentas en efectivo + ingresos − gastos − retiros − devoluciones.
 - **2.3 Resumen del cierre por medio de pago** *(punto 11)*: en el Historial de caja (Dueño/a), totales por medio. El cierre sigue siendo "a ciegas" para el que cierra.
 
 ### Fase 3 · Clientes y postventa

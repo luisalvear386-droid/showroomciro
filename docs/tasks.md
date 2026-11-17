@@ -17,6 +17,9 @@
 | Cambios | Si la prenda nueva es más cara, se cobra la diferencia con cualquier medio. Si es más barata, la diferencia se devuelve en efectivo. |
 | Precios | Un solo precio por producto (no varía según el medio de pago). Sin descuentos. |
 | Permisos finos | Un solo permiso configurable: **"Puede editar precios"**, por usuario Vendedor y lo activa el Dueño/a. El resto de los permisos del Vendedor no cambia. |
+| Migración de medios | Las ventas guardadas con "tarjeta" se migran a `debito`. (Al 17/11/2026 la base tiene 0 ventas.) |
+| Cobros de cuentas | `cuenta_pagos` guarda **medio de pago** (los mismos 4 medios) y **caja**. Cobrar una cuenta **exige caja abierta**, y los cobros en efectivo **suman al efectivo esperado** del cierre. |
+| Email del Dueño/a | El Dueño/a tiene **email real** y puede usar "Olvidé mi contraseña". Los Vendedores siguen con emails internos (`<usuario>@showroomciro.internal`) y solo los resetea el Dueño/a. |
 | Prueba en dispositivo real | Solo celular. ⚠️ La impresora térmica queda sin probar (ver Riesgos). |
 
 ---
@@ -55,24 +58,29 @@
   - [ ] El Dueño/a siempre puede editar precios.
   - [ ] Aplica también a la edición de precios en lote (4.4).
   - [ ] Cada cambio de precio queda en auditoría (1.1).
-- [ ] **1.3 Contraseñas.**
+- [ ] **1.3 Contraseñas y email del Dueño/a.**
   - [ ] Cada usuario puede cambiar su propia contraseña desde el menú de usuario, ingresando la actual y la nueva (mínimo 6 caracteres, igual que `crear_vendedor`).
-  - [ ] El Dueño/a puede resetear la contraseña de un Vendedor desde Usuarios, sin conocer la anterior. Queda en auditoría.
-  - [ ] Recuperación por email: no aplica, porque `crear_vendedor` usa emails técnicos inventados (`<usuario>@showroomciro.internal`). El reseteo del Dueño/a es el único camino para un Vendedor.
+  - [ ] El Dueño/a puede resetear la contraseña de un Vendedor desde Usuarios, sin conocer la anterior. Queda en auditoría (1.1).
+  - [ ] El Dueño/a tiene un email real cargado en Supabase Auth en lugar del interno, y sigue entrando con su nombre de usuario (el Login busca el email real del Dueño/a sin mostrarlo).
+  - [ ] "Olvidé mi contraseña" en el Login: envía el email de recuperación solo si el usuario es el Dueño/a. Para un Vendedor, el mensaje indica que le pida el reseteo al Dueño/a, sin revelar si el usuario existe.
+  - [ ] El link del email abre una pantalla para elegir la contraseña nueva, y después se entra normalmente.
+  - [ ] Los Vendedores siguen con emails internos (`<usuario>@showroomciro.internal`): `crear_vendedor` no cambia.
 
 ## Fase 2 · Cobros y caja
 
 - [ ] **2.1 Pagos por venta + medios nuevos.**
   - [ ] Tabla `venta_pagos` (venta, medio, monto > 0). Enum de medios: `efectivo | debito | transferencia | qr_mp`.
-  - [ ] Se saca `medio_pago` de `ventas`. Las ventas existentes se migran a un pago por venta por su total; el mapeo de `tarjeta` queda decidido antes de escribir la migración.
-  - [ ] `registrar_venta` recibe la lista de pagos y rechaza la venta si la suma no es igual al total que calcula la base. Sigue siendo atómica e idempotente por `p_venta_id`.
-  - [ ] POS (checkout): se pueden agregar varios pagos, se ve cuánto falta, y "Confirmar Venta" se habilita solo cuando lo pagado es igual al total. El vuelto se calcula solo sobre el efectivo.
+  - [ ] Se saca `medio_pago` de `ventas`. La migración pasa cada venta existente a un pago por su total, con "tarjeta" → `debito`. Al 17/11/2026 la base tiene 0 ventas: la migración tiene que funcionar igual con 0 filas.
+  - [ ] `registrar_venta` recibe la lista de pagos y rechaza la venta si la suma no es igual al total que calcula la base, o si hay un medio fuera del enum. Sigue siendo atómica e idempotente por `p_venta_id`.
+  - [ ] POS (checkout): se pueden agregar varios pagos, se ve cuánto falta, y "Confirmar Venta" se habilita solo cuando lo pagado es igual al total. El vuelto se calcula solo sobre el efectivo. No aparece la opción de crédito.
   - [ ] El ticket muestra cada pago con su medio y monto.
-  - [ ] `cerrar_caja`, el Historial de caja y los reportes leen los pagos de `venta_pagos` y dan los mismos totales que antes para las ventas migradas.
-- [ ] **2.2 Movimientos de caja.**
+  - [ ] `cerrar_caja`, el Historial de caja y los reportes leen los pagos de `venta_pagos`.
+- [ ] **2.2 Movimientos de caja y cobros de cuentas en la caja.**
   - [ ] Tabla `caja_movimientos`: tipo (`gasto | retiro | ingreso_cambio | devolucion`), monto > 0, motivo, usuario, caja y fecha.
   - [ ] Solo se cargan en la caja abierta. `devolucion` no se carga a mano: la genera 3.3.
-  - [ ] `cerrar_caja` calcula el efectivo esperado como apertura + ventas en efectivo + ingresos − gastos − retiros − devoluciones.
+  - [ ] `cuenta_pagos` suma `medio_pago` (mismo enum que 2.1) y `caja_id`. Los cobros ya existentes se migran (medio y caja a definir en la migración según lo que haya en la base).
+  - [ ] `registrar_pago` exige caja abierta y la registra en el cobro. Sin caja abierta, la base rechaza el cobro y la app lo explica. El modal de cobro pide el medio de pago.
+  - [ ] `cerrar_caja` calcula el efectivo esperado como apertura + ventas en efectivo + cobros de cuentas en efectivo + ingresos − gastos − retiros − devoluciones.
   - [ ] Cada movimiento queda en auditoría (1.1).
 - [ ] **2.3 Resumen del cierre por medio de pago.**
   - [ ] En el Historial de caja (solo Dueño/a), cada caja muestra el total por medio (efectivo, débito, transferencia, QR MP) y los movimientos de 2.2. Hoy el Historial ya separa por medio con la columna vieja: se adapta a `venta_pagos`.
@@ -143,7 +151,12 @@ Corrida anterior: 31 tests, 28 pasaron, TC011 falló, TC007 y TC008 bloqueados. 
 - **TC007 se divide**: en TestSprite, alta de producto con variante y sin foto (verifica el SKU). Con Playwright, alta con foto (`setInputFiles`).
 
 ### Datos de prueba cargados en la base
-Seed del Módulo 1 (usuarios `ciro` y `vendedor1`), lo cargado a mano en los Módulos 4 a 11, lo que cargaron las corridas de TestSprite y una caja abierta por `ciro` el 20/10/2026 a las 21:45. El reset antes de producción queda fuera del Plan v2.
+Verificado en el SQL Editor el 17/11/2026: **0 productos, 0 variantes, 0 ventas, 7 cajas y 2 usuarios.** El catálogo y las ventas de prueba de los Módulos 4 a 11 y de TestSprite ya no están. Quedan:
+- **7 cajas** de las pruebas anteriores (aperturas y cierres de desarrollo).
+- **2 usuarios.**
+- Lo que cargue el script de productos de prueba para probar la 0.3: productos con nombre **"PRUEBA - …"**, para borrarlos antes de producción.
+
+El reset antes de producción queda fuera del Plan v2.
 
 ---
 
