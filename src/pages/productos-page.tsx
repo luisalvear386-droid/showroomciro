@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useTieneRol } from '../auth/use-auth'
+import { ConfirmarModal } from '../components/confirmar-modal'
 import { AvisoSinConexion } from '../components/estado-conexion'
 import { FotoProducto } from '../components/producto-visual'
 import { useConsulta } from '../hooks/use-consulta'
@@ -47,6 +48,8 @@ export function ProductosPage() {
   const [pagina, setPagina] = useState(0)
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null)
   const [cambiando, setCambiando] = useState<string | null>(null)
+  /** Producto activo que se quiere dar de baja, a la espera de la confirmación. */
+  const [aDarDeBaja, setADarDeBaja] = useState<ProductoListado | null>(null)
   const enLinea = useEnLinea()
   const [error, setError] = useState<string | null>(null)
 
@@ -74,12 +77,32 @@ export function ProductosPage() {
     setPagina(0)
   }
 
-  async function alternarActivo(p: ProductoListado) {
+  const cerrarConfirmacion = useCallback(() => setADarDeBaja(null), [])
+
+  /** Dar de baja pide confirmación; reactivar no. */
+  function elegirAccion(p: ProductoListado) {
     setMenuAbierto(null)
+    if (p.activo) setADarDeBaja(p)
+    else void reactivar(p)
+  }
+
+  /** Confirmación de la baja: si falla, el mensaje queda en el modal para reintentar. */
+  async function darDeBaja(p: ProductoListado): Promise<string | null> {
+    try {
+      await cambiarActivo(p.id, false)
+    } catch (e) {
+      return mensajeDeError(e)
+    }
+    setADarDeBaja(null)
+    productos.recargar()
+    return null
+  }
+
+  async function reactivar(p: ProductoListado) {
     setCambiando(p.id)
     setError(null)
     try {
-      await cambiarActivo(p.id, !p.activo)
+      await cambiarActivo(p.id, true)
       productos.recargar()
     } catch (e) {
       setError(mensajeDeError(e))
@@ -234,7 +257,7 @@ export function ProductosPage() {
                                   type="button"
                                   role="menuitem"
                                   className={p.activo ? 'productos__menu-opcion productos__menu-opcion--baja' : 'productos__menu-opcion'}
-                                  onClick={() => void alternarActivo(p)}
+                                  onClick={() => elegirAccion(p)}
                                 >
                                   {p.activo ? 'Dar de baja' : 'Reactivar'}
                                 </button>
@@ -277,6 +300,22 @@ export function ProductosPage() {
           </button>
         </span>
       </div>
+
+      {aDarDeBaja && (
+        <ConfirmarModal
+          titulo="¿Dar de baja el producto?"
+          textoConfirmar="Dar de baja"
+          textoEnviando="Dando de baja…"
+          peligro
+          onCancelar={cerrarConfirmacion}
+          onConfirmar={() => darDeBaja(aDarDeBaja)}
+        >
+          <p className="confirmar-modal__texto">
+            <strong>{aDarDeBaja.nombre}</strong> deja de aparecer en el POS. No se borra: sus ventas y ajustes de stock
+            se conservan, y podés reactivarlo cuando quieras.
+          </p>
+        </ConfirmarModal>
+      )}
     </div>
   )
 }

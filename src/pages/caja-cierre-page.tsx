@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import { useAuth } from '../auth/use-auth'
 import { useCaja } from '../caja/use-caja'
@@ -7,7 +7,7 @@ import { useEnLinea } from '../hooks/use-en-linea'
 import { useEsMobile } from '../hooks/use-es-mobile'
 import { cerrarCaja } from '../lib/caja'
 import { formatearFechaLarga, formatearHora, formatearMoneda, parsearMonto } from '../lib/formato'
-import '../components/confirmar-modal.css'
+import { ConfirmarModal } from '../components/confirmar-modal'
 import './caja-cierre-page.css'
 
 interface ConfirmarCierreModalProps {
@@ -17,77 +17,25 @@ interface ConfirmarCierreModalProps {
   onConfirmar: () => Promise<string | null>
 }
 
+/** Si sale bien, la pantalla se desmonta al cerrar la sesión. */
 function ConfirmarCierreModal({ montoContado, onVolver, onConfirmar }: ConfirmarCierreModalProps) {
-  const [enviando, setEnviando] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const enLinea = useEnLinea()
-
-  useEffect(() => {
-    function alPresionar(e: KeyboardEvent) {
-      if (e.key === 'Escape' && !enviando) onVolver()
-    }
-    window.addEventListener('keydown', alPresionar)
-    return () => window.removeEventListener('keydown', alPresionar)
-  }, [enviando, onVolver])
-
-  async function confirmar() {
-    setEnviando(true)
-    setError(null)
-    const mensaje = await onConfirmar()
-    // Si salió bien, la pantalla se desmonta al cerrar la sesión
-    if (mensaje !== null) {
-      setError(mensaje)
-      setEnviando(false)
-    }
-  }
-
   return (
-    <div className="modal-fondo" onClick={() => !enviando && onVolver()}>
-      <div
-        className="confirmar-cierre"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="confirmar-cierre-titulo"
-        aria-describedby="confirmar-cierre-texto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id="confirmar-cierre-titulo" className="confirmar-cierre__titulo">
-          ¿Cerrar la caja?
-        </h2>
-        <div id="confirmar-cierre-texto" className="confirmar-cierre__textos">
-          <p className="confirmar-cierre__texto">
-            Vas a cerrar la caja con <strong>{formatearMoneda(montoContado)}</strong> contados en efectivo. El conteo no
-            se puede editar después.
-          </p>
-          <p className="confirmar-cierre__aviso">
-            <span className="confirmar-cierre__aviso-punto" aria-hidden="true" />
-            Al confirmar, tu sesión se cerrará automáticamente.
-          </p>
-        </div>
-
-        {error && (
-          <div className="mensaje-error" role="alert">
-            {error}
-          </div>
-        )}
-        <AvisoSinConexion />
-
-        <div className="confirmar-cierre__botones">
-          <button type="button" className="boton-cancelar" onClick={onVolver} disabled={enviando}>
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="boton-primario confirmar-cierre__confirmar"
-            onClick={() => void confirmar()}
-            disabled={enviando || !enLinea}
-            autoFocus
-          >
-            {enviando ? 'Cerrando caja…' : 'Cerrar Caja'}
-          </button>
-        </div>
-      </div>
-    </div>
+    <ConfirmarModal
+      titulo="¿Cerrar la caja?"
+      textoConfirmar="Cerrar Caja"
+      textoEnviando="Cerrando caja…"
+      onCancelar={onVolver}
+      onConfirmar={onConfirmar}
+    >
+      <p className="confirmar-modal__texto">
+        Vas a cerrar la caja con <strong>{formatearMoneda(montoContado)}</strong> contados en efectivo. El conteo no se
+        puede editar después.
+      </p>
+      <p className="confirmar-modal__aviso">
+        <span className="confirmar-modal__aviso-punto" aria-hidden="true" />
+        Al confirmar, tu sesión se cerrará automáticamente.
+      </p>
+    </ConfirmarModal>
   )
 }
 

@@ -41,9 +41,10 @@
   - [x] Un error que no es transitorio (sin stock, permiso) no bloquea el carrito.
   - [ ] Probado a mano con los productos "PRUEBA - …" (corte de red al confirmar, cambio del carrito y reintento).
 - [ ] **0.4 Confirmación antes de "Dar de baja" un producto** (menú "⋯" del listado de Productos).
-  - [ ] "Dar de baja" abre un modal de confirmación con el nombre del producto. Usa el modal de confirmación que ya existe.
-  - [ ] Cancelar no cambia nada. Confirmar da de baja igual que hoy.
-  - [ ] "Reactivar" no pide confirmación.
+  - [x] "Dar de baja" abre un modal de confirmación con el nombre del producto. No había un componente reutilizable (solo el modal interno del Cierre de Caja): se creó `ConfirmarModal` (`src/components/confirmar-modal.tsx`) con su estilo, y el Cierre de Caja pasó a usarlo sin cambiar textos.
+  - [x] Cancelar (botón, Escape o clic afuera) no cambia nada. Confirmar da de baja igual que antes; si falla, el error queda en el modal.
+  - [x] "Reactivar" no pide confirmación.
+  - [ ] Probado a mano (baja, cancelar, reactivar y cierre de caja con el modal nuevo).
 
 ## Fase 1 · Usuarios y control
 

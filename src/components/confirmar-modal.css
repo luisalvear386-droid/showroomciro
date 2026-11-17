@@ -1,8 +1,8 @@
 /*
- * Modal de confirmación (estilo de prototipos/Caja Cierre.dc.html). Lo usa el cierre de caja.
+ * Modal de confirmación (estilo de prototipos/Caja Cierre.dc.html). Lo usa el componente ConfirmarModal (cierre de caja, baja de producto).
  */
 
-.confirmar-cierre {
+.confirmar-modal {
   width: 100%;
   max-width: 440px;
   display: flex;
@@ -15,7 +15,7 @@
   box-shadow: 0 40px 80px -32px rgba(38, 24, 18, 0.6);
 }
 
-.confirmar-cierre__titulo {
+.confirmar-modal__titulo {
   margin: 0;
   font-family: var(--fuente-titulos);
   font-size: 24px;
@@ -23,24 +23,24 @@
   letter-spacing: -0.01em;
 }
 
-.confirmar-cierre__textos {
+.confirmar-modal__textos {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.confirmar-cierre__texto {
+.confirmar-modal__texto {
   margin: 0;
   font-size: 14.5px;
   line-height: 1.5;
   color: #6b5545;
 }
 
-.confirmar-cierre__texto strong {
+.confirmar-modal__texto strong {
   color: var(--color-cacao);
 }
 
-.confirmar-cierre__aviso {
+.confirmar-modal__aviso {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -54,7 +54,7 @@
   font-weight: 500;
 }
 
-.confirmar-cierre__aviso-punto {
+.confirmar-modal__aviso-punto {
   width: 7px;
   height: 7px;
   flex: none;
@@ -62,13 +62,23 @@
   background: currentColor;
 }
 
-.confirmar-cierre__botones {
+.confirmar-modal__botones {
   display: flex;
   gap: 10px;
 }
 
-.confirmar-cierre__confirmar {
+.confirmar-modal__confirmar {
   flex: 1;
   padding: 15px;
   font-size: 15px;
+}
+
+/* Acción destructiva (dar de baja): vino, el color de "Dar de baja" en el menú del listado */
+.confirmar-modal__confirmar--peligro {
+  background: var(--color-vino);
+  box-shadow: 0 8px 18px -12px rgba(122, 46, 42, 0.9);
+}
+
+.confirmar-modal__confirmar--peligro:hover:not(:disabled) {
+  background: #64241f;
 }
