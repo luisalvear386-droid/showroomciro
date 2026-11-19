@@ -1,5 +1,7 @@
 # tasks.md — ShowroomCiro
 
+> ⏸️ **Plan v2 en pausa desde el 18/11/2026: se entrega el MVP (Módulos 0 a 11 + tareas 0.1 a 0.4).**
+
 **Cómo usar este documento:** el trabajo vigente es el **Plan v2** (`docs/plan-v2.md`, alcance acordado el 17/11/2026), dividido en las Fases 0 a 5. Cada tarea tiene criterios de aceptación: se marca `[x]` solo cuando se cumplen todos. Las fases van en orden; dentro de una fase, también salvo que se indique lo contrario. Los Módulos 0 a 11 quedan al final como historial.
 
 **Fuera de alcance por ahora** (no agregar sin confirmarlo con Marcos): multi-cliente, factura electrónica, requisitos técnicos de producción (entornos, backups, monitoreo, CI), integración con Mercado Pago, código de barras, descuentos, precios por medio de pago, señas, ticket digital, varias cajas, recordatorios por WhatsApp y todas las funciones avanzadas.
@@ -30,21 +32,21 @@
   - [x] Todo el trabajo pendiente del Módulo 11 está en un commit (`56ea8f5`), con `estado-conexion.tsx`, `conexion.ts`, `use-en-linea.ts`, la migración `0013` y `e2e/`.
   - [x] No entra ningún `.env`, `.env.e2e` ni credencial (`.env` y `.env.*` en `.gitignore`).
   - [x] `tsc -b`, `npm run lint` y `npm run build` pasan.
-- [ ] **0.2 Aplicar la migración `0013_storage_borrar_fotos.sql` en Supabase.**
-  - [ ] La política `fotos_productos_delete` existe en `storage.objects`.
-  - [ ] Al reemplazar la foto de un producto, el archivo anterior desaparece del bucket `fotos-productos` y la foto nueva se ve en el listado y en el POS.
-  - [ ] La foto de un producto dado de baja no se borra.
-- [ ] **0.3 Venta duplicada** (`src/pages/ventas-page.tsx`).
+- [x] **0.2 Aplicar la migración `0013_storage_borrar_fotos.sql` en Supabase.**
+  - [x] La política `fotos_productos_delete` existe en `storage.objects`.
+  - [x] Al reemplazar la foto de un producto, el archivo anterior desaparece del bucket `fotos-productos` y la foto nueva se ve en el listado y en el POS.
+  - [x] La foto de un producto dado de baja no se borra.
+- [x] **0.3 Venta duplicada** (`src/pages/ventas-page.tsx`).
   - [x] El id de la venta (`ventaId`) es uno solo mientras el POS está abierto: no cambia aunque se agreguen, quiten o cambien cantidades, ni después de un intento fallido.
   - [x] Se renueva solo cuando la venta se confirma (se vuelve al Dashboard) o cuando el vendedor sale del POS a propósito: "Nueva Venta" del Dashboard abre el POS de cero. El prototipo del POS no tiene botón "Vaciar carrito", así que no se agregó.
   - [x] Si el primer intento sí llegó a la base y el carrito cambió, el reintento devuelve esa misma venta (no crea otra ni descuenta stock dos veces). El modal avisa que la venta quedó distinta del carrito, el ticket muestra lo registrado y no se vuelve solo al Dashboard.
   - [x] Un error que no es transitorio (sin stock, permiso) no bloquea el carrito.
-  - [ ] Probado a mano con los productos "PRUEBA - …" (corte de red al confirmar, cambio del carrito y reintento).
-- [ ] **0.4 Confirmación antes de "Dar de baja" un producto** (menú "⋯" del listado de Productos).
+  - [x] Probado a mano con los productos "PRUEBA - …" (corte de red al confirmar, cambio del carrito y reintento).
+- [x] **0.4 Confirmación antes de "Dar de baja" un producto** (menú "⋯" del listado de Productos).
   - [x] "Dar de baja" abre un modal de confirmación con el nombre del producto. No había un componente reutilizable (solo el modal interno del Cierre de Caja): se creó `ConfirmarModal` (`src/components/confirmar-modal.tsx`) con su estilo, y el Cierre de Caja pasó a usarlo sin cambiar textos.
   - [x] Cancelar (botón, Escape o clic afuera) no cambia nada. Confirmar da de baja igual que antes; si falla, el error queda en el modal.
   - [x] "Reactivar" no pide confirmación.
-  - [ ] Probado a mano (baja, cancelar, reactivar y cierre de caja con el modal nuevo).
+  - [x] Probado a mano (baja, cancelar, reactivar y cierre de caja con el modal nuevo).
 
 ## Fase 1 · Usuarios y control
 
@@ -262,8 +264,8 @@ El reset antes de producción queda fuera del Plan v2.
 - [x] Se eliminó todo lo de vender o guardar sin conexión: base local Dexie (catálogo, perfil y caja guardados, cola de ventas), sincronización, modo "sesión offline", pantalla `/ventas/pendientes`, indicador de ventas por sincronizar, ticket "Pendiente de sincronizar" y bloqueo del cierre por ventas sin sincronizar. Sin `dexie` ni `dexie-react-hooks`.
 - [x] Sin conexión: pastilla "Sin conexión" en el header, acciones que escriben en la base bloqueadas, el carrito no se pierde, reintento de venta con el mismo id (no duplica) y pantalla "Sin conexión" con "Reintentar" al arrancar sin red.
 - [x] La base no se tocó: la migración `0012_registrar_venta_fecha.sql` queda (`p_fecha` opcional, sin uso). Antes de sacar la cola se verificó que no quedaran ventas sin sincronizar: la app solo se usó en la PC de desarrollo (Edge, `localhost:5173`), con ventas de prueba.
-- [x] Caché de fotos de producto: se mantiene, con **nombre de archivo único** por foto y borrado de la anterior (migración `0013_storage_borrar_fotos.sql`, pendiente de aplicar en Supabase: ver tarea 0.2).
+- [x] Caché de fotos de producto: se mantiene, con **nombre de archivo único** por foto y borrado de la anterior (migración `0013_storage_borrar_fotos.sql`, aplicada en Supabase en la tarea 0.2).
 
 ---
 
-**Estado: Módulos 0 a 11 completos (offline descartado por ahora). Plan v2 en curso: Fase 0, tarea 0.1 hecha.**
+**Estado: MVP entregado el 18/11/2026 (Módulos 0 a 11 + tareas 0.1 a 0.4). Plan v2 (Fases 1 a 5) en pausa.**

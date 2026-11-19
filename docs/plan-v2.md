@@ -1,5 +1,7 @@
 # ShowroomCiro · Plan v2 (camino a producción en Ciro Rey)
 
+> ⏸️ **Plan v2 en pausa desde el 18/11/2026: se entrega el MVP (Módulos 0 a 11 + tareas 0.1 a 0.4).**
+
 > Alcance acordado el 17/11/2026. Reemplaza al Módulo 12 y al "próximo módulo" de tasks.md.
 > Todo lo que no figura acá queda **fuera de alcance por ahora**: multi-cliente, factura electrónica, requisitos técnicos de producción (entornos, backups, monitoreo, CI), integración con Mercado Pago, código de barras, descuentos, precios por medio de pago, señas, ticket digital, varias cajas, recordatorios por WhatsApp y todas las funciones avanzadas.
 
