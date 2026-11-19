@@ -26,12 +26,14 @@ export default defineConfig({
         short_name: 'ShowroomCiro',
         description: 'Sistema de gestión de Ciro Rey Showroom',
         lang: 'es',
+        id: '/',
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        // Fondo de la pantalla de carga: el negro del ícono
-        background_color: '#000000',
-        theme_color: '#fffcf7',
+        // Paleta del proyecto (docs/contexto-diseno-showroomciro.md): crema hueso, el fondo
+        // general de la app, para la pantalla de carga y la barra del sistema
+        background_color: '#f7f0e6',
+        theme_color: '#f7f0e6',
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
